@@ -263,3 +263,230 @@ export const THESIS_SECOND =
   "I'd handle the logistics like any coordinator, and I'd also measure what each event achieves, so the team can show leadership exactly how events support the 2028 plan."
 
 export const CONTACT_EMAIL = 'sofiamotaus@gmail.com'
+
+/* -- Section 5: The plan ------------------------------------------------ */
+
+export interface Program extends Sourced {
+  name: string
+  lead?: boolean
+  calculation: string
+  cost: number
+  costLabel: string
+  /** What it is, in a sentence. */
+  blurb: string
+}
+
+export const PROGRAMS: Program[] = [
+  {
+    name: 'First 90 Days',
+    lead: true,
+    calculation: '~15 NY partners × 3 lunches × 6 people × $100',
+    cost: 27000,
+    costLabel: '$27,000',
+    blurb:
+      'A structured welcome for every lateral partner: three small lunches in their first ninety days, each with people they would not otherwise meet.',
+    estimate: true,
+    sources: [28],
+  },
+  {
+    name: 'Momentum Circles',
+    calculation: '4 cohorts × 12 people × 10 lunches × $40',
+    cost: 19200,
+    costLabel: '$19,200',
+    blurb:
+      'Keeps the Momentum summit cohorts talking between summits, with a standing monthly lunch rather than a yearly event.',
+    sources: [23],
+  },
+  {
+    name: 'Global Table',
+    calculation: '2 mixers × 60 people × $75, virtual sessions ~free',
+    cost: 9000,
+    costLabel: '$9,000',
+    blurb:
+      'Brings New York together with one other office at a time, so cross-border ties exist before a deal needs them.',
+    sources: [1],
+  },
+  {
+    name: 'Client Roundtables',
+    calculation: '8 dinners × 14 seats × $200',
+    cost: 22400,
+    costLabel: '$22,400',
+    blurb:
+      'Small client dinners built around a topic rather than a pitch, measured by what follows rather than who attended.',
+    sources: [19, 28],
+  },
+]
+
+export const PILOT_TOTAL = 77600
+export const PILOT_TOTAL_LABEL = '$77,600'
+
+export const LEANER_OPTION = {
+  label: 'Leaner',
+  body: "At Arnold & Porter's $50-per-person lunch limit, First 90 Days costs $13,500 and the total drops to about $64K.",
+  sources: [26],
+}
+
+export const COST_NEUTRAL_OPTION = {
+  label: 'Cost-neutral',
+  body: 'One 200-person reception (200 × $150 = $30,000) pays for about ten client dinners: $30,000 ÷ $2,800 = 10.7.',
+  sources: [28],
+}
+
+export const DESIGN_RULE =
+  'Every program is optional, small and short. Mandatory team-building can backfire.'
+
+export interface RoadmapPhase {
+  when: string
+  what: string
+}
+
+export const ROADMAP: RoadmapPhase[] = [
+  { when: 'Month 1', what: 'Listen and set baselines.' },
+  { when: 'Months 2-3', what: 'Launch First 90 Days and Momentum Circles.' },
+  { when: 'Months 4-6', what: 'Add Client Roundtables and Global Table.' },
+  {
+    when: 'Months 7-12',
+    what: 'Compare participants with non-participants, then recommend scale, adjust or stop.',
+  },
+]
+
+/* -- Section 6: The business case --------------------------------------- */
+
+export const LATERAL_FUNNEL = {
+  hired: 51,
+  leaveLow: 15.3,
+  leaveHigh: 19.4,
+  leaveLabel: '~15-19',
+  atRiskLabel: '$61.8M-$78.3M',
+  firmwideCost: 91800,
+  firmwideCostLabel: '$91,800',
+  returnMultiple: 44,
+  pointsMoved: '1 / 51 = 2 points',
+  sources: [6, 7],
+}
+
+export interface KeepFourRow extends Sourced {
+  who: string
+  calculation: string
+  saved: string
+}
+
+export const KEEP_FOUR: KeepFourRow[] = [
+  { who: '4 associates (low)', calculation: '4 × $200,000', saved: '$800,000', sources: [14] },
+  { who: '4 associates (high)', calculation: '4 × $500,000', saved: '$2,000,000', sources: [14] },
+  { who: '4 lateral partners', calculation: '4 × $4,039,200', saved: '~$16.2M', sources: [7] },
+]
+
+export const KEEP_FOUR_NOTE =
+  'Keeping four associates returns 10-26× the $77,600 pilot cost.'
+
+export const MOMENTUM_SCENARIOS = {
+  people: 48,
+  cautious: { rate: '1%', avoided: 0.48, saved: '$96,000', multiple: '5×' },
+  field: { rate: '4%', avoided: 1.92, saved: '$384,000', multiple: '20×' },
+  sources: [13, 14],
+}
+
+export const CLIENT_FACTS = [
+  {
+    figure: '5.7×',
+    body: 'Clients served by three practice groups generate 5.7 times the revenue of clients served by one.',
+    sources: [18],
+  },
+  {
+    figure: '27%',
+    body: 'Clients spend about twice as much with firms that ask for formal feedback, yet only 27% are asked.',
+    sources: [19],
+  },
+  {
+    figure: '~4 days',
+    body: 'The dinners break even on about four days of one lawyer’s work: $1.36M per lawyer ÷ 250 days = $5,440 a day, and $22,400 ÷ $5,440 ≈ 4.',
+    sources: [29],
+  },
+]
+
+export const HEADLINE_CALLOUT = {
+  figure: '1.9%',
+  calculation: '$77,600 ÷ $4,039,200',
+  body: 'The whole pilot costs less than 2% of one failed lateral partner.',
+  sources: [7],
+}
+
+/* -- Section 7: How I'd measure it -------------------------------------- */
+
+export interface ScorecardMetric {
+  name: string
+  target: string | null
+}
+
+/**
+ * Deliberately has no values. A sample layout with invented numbers would be
+ * fiction that screenshots out of context; the targets that do exist are the
+ * ones named in the outline.
+ */
+export const SCORECARD: ScorecardMetric[] = [
+  { name: 'Attendance', target: null },
+  { name: 'Repeat rate', target: null },
+  { name: 'Follow-ups within 30 days', target: null },
+  { name: 'New matters', target: null },
+  { name: 'Cost per relationship', target: null },
+  { name: 'Belonging score', target: null },
+  { name: 'Cross-office introductions per new partner', target: '10+ in 90 days' },
+]
+
+export const MEASUREMENT_LIST = [
+  'Set success targets before launch, for example 10+ cross-office introductions per new partner in 90 days.',
+  'Link event attendance to the firm’s client and new-work data.',
+  'Publish a monthly Event Impact Scorecard.',
+  'Compare participants with similar non-participants, with surveys before and after.',
+  'Map relationships to flag new partners with few connections at day 30, anonymized totals only.',
+  'Track no-show rates and cost per guest to cut waste.',
+  'Analyze client feedback themes in English and Portuguese.',
+  'Add one survey question: “I feel valued for my work.”',
+]
+
+/* -- Section 8: Risks --------------------------------------------------- */
+
+export interface Risk {
+  pushback: string
+  answer: string
+}
+
+export const RISKS: Risk[] = [
+  {
+    pushback: 'We already do this.',
+    answer:
+      'It builds on Momentum, the alumni program and client events, and supports the HR and talent teams that own retention.',
+  },
+  {
+    pushback: 'Lawyers won’t show up.',
+    answer: 'Optional, small and short: a lunch, or ninety minutes in the evening.',
+  },
+  {
+    pushback: 'You can’t prove it.',
+    answer:
+      'True in year one. Track early signals, then compare participants with non-participants.',
+  },
+  {
+    pushback: 'Costs are already up.',
+    answer: 'Use the cost-neutral version: move budget from one large reception.',
+  },
+  {
+    pushback: 'Partners won’t host.',
+    answer:
+      'Hosting supports the new partner evaluations, which reward client engagement and collaboration.',
+  },
+  {
+    pushback: 'Privacy and compliance.',
+    answer:
+      'Anonymized reporting only, HR and compliance sign-off, and client gift rules respected.',
+  },
+]
+
+/* -- Section 9: About --------------------------------------------------- */
+
+export const ABOUT = {
+  name: 'Sofia Mota',
+  bio: '2026 Business Analytics graduate of Biola University. Events Coordinator for Biola’s Global Student Engagement office, running about ten events a semester. Coordinated camps for 200+ children and built dashboards with Restoration Ministries in São Paulo. Speaks English and Portuguese.',
+  email: CONTACT_EMAIL,
+}

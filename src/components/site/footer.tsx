@@ -1,57 +1,75 @@
 import { Link } from 'react-router-dom'
-import { Disclaimer } from '@/components/site/disclaimer'
-import { Rule } from '@/components/site/section'
+import { ArrowUpRight } from 'lucide-react'
+import { DISCLAIMER } from '@/components/site/disclaimer'
 import { CONTACT_EMAIL } from '@/lib/data'
-import { NAV_SECTIONS } from '@/lib/nav'
+import { SECTIONS } from '@/lib/sections'
+
+const PAGES = [
+  { to: '/culture-extras', label: 'Culture extras' },
+  { to: '/methodology', label: 'Methodology' },
+  { to: '/sources', label: 'Sources' },
+]
 
 export function SiteFooter() {
   return (
     <footer className="bg-midnight">
-      <div className="mx-auto w-full max-w-[1200px] px-6 py-16 md:px-10 md:py-24">
-        <div className="grid gap-12 md:grid-cols-[1.4fr_1fr_1fr]">
+      <div className="mx-auto w-full max-w-[1200px] px-6 py-20 md:px-10 md:py-28">
+        <div className="grid gap-14 lg:grid-cols-[1.4fr_1fr_1fr]">
           <div>
-            <p className="font-display text-3xl text-ivory">The Connected Firm</p>
-            <p className="measure mt-4 text-ivory/70">
-              An events strategy for White &amp; Case&apos;s New York office, built from
-              public sources with every figure dated and every assumption labelled.
+            <p className="font-display text-[clamp(2rem,3.4vw,3rem)] leading-tight text-ivory">
+              The Connected Firm
             </p>
+            <p className="measure mt-5 text-ivory/70">
+              An events strategy for White &amp; Case&apos;s New York office, built from public
+              sources with every figure dated and every assumption labelled.
+            </p>
+
+            <a
+              href={`mailto:${CONTACT_EMAIL}`}
+              className="mt-8 inline-flex items-center gap-2 font-display text-xl text-ivory underline-offset-4 hover:text-sky hover:underline"
+            >
+              {CONTACT_EMAIL}
+              <ArrowUpRight className="size-4" strokeWidth={1.5} />
+            </a>
           </div>
 
-          <div>
+          <nav aria-label="Sections">
             <p className="eyebrow text-sky">Sections</p>
-            <ul className="mt-4 space-y-2">
-              {NAV_SECTIONS.map((section) => (
+            <ul className="mt-5 space-y-2.5">
+              {SECTIONS.filter((s) => s.id !== 'hero').map((section) => (
                 <li key={section.id}>
-                  <a href={`/#${section.id}`} className="text-ivory/70 hover:text-ivory">
+                  <a
+                    href={`/#${section.id}`}
+                    className="flex gap-3 text-ivory/70 transition-colors hover:text-ivory"
+                  >
+                    <span className="tabular text-caption text-ivory/35">{section.number}</span>
                     {section.label}
                   </a>
                 </li>
               ))}
             </ul>
-          </div>
+          </nav>
 
-          <div>
+          <nav aria-label="Reference">
             <p className="eyebrow text-sky">Reference</p>
-            <ul className="mt-4 space-y-2">
-              <li>
-                <Link to="/sources" className="text-ivory/70 hover:text-ivory">
-                  Sources
-                </Link>
-              </li>
-              <li>
-                <a
-                  href={`mailto:${CONTACT_EMAIL}`}
-                  className="text-ivory/70 hover:text-ivory"
-                >
-                  {CONTACT_EMAIL}
-                </a>
-              </li>
+            <ul className="mt-5 space-y-2.5">
+              {PAGES.map((page) => (
+                <li key={page.to}>
+                  <Link to={page.to} className="text-ivory/70 transition-colors hover:text-ivory">
+                    {page.label}
+                  </Link>
+                </li>
+              ))}
             </ul>
-          </div>
+          </nav>
         </div>
 
-        <Rule tone="dark" className="my-10" />
-        <Disclaimer tone="dark" />
+        <hr className="hairline-light my-12" />
+
+        <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
+          <p className="eyebrow text-ivory/60">{DISCLAIMER}</p>
+          <p className="eyebrow text-ivory/35">October 2026</p>
+        </div>
       </div>
     </footer>
   )

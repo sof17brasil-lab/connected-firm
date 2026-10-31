@@ -11,7 +11,17 @@ import {
   RESEARCH_PARTNERS,
   RESEARCH_PEOPLE,
   WHY_NOW_STATS,
+  PROGRAMS,
+  PILOT_TOTAL,
+  ROADMAP,
+  LATERAL_FUNNEL,
+  KEEP_FOUR,
+  MOMENTUM_SCENARIOS,
+  HEADLINE_CALLOUT,
+  SCORECARD,
+  RISKS,
 } from './data'
+import { ALREADY_HAS, ASSUMPTIONS, OTHER_FIRMS, STILL_TO_VERIFY } from './extras'
 import { SOURCES, SOURCE_BY_ID, sourceYearLabel } from './sources'
 
 /**
@@ -210,5 +220,122 @@ describe('Every displayed figure cites a real source', () => {
     for (const id of cited) {
       expect(SOURCE_BY_ID.has(id)).toBe(true)
     }
+  })
+})
+
+describe('Section 5 — program costs', () => {
+  it('matches Exact data', () => {
+    expect(PROGRAMS.map((p) => [p.name, p.cost])).toEqual([
+      ['First 90 Days', 27000],
+      ['Momentum Circles', 19200],
+      ['Global Table', 9000],
+      ['Client Roundtables', 22400],
+    ])
+  })
+
+  it('sums to the stated total', () => {
+    expect(PROGRAMS.reduce((sum, p) => sum + p.cost, 0)).toBe(PILOT_TOTAL)
+    expect(PILOT_TOTAL).toBe(77600)
+  })
+
+  it('labels the ~15 NY partners figure as an estimate', () => {
+    const lead = PROGRAMS.find((p) => p.name === 'First 90 Days')!
+    expect(lead.estimate).toBe(true)
+    expect(lead.calculation).toContain('~15')
+  })
+
+  it('checks each program calculation multiplies out', () => {
+    expect(15 * 3 * 6 * 100).toBe(27000)
+    expect(4 * 12 * 10 * 40).toBe(19200)
+    expect(2 * 60 * 75).toBe(9000)
+    expect(8 * 14 * 200).toBe(22400)
+  })
+
+  it('has the four roadmap phases', () => {
+    expect(ROADMAP.map((p) => p.when)).toEqual([
+      'Month 1',
+      'Months 2-3',
+      'Months 4-6',
+      'Months 7-12',
+    ])
+  })
+})
+
+describe('Section 6 — business case', () => {
+  it('matches the lateral funnel in Exact data', () => {
+    expect(LATERAL_FUNNEL.hired).toBe(51)
+    expect(+(51 * 0.3).toFixed(1)).toBe(LATERAL_FUNNEL.leaveLow)
+    expect(+(51 * 0.38).toFixed(1)).toBe(LATERAL_FUNNEL.leaveHigh)
+    expect(51 * 3 * 6 * 100).toBe(LATERAL_FUNNEL.firmwideCost)
+    expect(Math.round(4039200 / LATERAL_FUNNEL.firmwideCost)).toBe(LATERAL_FUNNEL.returnMultiple)
+  })
+
+  it('keeps the published range for value at risk', () => {
+    expect((15.3 * 4039200) / 1e6).toBeCloseTo(61.8, 1)
+    expect((19.4 * 4039200) / 1e6).toBeCloseTo(78.4, 1)
+  })
+
+  it('matches the keep-four rows', () => {
+    expect(KEEP_FOUR.map((r) => r.saved)).toEqual(['$800,000', '$2,000,000', '~$16.2M'])
+    expect(4 * 200000).toBe(800000)
+    expect(4 * 500000).toBe(2000000)
+    expect(Math.round((4 * 4039200) / 1e5) / 10).toBe(16.2)
+  })
+
+  it('matches the Momentum Circles scenarios', () => {
+    expect(48 * 0.01 * 200000).toBe(96000)
+    expect(48 * 0.04 * 200000).toBe(384000)
+    expect(MOMENTUM_SCENARIOS.cautious.saved).toBe('$96,000')
+    expect(MOMENTUM_SCENARIOS.field.saved).toBe('$384,000')
+  })
+
+  it('derives the 1.9% headline', () => {
+    expect(((77600 / 4039200) * 100).toFixed(1)).toBe('1.9')
+    expect(HEADLINE_CALLOUT.figure).toBe('1.9%')
+  })
+
+  it('derives the client break-even at about four days', () => {
+    const perDay = 1360000 / 250
+    expect(perDay).toBe(5440)
+    expect(Math.round(22400 / perDay)).toBe(4)
+  })
+})
+
+describe('Section 7 — scorecard', () => {
+  it('carries no invented values', () => {
+    for (const metric of SCORECARD) {
+      expect(metric).not.toHaveProperty('value')
+    }
+  })
+
+  it('keeps the one target the outline states', () => {
+    const withTarget = SCORECARD.filter((m) => m.target !== null)
+    expect(withTarget).toHaveLength(1)
+    expect(withTarget[0].target).toBe('10+ in 90 days')
+  })
+})
+
+describe('Section 8 — risks', () => {
+  it('has the six pushbacks from the outline', () => {
+    expect(RISKS).toHaveLength(6)
+    for (const risk of RISKS) expect(risk.answer.length).toBeGreaterThan(20)
+  })
+})
+
+describe('Reference pages', () => {
+  it('cites a real source for every assumption that claims one', () => {
+    for (const row of ASSUMPTIONS) {
+      for (const id of row.sources) expect(SOURCE_BY_ID.has(id)).toBe(true)
+    }
+  })
+
+  it('keeps every culture-extras citation resolvable', () => {
+    for (const item of [...OTHER_FIRMS, ...ALREADY_HAS]) {
+      for (const id of item.sources) expect(SOURCE_BY_ID.has(id)).toBe(true)
+    }
+  })
+
+  it('lists the four items still to verify', () => {
+    expect(STILL_TO_VERIFY).toHaveLength(4)
   })
 })

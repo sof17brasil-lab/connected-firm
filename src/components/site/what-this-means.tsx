@@ -95,7 +95,7 @@ export function WhatThisMeans({
         <Word
           key={`b${i}`}
           progress={scrollYProgress}
-          range={[i / total, (i + 1.5) / total]}
+          range={[i / total, Math.min((i + 1.5) / total, 1)]}
           dark={dark}
         >
           {word}
@@ -109,7 +109,7 @@ export function WhatThisMeans({
           <Word
             key={`a${i}`}
             progress={scrollYProgress}
-            range={[idx / total, (idx + 1.5) / total]}
+            range={[idx / total, Math.min((idx + 1.5) / total, 1)]}
             dark={dark}
           >
             {word}

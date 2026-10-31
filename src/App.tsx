@@ -9,6 +9,8 @@ import { CardCounter, CardCounterProvider } from '@/components/site/card-counter
 import { SiteFooter } from '@/components/site/footer'
 import Home from '@/pages/Home'
 import SourcesPage from '@/pages/Sources'
+import CultureExtras from '@/pages/CultureExtras'
+import Methodology from '@/pages/Methodology'
 
 export default function App() {
   return (
@@ -24,6 +26,8 @@ export default function App() {
           <main>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/culture-extras" element={<CultureExtras />} />
+              <Route path="/methodology" element={<Methodology />} />
               <Route path="/sources" element={<SourcesPage />} />
             </Routes>
           </main>
