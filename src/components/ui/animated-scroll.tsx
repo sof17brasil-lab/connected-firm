@@ -35,11 +35,13 @@ function Panel({
   // Every stop has to stay inside 0-1 and keep increasing: framer-motion
   // hands these to the Web Animations API as keyframe offsets, and a value
   // outside that range throws and takes the whole page down.
+  // A fifth of each slice to arrive, the middle to be read, a fifth to leave.
+  const span = end - start
   const stops = [
     Math.max(start, 0),
-    Math.min(start + 0.07, 1),
-    Math.max(Math.min(end - 0.07, 1), start + 0.08),
-    Math.min(Math.max(end, start + 0.09), 1),
+    Math.min(start + span * 0.22, 1),
+    Math.min(end - span * 0.22, 1),
+    Math.min(end, 1),
   ]
 
   // Each panel owns a slice of the scroll: text in from one side, the number
@@ -48,8 +50,8 @@ function Panel({
   const slide: [number, number] = [stops[0], stops[1]]
   // Pixels, not percentages: a percentage slide pushed the text outside the
   // pinned container, which clips, and program names lost their first letters.
-  const textX = useTransform(progress, slide, [first ? 0 : -28, 0])
-  const blockX = useTransform(progress, slide, [first ? 0 : 28, 0])
+  const textX = useTransform(progress, slide, [first ? 0 : -64, 0])
+  const blockX = useTransform(progress, slide, [first ? 0 : 64, 0])
   const opacity = useTransform(progress, stops, [
     first ? 1 : 0,
     1,
@@ -136,7 +138,7 @@ export function ProgramPanels({ programs }: { programs: Program[] }) {
   return (
     <>
       {/* Tall track: the sticky frame inside holds one panel at a time. */}
-      <div ref={ref} className="relative hidden md:block" style={{ height: `${programs.length * 90}vh` }}>
+      <div ref={ref} className="relative hidden md:block" style={{ height: `${programs.length * 110}vh` }}>
         <div className="sticky top-0 h-screen overflow-hidden">
           {programs.map((program, i) => (
             <Panel

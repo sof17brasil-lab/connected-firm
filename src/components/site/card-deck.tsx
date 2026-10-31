@@ -95,19 +95,22 @@ export function CardDeck({
           }
 
           // The chart draws itself after the wipe, scrubbed rather than
-          // played, so scrolling back un-draws it.
+          // played, so scrolling back un-draws it. Both halves of the opacity
+          // matter: without the entrance factor every chart sits at full
+          // opacity from the start and all four stack on top of each other.
           const chart = charts[i]
           if (chart) {
-            const fade = 1 - easeOut(clamp01(next / 0.3))
-            gsap.set(chart, { opacity: fade })
+            const enter = easeOut(clamp01(local / 0.18))
+            const leave = easeOut(clamp01(next / 0.3))
+            gsap.set(chart, { opacity: enter * (1 - leave) })
             drawChart(chart, clamp01((local - 0.3) / 0.5))
           }
 
           // The text crosses to the other side: out on one, in on the other.
           const text = texts[i]
           if (text) {
-            const show = easeOut(clamp01((local - 0.28) / 0.32))
-            const hide = easeOut(clamp01(next / 0.34))
+            const show = easeOut(clamp01((local - 0.12) / 0.24))
+            const hide = easeOut(clamp01(next / 0.45))
             gsap.set(text, { opacity: show * (1 - hide), y: (1 - show) * 24 })
           }
         })
