@@ -1,23 +1,20 @@
 import { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
+import { motion, useMotionValue, useScroll, useTransform } from 'framer-motion'
 import { useReducedMotion } from '@/hooks/use-reduced-motion'
 import { cn } from '@/lib/utils'
 
 /**
  * An original single-line New York skyline, drawn rather than traced: one
- * continuous stroke across the base with a stepped Empire State and spire
- * near the middle and the Chrysler's tiered crown to its right, plus
- * anonymous towers either side for rhythm.
+ * continuous stroke with a stepped Empire State and spire near the middle,
+ * the Chrysler's tiered crown to its right, and anonymous towers either side.
  *
- * The stroke draws itself as the section scrolls past.
+ * It strokes itself on as the closing line scrolls past.
  */
 const PATH = [
-  // Left flank: low blocks stepping up from the water's edge.
   'M 0 150',
   'L 46 150 L 46 118 L 74 118 L 74 150',
   'L 104 150 L 104 96 L 112 88 L 120 96 L 120 150',
   'L 150 150 L 150 124 L 186 124 L 186 150',
-  // A slim tower with a mast.
   'L 208 150 L 208 72 L 214 72 L 214 56 L 216 56 L 216 72 L 222 72 L 222 150',
   'L 248 150 L 248 110 L 278 110 L 278 150',
   // Empire State: three setbacks into a tapered mast.
@@ -32,7 +29,6 @@ const PATH = [
   'M 444 62 Q 452 50 460 62',
   'M 452 50 L 452 26 L 453 26 L 453 50',
   'M 468 86 L 468 150',
-  // Right flank: a wide block, a stepped pair, then back to the base line.
   'L 498 150 L 498 104 L 536 104 L 536 150',
   'L 560 150 L 560 130 L 578 130 L 578 112 L 598 112 L 598 150',
   'L 640 150',
@@ -44,23 +40,36 @@ export function Skyline({ className }: { className?: string }) {
 
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ['start 0.95', 'center 0.6'],
+    // A long window, so the drawing lasts the whole approach rather than
+    // finishing before it is properly on screen.
+    offset: ['start end', 'end 0.55'],
   })
 
-  const pathLength = useTransform(scrollYProgress, [0, 1], [0, 1])
+  const drawn = useTransform(scrollYProgress, [0.05, 0.95], [0, 1])
+  const settled = useMotionValue(1)
+
+  // Always hand framer-motion a MotionValue for pathLength. Swapping between
+  // a plain number and a MotionValue leaves the dash properties unset, and
+  // the path renders fully drawn from the start.
+  const pathLength = reducedMotion ? settled : drawn
 
   return (
     <div ref={ref} className={cn('w-full', className)} aria-hidden="true">
-      <svg viewBox="0 0 640 160" className="w-full" fill="none">
+      <svg
+        viewBox="0 0 640 160"
+        preserveAspectRatio="xMidYMax meet"
+        className="h-[clamp(9rem,22vw,20rem)] w-full"
+        fill="none"
+      >
         <motion.path
           d={PATH}
           stroke="var(--color-navy)"
-          strokeOpacity={0.3}
+          strokeOpacity={0.32}
           strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
           vectorEffect="non-scaling-stroke"
-          style={reducedMotion ? { pathLength: 1 } : { pathLength }}
+          style={{ pathLength }}
         />
       </svg>
     </div>

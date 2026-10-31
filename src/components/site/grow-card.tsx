@@ -3,24 +3,19 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { Footnote } from '@/components/site/footnote'
-import { buildCollage } from '@/lib/collage'
 import { useReducedMotion } from '@/hooks/use-reduced-motion'
 import type { StatTile } from '@/lib/data'
-import { cn } from '@/lib/utils'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
 
-const RAD = Math.PI / 180
 const clamp01 = (n: number) => (n < 0 ? 0 : n > 1 ? 1 : n)
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3)
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 
-const PIECES = buildCollage(9, 'left')
-
 /**
- * Move 1: the chapter opener's centre square grows until it fills the screen,
- * the stats appear over it one at a time, and the next section wipes up to
- * cover it.
+ * Move 1: the chapter opener's picture grows until it fills the screen, the
+ * stats appear over it one at a time, and the next section wipes up to cover
+ * it, switching the page from the dark image back to ivory.
  *
  * Everything is scrubbed from one pinned ScrollTrigger — no timers — so the
  * whole move runs forwards and backwards with the scroll.
@@ -51,7 +46,6 @@ export function GrowCard({
       const card = el.querySelector<HTMLElement>('[data-card]')
       const heading = el.querySelector<HTMLElement>('[data-heading]')
       const curtain = el.querySelector<HTMLElement>('[data-curtain]')
-      const pieces = gsap.utils.toArray<HTMLElement>('[data-piece]', el)
       const statEls = gsap.utils.toArray<HTMLElement>('[data-stat]', el)
       if (!stage || !card || !heading || !curtain) return
 
@@ -59,44 +53,24 @@ export function GrowCard({
         const vw = window.innerWidth
         const vh = window.innerHeight
 
-        // 0 - 0.18 : collage settles around the heading (the orbit from 01/02).
-        // 0.18 - 0.55: heading leaves, squares fly out, the centre card grows.
-        // 0.55 - 0.80: the stats arrive one at a time.
+        // 0.00 - 0.42: the heading leaves and the picture grows to full bleed.
+        // 0.45 - 0.78: the numbers arrive, one after another.
         // 0.80 - 1.00: the next panel wipes up and covers everything.
-        const orbit = clamp01(p / 0.18)
-        const grow = easeOut(clamp01((p - 0.18) / 0.37))
+        const grow = easeOut(clamp01(p / 0.42))
         const wipe = easeOut(clamp01((p - 0.8) / 0.2))
 
-        const ring = Math.min(Math.max(Math.min(vw, vh) * 0.4, 150), 430)
+        gsap.set(heading, { opacity: 1 - clamp01(grow * 2.4), y: -grow * vh * 0.3 })
 
-        pieces.forEach((node, i) => {
-          const piece = PIECES[i]
-          if (!piece) return
-          const local = easeOut(clamp01((orbit - piece.delay) / piece.span))
-          const angle = lerp(piece.a0, piece.a1, local) * RAD
-          // Once the card starts growing the squares keep going outward.
-          const dist = lerp(piece.r0, piece.r1, local) * ring + grow * vw * 0.9
-          gsap.set(node, {
-            x: Math.cos(angle) * dist,
-            y: Math.sin(angle) * dist,
-            scale: lerp(0.6, 1, local),
-            opacity: Math.min(local * 3.5, 1) * (1 - clamp01(grow * 1.6)),
-          })
-        })
-
-        gsap.set(heading, { opacity: 1 - clamp01(grow * 2.2), y: -grow * vh * 0.3 })
-
-        // The card morphs from a small portrait tile to the full viewport.
         gsap.set(card, {
-          width: lerp(Math.min(vw * 0.22, 240), vw, grow),
-          height: lerp(Math.min(vh * 0.26, 260), vh, grow),
+          width: lerp(Math.min(vw * 0.26, 300), vw, grow),
+          height: lerp(Math.min(vh * 0.3, 300), vh, grow),
           borderRadius: lerp(2, 0, grow),
         })
 
         statEls.forEach((node, i) => {
-          const slot = 0.55 + (i * 0.25) / statEls.length
-          const local = easeOut(clamp01((p - slot) / (0.25 / statEls.length)))
-          gsap.set(node, { opacity: local, y: (1 - local) * 26 })
+          const slot = 0.45 + (i * 0.33) / statEls.length
+          const local = easeOut(clamp01((p - slot) / (0.33 / statEls.length)))
+          gsap.set(node, { opacity: local, y: (1 - local) * 30 })
         })
 
         gsap.set(curtain, { yPercent: (1 - wipe) * 100 })
@@ -162,26 +136,6 @@ export function GrowCard({
   return (
     <div ref={root} id="why-now" className="relative h-[460vh]">
       <div data-stage className="relative h-screen w-full overflow-hidden">
-        {/* Collage, orbiting then flying outward. */}
-        <div aria-hidden="true" className="pointer-events-none absolute left-1/2 top-1/2 z-10">
-          {PIECES.map((piece, i) => (
-            <div
-              key={i}
-              data-piece
-              className={cn(
-                'absolute',
-                piece.tone === 'navy' ? 'bg-navy' : piece.tone === 'sky' ? 'bg-sky' : 'bg-stone',
-              )}
-              style={{
-                width: piece.size,
-                height: piece.size,
-                marginLeft: -piece.size / 2,
-                marginTop: -piece.size / 2,
-                opacity: 0,
-              }}
-            />
-          ))}
-        </div>
 
         {/* The growing card. */}
         <div className="absolute inset-0 flex items-center justify-center">
@@ -194,14 +148,14 @@ export function GrowCard({
             />
 
             {/* Stats, arriving one at a time over the full-bleed image. */}
-            <div className="absolute inset-x-0 bottom-0 p-7 md:p-14">
-              <dl className="mx-auto flex w-full max-w-[1200px] flex-col gap-6 md:flex-row md:items-end md:justify-between md:gap-10">
+            <div className="absolute inset-x-0 bottom-0 p-7 md:p-12">
+              <dl className="mx-auto grid w-full max-w-[1200px] grid-cols-1 gap-x-14 gap-y-7 sm:grid-cols-2">
                 {stats.map((stat) => (
-                  <div key={stat.label} data-stat style={{ opacity: 0 }} className="md:max-w-[15rem]">
-                    <dt className="font-display text-[clamp(2.2rem,5vw,4.2rem)] leading-none text-ivory">
+                  <div key={stat.label} data-stat style={{ opacity: 0 }}>
+                    <dt className="font-display text-[clamp(2.6rem,7vw,6rem)] leading-[0.92] text-ivory">
                       {stat.value}
                     </dt>
-                    <dd className="mt-3 text-sm leading-snug text-ivory/80">
+                    <dd className="mt-2 text-sm leading-snug text-ivory/80 md:text-base">
                       {stat.label}
                       <Footnote ids={stat.sources} tone="dark" className="ml-1" />
                       {stat.note && (

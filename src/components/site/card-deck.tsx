@@ -180,7 +180,7 @@ export function CardDeck({
           {/* The card frame: fixed once it has arrived. */}
           <div
             data-frame
-            className="relative h-[46vh] w-[min(34vh,calc(100vw-3rem))] overflow-hidden md:h-[70vh] md:w-[min(52vh,calc(100vw-3rem))]"
+            className="relative h-[52vh] w-[min(40vh,calc(100vw-2.5rem))] overflow-hidden md:h-[74vh] md:w-[min(58vh,calc(100vw-3rem))]"
             style={{ opacity: 0 }}
           >
             {cards.map((card, i) => (
@@ -196,7 +196,7 @@ export function CardDeck({
               <div
                 key={`chart-${i}`}
                 data-chart
-                className="absolute inset-0 flex items-center justify-center p-8"
+                className="absolute inset-0 flex items-center justify-center p-4 md:p-6"
                 style={{ opacity: 0 }}
               >
                 <div className="w-full">{card.chart(true)}</div>

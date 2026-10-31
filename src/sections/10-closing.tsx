@@ -39,7 +39,6 @@ export function Closing() {
             <h2 className="font-display text-[clamp(1.8rem,3vw,2.6rem)] text-navy">
               {ABOUT.name}
             </h2>
-            <p className="measure mt-5 text-slate">{ABOUT.bio}</p>
             <a
               href={`mailto:${ABOUT.email}`}
               className="mt-8 inline-flex items-center gap-3 font-display text-[clamp(1.3rem,2.2vw,1.9rem)] text-navy underline-offset-4 hover:text-sky-deep hover:underline"

@@ -22,7 +22,7 @@ export default function Home() {
       {/* Opener 01 and the Section 1 numbers are one continuous move. */}
       <WhyNow />
 
-      <ChapterOpener number="02" question="What keeps *people* at a firm?" side="right" />
+      <ChapterOpener number="02" question="What keeps *people* at a firm?" collage={false} />
       <TheProblem />
 
       <ThePlan />

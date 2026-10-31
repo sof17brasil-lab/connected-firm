@@ -12,7 +12,7 @@ import { WhatThisMeans } from '@/components/site/what-this-means'
  */
 export function BusinessCase() {
   return (
-    <Band id="business-case" className="py-24 md:py-32">
+    <Band id="business-case" className="pb-24 pt-2 md:pb-32 md:pt-4">
       <Reveal>
         <p className="font-display text-[clamp(4rem,12vw,10rem)] leading-[0.9] text-navy">
           <CountUp to={3.9} prefix="$" suffix="M" decimals={1} display="$3.9M" />

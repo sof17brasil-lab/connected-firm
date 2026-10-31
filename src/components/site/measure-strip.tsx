@@ -15,11 +15,11 @@ export function MeasureStrip() {
   const items = (
     <>
       {MEASURES.map((measure) => (
-        <span key={measure} className="flex items-center gap-10 whitespace-nowrap">
-          <span className="font-display text-[clamp(1.1rem,1.8vw,1.6rem)] text-navy">
+        <span key={measure} className="flex items-center gap-14 whitespace-nowrap">
+          <span className="font-display text-[clamp(1.8rem,4vw,3.4rem)] leading-none text-navy">
             {measure}
           </span>
-          <span aria-hidden="true" className="size-1 rounded-full bg-sky-deep" />
+          <span aria-hidden="true" className="size-1.5 rounded-full bg-sky-deep" />
         </span>
       ))}
     </>
@@ -27,17 +27,17 @@ export function MeasureStrip() {
 
   return (
     <div className="flex items-stretch border-y border-stone">
-      <p className="eyebrow flex shrink-0 items-center border-r border-stone px-5 text-sky-deep md:px-7">
+      <p className="flex shrink-0 items-center border-r border-stone px-5 font-display text-[clamp(1.2rem,2.2vw,1.9rem)] text-sky-deep md:px-10">
         I&apos;d measure
       </p>
 
       <div className="group relative flex-1 overflow-hidden">
         {reducedMotion ? (
-          <div className="flex items-center gap-10 px-6 py-5">{items}</div>
+          <div className="flex items-center gap-14 px-8 py-9">{items}</div>
         ) : (
-          <div className="flex w-max animate-[marquee_26s_linear_infinite] items-center gap-10 py-5 pl-10 group-hover:[animation-play-state:paused]">
+          <div className="flex w-max animate-[marquee_34s_linear_infinite] items-center gap-14 py-9 pl-14 group-hover:[animation-play-state:paused]">
             {items}
-            <span aria-hidden="true" className="flex items-center gap-10">
+            <span aria-hidden="true" className="flex items-center gap-14">
               {items}
             </span>
           </div>

@@ -46,8 +46,10 @@ function Panel({
   // block in from the other, meeting in the middle. The first panel is
   // already on screen when the section pins, and the last one stays put.
   const slide: [number, number] = [stops[0], stops[1]]
-  const textX = useTransform(progress, slide, [first ? '0%' : '-8%', '0%'])
-  const blockX = useTransform(progress, slide, [first ? '0%' : '8%', '0%'])
+  // Pixels, not percentages: a percentage slide pushed the text outside the
+  // pinned container, which clips, and program names lost their first letters.
+  const textX = useTransform(progress, slide, [first ? 0 : -28, 0])
+  const blockX = useTransform(progress, slide, [first ? 0 : 28, 0])
   const opacity = useTransform(progress, stops, [
     first ? 1 : 0,
     1,
@@ -64,7 +66,7 @@ function Panel({
     >
       <div
         className={cn(
-          'mx-auto grid w-full max-w-[1100px] items-center gap-10 px-6 md:grid-cols-2 md:gap-16 md:px-10',
+          'mx-auto grid w-full max-w-[1100px] items-center gap-8 px-6 md:grid-cols-2 md:gap-16 md:px-10',
           flip && 'md:[&>*:first-child]:order-2',
         )}
       >
@@ -85,7 +87,7 @@ function Panel({
         </motion.div>
 
         <motion.div style={{ x: blockX }}>
-          <div className="flex aspect-[4/3] flex-col justify-end bg-navy p-8 md:p-10">
+          <div className="flex aspect-[4/3] max-h-[42vh] flex-col justify-end bg-navy p-8 md:p-10">
             <p className="font-display text-[clamp(2.6rem,5vw,4.5rem)] leading-none text-ivory">
               {program.costLabel}
             </p>

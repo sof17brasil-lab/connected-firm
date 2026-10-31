@@ -18,7 +18,8 @@ export interface BarDatum {
 export function OutlineBars({ data, animate, max }: { data: BarDatum[]; animate: boolean; max?: number }) {
   const ceiling = max ?? Math.max(...data.map((d) => d.value)) * 1.25
   const slot = VB.w / data.length
-  const barW = Math.min(slot * 0.54, 56)
+  // Two-bar comparisons were reading as thin slivers; let them breathe.
+  const barW = Math.min(slot * 0.56, data.length <= 2 ? 118 : 64)
   const floor = VB.h - 34
 
   return (
