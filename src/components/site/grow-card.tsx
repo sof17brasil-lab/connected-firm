@@ -59,24 +59,17 @@ export function GrowCard({
       // 0.56 - 0.84  the numbers, one at a time
       // 0.86 - 1.00  the next panel wipes up
       const grow = easeOut(clamp01(p / 0.34))
-      const headOut = easeOut(clamp01((p - 0.34) / 0.1))
+      // Tied to the growth, not to raw scroll: the heading has to be gone
+      // before the picture is tall enough to reach the band it sits in.
+      const headOut = easeOut(clamp01((grow - 0.34) / 0.2))
       const standIn = easeOut(clamp01((p - 0.42) / 0.12))
       const wipe = easeOut(clamp01((p - 0.86) / 0.14))
 
       gsap.set(card, {
-        width: lerp(Math.min(vw * 0.26, 300), vw, grow),
-        height: lerp(Math.min(vh * 0.3, 300), vh, grow),
+        width: lerp(Math.min(vw * 0.17, 210), vw, grow),
+        height: lerp(Math.min(vh * 0.2, 210), vh, grow),
         borderRadius: lerp(2, 0, grow),
       })
-
-      // The heading sits on ivory before the picture is behind it and on the
-      // darkened photograph after, so it needs a deeper blue at the start and
-      // the lighter one once there is something dark underneath.
-      const onPhoto = grow > 0.12
-      const title = el.querySelector<HTMLElement>('[data-title]')
-      const eyebrow = el.querySelector<HTMLElement>('[data-eyebrow]')
-      if (title) gsap.set(title, { color: onPhoto ? '#8DB4E2' : '#3D6CA6' })
-      if (eyebrow) gsap.set(eyebrow, { color: onPhoto ? 'rgba(247,244,238,0.7)' : '#6A6F7A' })
 
       gsap.set(heading, { opacity: 1 - headOut, y: -headOut * vh * 0.12 })
       if (stand) gsap.set(stand, { opacity: standIn, y: (1 - standIn) * 24 })
@@ -155,23 +148,14 @@ export function GrowCard({
               className="absolute inset-0 bg-gradient-to-t from-midnight/80 via-navy/35 to-navy/45"
             />
 
-            {/* All the type lives inside the picture, so it is never on ivory. */}
+            {/* The standfirst and the numbers sit on the picture; the heading
+                does not, so the picture can never cover it. */}
             <div className="absolute inset-0 flex flex-col items-center justify-center px-7 text-center md:px-12">
-              <div data-heading>
-                <p
-                  data-eyebrow
-                  className="eyebrow mb-6 font-display text-lg tracking-[0.08em] text-muted-ink"
-                >
-                  [{number}]
-                </p>
-                {Heading}
-              </div>
-
               {standfirst && (
                 <p
                   data-standfirst
                   style={{ opacity: 0 }}
-                  className="absolute inset-x-7 top-[14vh] mx-auto max-w-2xl text-lg text-ivory/90 md:inset-x-12 md:text-xl"
+                  className="absolute inset-x-7 top-[12vh] mx-auto max-w-2xl text-lg text-ivory/90 md:inset-x-12 md:text-xl"
                 >
                   {standfirst}
                 </p>
@@ -195,6 +179,20 @@ export function GrowCard({
               </dl>
             </div>
           </div>
+        </div>
+
+        {/* Above the picture, and on a higher layer, so it is never covered. */}
+        <div
+          data-heading
+          className="pointer-events-none absolute inset-x-0 top-[11vh] z-20 flex flex-col items-center px-6 text-center"
+        >
+          <p
+            data-eyebrow
+            className="eyebrow mb-5 font-display text-lg tracking-[0.08em] text-muted-ink"
+          >
+            [{number}]
+          </p>
+          {Heading}
         </div>
 
         <div
