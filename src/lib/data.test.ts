@@ -7,6 +7,7 @@ import {
   GLASSDOOR_NOTE,
   REVENUE_DATA,
   REVENUE_GOAL,
+  REVENUE_SHARE_OF_GOAL,
   RESEARCH_PARTNERS,
   RESEARCH_PEOPLE,
   WHY_NOW_STATS,
@@ -72,6 +73,10 @@ describe('Section 1 — revenue chart', () => {
 
   it('sets the goal line at $5.0bn', () => {
     expect(REVENUE_GOAL).toBe(5.0)
+  })
+
+  it('derives the share of the goal already reached from the two figures', () => {
+    expect(((3.594 / REVENUE_GOAL) * 100).toFixed(2)).toBe(REVENUE_SHARE_OF_GOAL.toFixed(2))
   })
 })
 

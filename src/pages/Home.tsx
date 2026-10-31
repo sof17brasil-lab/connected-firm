@@ -12,26 +12,10 @@ export default function Home() {
       <Hero />
       <Thesis />
 
-      <ChapterOpener
-        number="01"
-        label="Why now"
-        headline="A Public Target"
-        sentence="White & Case has told the market it will pass $5bn by 2028. The current pace does not get there."
-        figure="$5bn"
-        figureCaption="2028 revenue goal"
-        tone="midnight"
-      />
+      <ChapterOpener number="01" question="Why does *2028* matter?" side="left" />
       <WhyNow />
 
-      <ChapterOpener
-        number="02"
-        label="The problem"
-        headline="People Leave"
-        sentence="Up to 38% of lateral partners are gone within five years, and each one costs about $4m."
-        figure="30-38%"
-        figureCaption="Lateral partners gone within five years"
-        tone="ivory"
-      />
+      <ChapterOpener number="02" question="What keeps *people* at a firm?" side="right" />
       <TheProblem />
 
       <WhatPeopleSay />

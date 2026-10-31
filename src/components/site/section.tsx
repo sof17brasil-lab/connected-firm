@@ -1,7 +1,6 @@
 import { cn } from '@/lib/utils'
 import { Reveal } from '@/components/site/reveal'
 
-/** Small-caps label: "01 — Why now". */
 export function Eyebrow({
   children,
   tone = 'light',
@@ -18,7 +17,6 @@ export function Eyebrow({
   )
 }
 
-/** The italic one-liner that closes each section. */
 export function WhatThisMeans({
   children,
   tone = 'light',
@@ -45,30 +43,61 @@ export function WhatThisMeans({
   )
 }
 
-/** Full-bleed band with the standard page gutters and max width inside. */
+/**
+ * A section band. Transparent by design: PageBackground paints the colour so
+ * that tones blend into each other instead of switching at a hard edge.
+ */
 export function Band({
   id,
   children,
   className,
-  tone = 'ivory',
 }: {
   id?: string
   children: React.ReactNode
   className?: string
-  tone?: 'ivory' | 'midnight' | 'navy'
 }) {
-  const bg =
-    tone === 'ivory' ? 'bg-ivory' : tone === 'midnight' ? 'bg-midnight' : 'bg-navy'
   return (
-    <section id={id} className={cn('scroll-mt-20', bg, className)}>
+    <section id={id} className={cn('relative scroll-mt-4', className)}>
       <div className="mx-auto w-full max-w-[1200px] px-6 md:px-10">{children}</div>
     </section>
   )
 }
 
-/** Hairline rule used instead of boxes and heavy borders. */
-export function Rule({ tone = 'light', className }: { tone?: 'light' | 'dark'; className?: string }) {
+export function Rule({
+  tone = 'light',
+  className,
+}: {
+  tone?: 'light' | 'dark'
+  className?: string
+}) {
+  return <hr className={cn(tone === 'light' ? 'hairline' : 'hairline-light', className)} />
+}
+
+/** Small-caps label, big serif number, quiet explanation — the findings list. */
+export function Finding({
+  label,
+  figure,
+  children,
+  tone = 'light',
+}: {
+  label: string
+  figure: React.ReactNode
+  children: React.ReactNode
+  tone?: 'light' | 'dark'
+}) {
+  const dark = tone === 'dark'
   return (
-    <hr className={cn(tone === 'light' ? 'hairline' : 'hairline-light', className)} />
+    <div className={cn('border-t py-8', dark ? 'border-ivory/15' : 'border-stone')}>
+      <p className={cn('eyebrow', dark ? 'text-sky' : 'text-sky-deep')}>{label}</p>
+      <p
+        className={cn(
+          'mt-4 font-display text-[clamp(2.25rem,4vw,3.5rem)] leading-none',
+          dark ? 'text-ivory' : 'text-navy',
+        )}
+      >
+        {figure}
+      </p>
+      <p className={cn('measure mt-4', dark ? 'text-ivory/70' : 'text-slate')}>{children}</p>
+    </div>
   )
 }

@@ -1,58 +1,36 @@
-import XScroll from '@/components/ui/x-scroll'
+import { StatCard } from '@/components/charts/stat-card'
+import { ArcChart, OutlineBars, UnitCircles } from '@/components/charts/outline/charts'
 import { Footnote } from '@/components/site/footnote'
 import { Reveal } from '@/components/site/reveal'
-import { Band, Eyebrow, Rule, WhatThisMeans } from '@/components/site/section'
-import { RESEARCH_PARTNERS, RESEARCH_PEOPLE, type ResearchCard } from '@/lib/data'
+import { SourcePill } from '@/components/site/source-pill'
+import { Band, Eyebrow, Finding, Rule, WhatThisMeans } from '@/components/site/section'
+import { RESEARCH_PARTNERS, RESEARCH_PEOPLE } from '@/lib/data'
 
-function Card({ card }: { card: ResearchCard }) {
-  return (
-    <div className="flex h-full w-[82vw] shrink-0 flex-col border-t border-stone pt-6 sm:w-auto sm:shrink">
-      <p className="font-display text-[clamp(1.75rem,2.4vw,2.5rem)] leading-none text-navy">
-        {card.figure}
-      </p>
-      <p className="mt-4 text-base text-slate">
-        {card.body}
-        <Footnote ids={card.sources} className="ml-1" />
-      </p>
-      {card.caveat && <p className="text-caption mt-3 text-muted-ink">{card.caveat}</p>}
-    </div>
-  )
-}
-
-/** Grid on desktop, a swipeable row on phones so nothing overflows. */
-function CardRow({ cards }: { cards: ResearchCard[] }) {
-  return (
-    <>
-      <div className="sm:hidden">
-        <XScroll>
-          <div className="flex gap-6 pb-4">
-            {cards.map((card) => (
-              <Card key={card.figure} card={card} />
-            ))}
-          </div>
-        </XScroll>
-      </div>
-
-      <div className="hidden gap-x-10 gap-y-12 sm:grid sm:grid-cols-2 lg:grid-cols-4">
-        {cards.map((card, i) => (
-          <Reveal key={card.figure} delay={i * 0.06}>
-            <Card card={card} />
-          </Reveal>
-        ))}
-      </div>
-    </>
-  )
-}
+/** The research not told as a card, set as a findings list. */
+const LIST = [
+  { label: 'Integration', figure: 'Best predictor', from: RESEARCH_PARTNERS[2] },
+  { label: 'Nobody is measuring', figure: '85%', from: RESEARCH_PARTNERS[3] },
+  { label: 'Friendship and retention', figure: '37% vs 49%', from: RESEARCH_PEOPLE[1] },
+  { label: 'Small budgets, real effect', figure: '4-5 points', from: RESEARCH_PEOPLE[3] },
+  { label: 'Replacing an associate', figure: '$200K-$500K', from: RESEARCH_PEOPLE[4] },
+  { label: 'Associate attrition', figure: '~20%', from: RESEARCH_PEOPLE[5] },
+  { label: 'What actually keeps people', figure: '9.4%', from: RESEARCH_PEOPLE[6] },
+]
 
 export function TheProblem() {
+  const lateral = RESEARCH_PARTNERS[0]
+  const cost = RESEARCH_PARTNERS[1]
+  const lonely = RESEARCH_PEOPLE[0]
+  const belonging = RESEARCH_PEOPLE[2]
+
   return (
-    <Band id="the-problem" className="py-24 md:py-32">
+    <Band id="the-problem" className="py-28 md:py-40">
       <Reveal>
         <Eyebrow>02 — The problem</Eyebrow>
       </Reveal>
       <Rule className="mt-6 mb-16" />
 
-      <div className="grid gap-12 lg:grid-cols-[1.1fr_1fr] lg:gap-20">
+      <div className="grid gap-x-16 gap-y-8 lg:grid-cols-[1.25fr_1fr]">
         <Reveal>
           <h2 className="text-h2 text-navy">
             Lateral partners leave, and people who feel alone leave with them.
@@ -66,21 +44,99 @@ export function TheProblem() {
         </Reveal>
       </div>
 
-      <div className="mt-24">
+      <Reveal className="mt-20">
+        <StatCard
+          figure="30-38%"
+          connector="of"
+          subject="lateral partners"
+          body="leave within five years of joining."
+          caveat={lateral.caveat}
+          sources={lateral.sources}
+          chart={(animate) => (
+            <UnitCircles animate={animate} filled={3.4} total={10} display="~1 in 3" />
+          )}
+        />
+      </Reveal>
+
+      <div className="mt-10 grid gap-10 lg:grid-cols-2">
         <Reveal>
-          <h3 className="eyebrow text-muted-ink">New partners</h3>
+          <StatCard
+            figure="$4.04M"
+            subject="per failed hire"
+            body="The cost of one failed lateral partner at an Am Law 50 firm."
+            caveat={cost.caveat}
+            sources={cost.sources}
+            chart={(animate) => (
+              <OutlineBars
+                animate={animate}
+                max={5}
+                data={[
+                  { label: 'one failed partner', value: 4.0392, display: '$4.04M', highlight: true },
+                  { label: 'one associate (high)', value: 0.5, display: '$500K' },
+                ]}
+              />
+            )}
+          />
         </Reveal>
-        <div className="mt-8">
-          <CardRow cards={RESEARCH_PARTNERS} />
-        </div>
+
+        <Reveal delay={0.08}>
+          <StatCard
+            figure="61%"
+            connector="of"
+            subject="lawyers"
+            body="scored above average on the UCLA loneliness scale — the highest of any profession studied."
+            sources={lonely.sources}
+            chart={(animate) => <ArcChart animate={animate} pct={61} display="61%" />}
+          />
+        </Reveal>
       </div>
 
-      <div className="mt-24">
-        <Reveal>
-          <h3 className="eyebrow text-muted-ink">People</h3>
-        </Reveal>
-        <div className="mt-8">
-          <CardRow cards={RESEARCH_PEOPLE} />
+      <Reveal className="mt-10">
+        <StatCard
+          figure="18% vs 61%"
+          subject="considered quitting"
+          body="Workers satisfied with their sense of belonging, against those who were not."
+          caveat={belonging.caveat}
+          sources={belonging.sources}
+          chart={(animate) => (
+            <OutlineBars
+              animate={animate}
+              max={70}
+              data={[
+                { label: 'feels they belong', value: 18, display: '18%', highlight: true },
+                { label: 'does not', value: 61, display: '61%' },
+              ]}
+            />
+          )}
+        />
+      </Reveal>
+
+      {/* Everything else, as a quiet findings list rather than more cards. */}
+      <div className="mt-28 grid gap-x-20 lg:grid-cols-[0.7fr_1.3fr]">
+        <div className="lg:sticky lg:top-28 lg:self-start">
+          <Reveal>
+            <h3 className="font-display text-[clamp(1.7rem,2.4vw,2.3rem)] leading-tight text-navy">
+              The rest of the evidence
+            </h3>
+            <p className="measure mt-5 text-slate">
+              Drawn from <SourcePill id={6} label="Above the Law" />
+              <SourcePill id={13} label="RFBerlin" /> and six other published sources.
+            </p>
+          </Reveal>
+        </div>
+
+        <div>
+          {LIST.map((item, i) => (
+            <Reveal key={item.label} delay={i * 0.04}>
+              <Finding label={item.label} figure={item.figure}>
+                {item.from.body}
+                <Footnote ids={item.from.sources} className="ml-1" />
+                {item.from.caveat && (
+                  <span className="text-caption mt-2 block text-muted-ink">{item.from.caveat}</span>
+                )}
+              </Finding>
+            </Reveal>
+          ))}
         </div>
       </div>
 

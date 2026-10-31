@@ -9,7 +9,7 @@ import { THESIS, THESIS_SECOND } from '@/lib/data'
  */
 export function Thesis() {
   return (
-    <div className="bg-ivory">
+    <div>
       <TextRevealByWord text={THESIS} />
 
       <Band className="pb-24 md:pb-32">

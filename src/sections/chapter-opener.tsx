@@ -1,70 +1,77 @@
-import { FlowSection } from '@/components/ui/story-scroll'
+import { Collage } from '@/components/site/collage'
+import { Reveal } from '@/components/site/reveal'
+import { buildCollage } from '@/lib/collage'
 import { cn } from '@/lib/utils'
 
 export interface ChapterOpenerProps {
   /** Matches the section it introduces: 01, 02, 05, 06. */
   number: string
-  label: string
-  headline: string
-  sentence: string
-  figure: string
-  figureCaption: string
-  tone: 'midnight' | 'ivory' | 'navy'
+  /** The question, with the emphasised word wrapped in asterisks. */
+  question: string
+  side?: 'left' | 'right'
+  dark?: boolean
+  id?: string
 }
 
 /**
- * Full-screen chapter opener. These are the only full-height panels on the
- * site; everything else flows at its natural height.
+ * Renders "What keeps *people* at a firm?" with the starred word in italic.
+ */
+function Question({ text, dark }: { text: string; dark: boolean }) {
+  const parts = text.split(/\*([^*]+)\*/g)
+  return (
+    <h2
+      className={cn(
+        'text-center font-display text-[clamp(2rem,4.6vw,4rem)] leading-[1.12]',
+        dark ? 'text-ivory' : 'text-navy',
+      )}
+    >
+      {parts.map((part, i) =>
+        i % 2 === 1 ? (
+          <em key={i} className="italic">
+            {part}
+          </em>
+        ) : (
+          <span key={i}>{part}</span>
+        ),
+      )}
+    </h2>
+  )
+}
+
+/**
+ * Full-screen chapter opener: a bracketed number over a centred question,
+ * with the collage gathering and spreading around it as you scroll.
  */
 export function ChapterOpener({
   number,
-  label,
-  headline,
-  sentence,
-  figure,
-  figureCaption,
-  tone,
+  question,
+  side = 'left',
+  dark = false,
+  id,
 }: ChapterOpenerProps) {
-  const dark = tone !== 'ivory'
-  const bg = tone === 'midnight' ? 'bg-midnight' : tone === 'navy' ? 'bg-navy' : 'bg-ivory'
+  const pieces = buildCollage(11, side)
 
   return (
-    <FlowSection aria-label={`${number} ${label}`} className={bg}>
-      <p className={cn('eyebrow', dark ? 'text-sky' : 'text-sky-deep')}>
-        {number} — {label}
-      </p>
+    <section
+      id={id}
+      aria-label={`Chapter ${number}`}
+      className="relative isolate flex min-h-screen items-center overflow-hidden"
+    >
+      <Collage pieces={pieces} />
 
-      <hr className={dark ? 'hairline-light' : 'hairline'} />
-
-      <div className="flex flex-1 flex-col justify-center py-[4vh]">
-        <h2
-          className={cn(
-            'text-[clamp(3rem,9vw,8rem)] leading-[0.95]',
-            dark ? 'text-ivory' : 'text-navy',
-          )}
-        >
-          {headline}
-        </h2>
-      </div>
-
-      <hr className={dark ? 'hairline-light' : 'hairline'} />
-
-      <div className="flex flex-col gap-8 md:flex-row md:items-end md:justify-between">
-        <p
-          className={cn(
-            'measure text-lg md:text-xl',
-            dark ? 'text-ivory/80' : 'text-slate',
-          )}
-        >
-          {sentence}
-        </p>
-        <div className="md:text-right">
-          <p className={cn('text-stat', dark ? 'text-ivory' : 'text-navy')}>{figure}</p>
-          <p className={cn('text-caption mt-2', dark ? 'text-ivory/60' : 'text-muted-ink')}>
-            {figureCaption}
+      <div className="relative mx-auto w-full max-w-3xl px-6">
+        <Reveal>
+          <p
+            className={cn(
+              'mb-7 text-center font-display text-lg tracking-[0.08em]',
+              dark ? 'text-ivory/70' : 'text-muted-ink',
+            )}
+          >
+            [{number}]
           </p>
-        </div>
+          <Question text={question} dark={dark} />
+        </Reveal>
       </div>
-    </FlowSection>
+    </section>
   )
 }

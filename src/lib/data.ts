@@ -81,6 +81,9 @@ export const REVENUE_DATA: RevenuePoint[] = [
   { year: 2028, actual: null, projected: 4.578, goal: 5.0 },
 ]
 
+/** 2025 revenue as a share of the 2028 goal. Derived from the two figures. */
+export const REVENUE_SHARE_OF_GOAL = 71.88
+
 export const REVENUE_GOAL = 5.0
 export const REVENUE_GAP_LABEL = '~$410-430M short at the current pace'
 
