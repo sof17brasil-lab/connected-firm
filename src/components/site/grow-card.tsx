@@ -45,6 +45,7 @@ export function GrowCard({
       const stage = el.querySelector<HTMLElement>('[data-stage]')
       const card = el.querySelector<HTMLElement>('[data-card]')
       const heading = el.querySelector<HTMLElement>('[data-heading]')
+      const title = el.querySelector<HTMLElement>('[data-title]')
       const curtain = el.querySelector<HTMLElement>('[data-curtain]')
       const statEls = gsap.utils.toArray<HTMLElement>('[data-stat]', el)
       if (!stage || !card || !heading || !curtain) return
@@ -60,6 +61,12 @@ export function GrowCard({
         const wipe = easeOut(clamp01((p - 0.8) / 0.2))
 
         gsap.set(heading, { opacity: 1 - clamp01(grow * 2.4), y: -grow * vh * 0.3 })
+
+        // Light blue throughout, but a deeper one before the dark picture is
+        // behind it, so it never sits washed out on ivory.
+        if (title) {
+          gsap.set(title, { color: grow > 0.12 ? '#8DB4E2' : '#3D6CA6' })
+        }
 
         gsap.set(card, {
           width: lerp(Math.min(vw * 0.26, 300), vw, grow),
@@ -134,7 +141,7 @@ export function GrowCard({
   }
 
   return (
-    <div ref={root} id="why-now" className="relative h-[460vh]">
+    <div ref={root} id="why-now" className="relative h-[400vh]">
       <div data-stage className="relative h-screen w-full overflow-hidden">
 
         {/* The growing card. */}
@@ -148,8 +155,8 @@ export function GrowCard({
             />
 
             {/* Stats, arriving one at a time over the full-bleed image. */}
-            <div className="absolute inset-x-0 bottom-0 p-7 md:p-12">
-              <dl className="mx-auto grid w-full max-w-[1200px] grid-cols-1 gap-x-14 gap-y-7 sm:grid-cols-2">
+            <div className="absolute inset-0 flex items-center justify-center p-7 md:p-12">
+              <dl className="grid w-full max-w-[1100px] grid-cols-1 gap-x-16 gap-y-10 text-center sm:grid-cols-2">
                 {stats.map((stat) => (
                   <div key={stat.label} data-stat style={{ opacity: 0 }}>
                     <dt className="font-display text-[clamp(2.6rem,7vw,6rem)] leading-[0.92] text-ivory">
@@ -177,7 +184,10 @@ export function GrowCard({
           <p className="eyebrow font-display text-lg tracking-[0.08em] text-muted-ink">
             [{number}]
           </p>
-          <h2 className="mt-6 max-w-3xl font-display text-[clamp(2rem,4.6vw,4rem)] leading-[1.12] text-navy">
+          <h2
+            data-title
+            className="mt-6 max-w-3xl font-display text-[clamp(2rem,4.6vw,4rem)] leading-[1.12] text-sky-deep"
+          >
             {question.split(/\*([^*]+)\*/g).map((part, i) =>
               i % 2 === 1 ? (
                 <em key={i} className="italic">

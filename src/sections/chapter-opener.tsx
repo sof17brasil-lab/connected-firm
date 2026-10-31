@@ -64,7 +64,7 @@ export function ChapterOpener({
       aria-label={`Chapter ${number}`}
       className={cn(
         'relative isolate flex items-center overflow-hidden',
-        compact ? 'min-h-[34vh] pt-10' : 'min-h-screen',
+        compact ? 'min-h-[30vh] pt-8' : 'min-h-[62vh]',
       )}
     >
       {collage && <Collage pieces={pieces} />}

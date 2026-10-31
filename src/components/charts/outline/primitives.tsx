@@ -1,41 +1,59 @@
-import { motion } from 'framer-motion'
-import { EASE } from '@/components/site/reveal'
-
 /**
- * Shared pieces of the outline chart language: everything is a thin stroke,
- * solid where the value is the point and dashed where it is only context.
- * Values sit in a pill on the mark itself, so no axis or legend is needed.
+ * Pieces of the outline chart language: thin strokes only, solid where the
+ * value is the point and dashed where it is context, values in a pill on the
+ * mark itself, no axis and no legend.
+ *
+ * Drawing is driven from outside rather than animated here. Every stroked
+ * shape carries `pathLength="1"` with a normalised dash, so a parent can set
+ * `stroke-dashoffset` from 0 to 1 and scrub the drawing with the scroll.
+ * Everything renders fully drawn by default: if no one ever animates it, the
+ * chart is still complete and readable.
  */
 
 export const STROKE = 1.5
 export const DASH = '5 4'
 
-/** Draws a stroked path on as the chart enters. */
+/** Marks a stroke as drawable and gives it its place in the stagger. */
+function drawAttrs(order: number) {
+  return {
+    'data-draw': order,
+    pathLength: 1,
+    strokeDasharray: '1 1',
+    strokeDashoffset: 0,
+  } as const
+}
+
+/** Marks a dot or pill as poppable, for the same stagger. */
+function popAttrs(order: number) {
+  return { 'data-pop': order } as const
+}
+
 export function DrawPath({
   d,
   dashed,
-  delay = 0,
-  animate,
+  order = 0,
   className = 'stroke-ivory',
 }: {
   d: string
   dashed?: boolean
-  delay?: number
-  animate: boolean
+  order?: number
   className?: string
 }) {
-  return (
-    <motion.path
-      d={d}
-      fill="none"
-      strokeWidth={STROKE}
-      strokeDasharray={dashed ? DASH : undefined}
-      className={className}
-      initial={animate ? { pathLength: 0, opacity: 0 } : false}
-      animate={{ pathLength: 1, opacity: 1 }}
-      transition={{ duration: 1.1, ease: EASE, delay }}
-    />
-  )
+  // A dashed context stroke cannot also use the dash array to draw itself, so
+  // it fades in with the pop group instead.
+  if (dashed) {
+    return (
+      <path
+        d={d}
+        fill="none"
+        strokeWidth={STROKE}
+        strokeDasharray={DASH}
+        className={className}
+        {...popAttrs(order)}
+      />
+    )
+  }
+  return <path d={d} fill="none" strokeWidth={STROKE} className={className} {...drawAttrs(order)} />
 }
 
 export function DrawRect({
@@ -44,8 +62,7 @@ export function DrawRect({
   width,
   height,
   dashed,
-  delay = 0,
-  animate,
+  order = 0,
   className = 'stroke-ivory',
 }: {
   x: number
@@ -53,24 +70,34 @@ export function DrawRect({
   width: number
   height: number
   dashed?: boolean
-  delay?: number
-  animate: boolean
+  order?: number
   className?: string
 }) {
+  if (dashed) {
+    return (
+      <rect
+        x={x}
+        y={y}
+        width={width}
+        height={height}
+        fill="none"
+        strokeWidth={STROKE}
+        strokeDasharray={DASH}
+        className={className}
+        {...popAttrs(order)}
+      />
+    )
+  }
   return (
-    <motion.rect
+    <rect
       x={x}
       y={y}
       width={width}
       height={height}
       fill="none"
       strokeWidth={STROKE}
-      strokeDasharray={dashed ? DASH : undefined}
       className={className}
-      initial={animate ? { opacity: 0, scaleY: 0.6 } : false}
-      animate={{ opacity: 1, scaleY: 1 }}
-      style={{ transformOrigin: `${x + width / 2}px ${y + height}px` }}
-      transition={{ duration: 0.9, ease: EASE, delay }}
+      {...drawAttrs(order)}
     />
   )
 }
@@ -80,102 +107,87 @@ export function DrawCircle({
   cy,
   r,
   dashed,
-  delay = 0,
-  animate,
+  order = 0,
   className = 'stroke-ivory',
 }: {
   cx: number
   cy: number
   r: number
   dashed?: boolean
-  delay?: number
-  animate: boolean
+  order?: number
   className?: string
 }) {
+  if (dashed) {
+    return (
+      <circle
+        cx={cx}
+        cy={cy}
+        r={r}
+        fill="none"
+        strokeWidth={STROKE}
+        strokeDasharray={DASH}
+        className={className}
+        {...popAttrs(order)}
+      />
+    )
+  }
   return (
-    <motion.circle
+    <circle
       cx={cx}
       cy={cy}
       r={r}
       fill="none"
       strokeWidth={STROKE}
-      strokeDasharray={dashed ? DASH : undefined}
       className={className}
-      initial={animate ? { opacity: 0, scale: 0.82 } : false}
-      animate={{ opacity: 1, scale: 1 }}
-      style={{ transformOrigin: `${cx}px ${cy}px` }}
-      transition={{ duration: 0.8, ease: EASE, delay }}
+      {...drawAttrs(order)}
     />
   )
 }
 
-/** Endpoint marker: a small filled dot. */
 export function Dot({
   cx,
   cy,
   r = 4,
-  delay = 0,
-  animate,
+  order = 0,
   className = 'fill-ivory',
 }: {
   cx: number
   cy: number
   r?: number
-  delay?: number
-  animate: boolean
+  order?: number
   className?: string
 }) {
-  return (
-    <motion.circle
-      cx={cx}
-      cy={cy}
-      r={r}
-      className={className}
-      initial={animate ? { opacity: 0, scale: 0 } : false}
-      animate={{ opacity: 1, scale: 1 }}
-      style={{ transformOrigin: `${cx}px ${cy}px` }}
-      transition={{ duration: 0.5, ease: EASE, delay }}
-    />
-  )
+  return <circle cx={cx} cy={cy} r={r} className={className} {...popAttrs(order)} />
 }
 
-/** The value pill that sits directly on the data. */
 export function ValuePill({
   x,
   y,
   children,
-  delay = 0,
-  animate,
+  order = 0,
 }: {
   x: number
   y: number
   children: string
-  delay?: number
-  animate: boolean
+  order?: number
 }) {
-  const w = Math.max(children.length * 7.4 + 16, 34)
+  const w = Math.max(children.length * 8.4 + 20, 40)
   return (
-    <motion.g
-      initial={animate ? { opacity: 0, scale: 0.8 } : false}
-      animate={{ opacity: 1, scale: 1 }}
-      style={{ transformOrigin: `${x}px ${y}px` }}
-      transition={{ duration: 0.5, ease: EASE, delay }}
-    >
-      <rect x={x - w / 2} y={y - 11} width={w} height={22} rx={11} className="fill-sky" />
+    <g {...popAttrs(order)} style={{ transformOrigin: `${x}px ${y}px` }}>
+      <rect x={x - w / 2} y={y - 13} width={w} height={26} rx={13} className="fill-sky" />
       <text
         x={x}
-        y={y + 4}
+        y={y + 5}
         textAnchor="middle"
         className="fill-navy"
-        style={{ fontSize: 12, fontWeight: 600, fontFamily: 'Manrope, sans-serif' }}
+        style={{ fontSize: 14, fontWeight: 600, fontFamily: 'Manrope, sans-serif' }}
       >
         {children}
       </text>
-    </motion.g>
+    </g>
   )
 }
 
-/** Small lowercase category label under a mark. */
 export function AxisLabel({ x, y, children }: { x: number; y: number; children: string }) {
   return (
     <text
@@ -183,9 +195,35 @@ export function AxisLabel({ x, y, children }: { x: number; y: number; children: 
       y={y}
       textAnchor="middle"
       className="fill-ivory/70"
-      style={{ fontSize: 10, fontFamily: 'Manrope, sans-serif' }}
+      style={{ fontSize: 12, fontFamily: 'Manrope, sans-serif' }}
     >
       {children}
     </text>
   )
+}
+
+/**
+ * Scrubs the drawing of one chart. `progress` runs 0 to 1; strokes draw in
+ * order, then the dots and pills arrive.
+ */
+export function drawChart(root: Element, progress: number) {
+  const clamp = (n: number) => (n < 0 ? 0 : n > 1 ? 1 : n)
+  const strokes = Array.from(root.querySelectorAll<SVGElement>('[data-draw]'))
+  const pops = Array.from(root.querySelectorAll<SVGElement>('[data-pop]'))
+
+  // Strokes take the first two thirds, the pills the last.
+  strokes.forEach((el, i) => {
+    const slice = 0.66 / Math.max(strokes.length, 1)
+    const local = clamp((progress - i * slice * 0.75) / slice)
+    el.setAttribute('stroke-dashoffset', String(1 - local))
+  })
+
+  pops.forEach((el, i) => {
+    const start = 0.45 + (i * 0.5) / Math.max(pops.length, 1)
+    const local = clamp((progress - start) / 0.22)
+    el.setAttribute('opacity', String(local))
+    if (el.tagName === 'g') {
+      el.style.transform = `scale(${0.75 + 0.25 * local})`
+    }
+  })
 }

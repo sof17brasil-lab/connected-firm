@@ -4,7 +4,7 @@ import { Reveal } from '@/components/site/reveal'
 
 export function HowIdMeasure() {
   return (
-    <section id="measure" className="scroll-mt-4 py-24 md:py-32">
+    <section id="measure" className="scroll-mt-4 py-16 md:py-24">
       <div className="mx-auto w-full max-w-[1200px] px-6 md:px-10">
         <Reveal>
           <PullQuote

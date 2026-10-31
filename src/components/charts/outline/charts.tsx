@@ -1,11 +1,12 @@
 import { AxisLabel, Dot, DrawCircle, DrawPath, DrawRect, ValuePill } from './primitives'
 
 /**
- * The six outline chart types. Each takes already-computed values — none of
- * them derives or rounds a number, so what is drawn is what data.ts holds.
+ * The outline chart types. None of them derives or rounds a number: what is
+ * drawn is what data.ts holds. Drawing order is set by `order`, which the
+ * parent uses to stagger the scrub.
  */
 
-const VB = { w: 420, h: 240 }
+const VB = { w: 440, h: 300 }
 
 export interface BarDatum {
   label: string
@@ -15,17 +16,17 @@ export interface BarDatum {
 }
 
 /** Outlined bars. Solid for the one that matters, dashed for context. */
-export function OutlineBars({ data, animate, max }: { data: BarDatum[]; animate: boolean; max?: number }) {
+export function OutlineBars({ data, max }: { data: BarDatum[]; max?: number }) {
   const ceiling = max ?? Math.max(...data.map((d) => d.value)) * 1.25
   const slot = VB.w / data.length
-  // Two-bar comparisons were reading as thin slivers; let them breathe.
-  const barW = Math.min(slot * 0.56, data.length <= 2 ? 118 : 64)
-  const floor = VB.h - 34
+  // Two-bar comparisons read as slivers at the old cap.
+  const barW = Math.min(slot * 0.56, data.length <= 2 ? 124 : 68)
+  const floor = VB.h - 42
 
   return (
     <svg viewBox={`0 0 ${VB.w} ${VB.h}`} className="w-full" role="img">
       {data.map((d, i) => {
-        const h = (d.value / ceiling) * (floor - 46)
+        const h = (d.value / ceiling) * (floor - 56)
         const x = slot * i + slot / 2
         return (
           <g key={d.label}>
@@ -35,14 +36,13 @@ export function OutlineBars({ data, animate, max }: { data: BarDatum[]; animate:
               width={barW}
               height={h}
               dashed={!d.highlight}
-              animate={animate}
-              delay={i * 0.08}
+              order={i}
               className={d.highlight ? 'stroke-ivory' : 'stroke-ivory/45'}
             />
-            <ValuePill x={x} y={floor - h - 16} animate={animate} delay={0.35 + i * 0.08}>
+            <ValuePill x={x} y={floor - h - 20} order={i}>
               {d.display}
             </ValuePill>
-            <AxisLabel x={x} y={floor + 16}>
+            <AxisLabel x={x} y={floor + 20}>
               {d.label}
             </AxisLabel>
           </g>
@@ -53,43 +53,28 @@ export function OutlineBars({ data, animate, max }: { data: BarDatum[]; animate:
 }
 
 /** A solid rectangle for the share, dashed for the remainder. */
-export function ProportionRect({
-  pct,
-  display,
-  animate,
-}: {
-  pct: number
-  display: string
-  animate: boolean
-}) {
+export function ProportionRect({ pct, display }: { pct: number; display: string }) {
   const left = 40
   const right = VB.w - 40
-  const top = 60
-  const bottom = VB.h - 60
+  const top = 80
+  const bottom = VB.h - 80
   const split = left + (right - left) * (pct / 100)
 
   return (
     <svg viewBox={`0 0 ${VB.w} ${VB.h}`} className="w-full" role="img">
-      <DrawRect
-        x={left}
-        y={top}
-        width={split - left}
-        height={bottom - top}
-        animate={animate}
-      />
+      <DrawRect x={left} y={top} width={split - left} height={bottom - top} order={0} />
       <DrawRect
         x={split}
         y={top}
         width={right - split}
         height={bottom - top}
         dashed
-        animate={animate}
-        delay={0.2}
+        order={1}
         className="stroke-ivory/45"
       />
-      <Dot cx={left} cy={(top + bottom) / 2} r={3} animate={animate} delay={0.5} />
-      <Dot cx={split} cy={(top + bottom) / 2} r={6} animate={animate} delay={0.55} />
-      <ValuePill x={(left + split) / 2} y={(top + bottom) / 2} animate={animate} delay={0.6}>
+      <Dot cx={left} cy={(top + bottom) / 2} r={3} order={1} />
+      <Dot cx={split} cy={(top + bottom) / 2} r={6} order={2} />
+      <ValuePill x={(left + split) / 2} y={(top + bottom) / 2} order={3}>
         {display}
       </ValuePill>
     </svg>
@@ -97,18 +82,10 @@ export function ProportionRect({
 }
 
 /** An arc swept to the share of the circle, with a dot at the head. */
-export function ArcChart({
-  pct,
-  display,
-  animate,
-}: {
-  pct: number
-  display: string
-  animate: boolean
-}) {
+export function ArcChart({ pct, display }: { pct: number; display: string }) {
   const cx = VB.w / 2
   const cy = VB.h / 2
-  const r = 74
+  const r = 96
   const angle = (pct / 100) * Math.PI * 2 - Math.PI / 2
   const endX = cx + Math.cos(angle) * r
   const endY = cy + Math.sin(angle) * r
@@ -116,15 +93,11 @@ export function ArcChart({
 
   return (
     <svg viewBox={`0 0 ${VB.w} ${VB.h}`} className="w-full" role="img">
-      <DrawCircle cx={cx} cy={cy} r={r} dashed animate={animate} className="stroke-ivory/35" />
-      <DrawPath
-        d={`M ${cx} ${cy - r} A ${r} ${r} 0 ${large} 1 ${endX} ${endY}`}
-        animate={animate}
-        delay={0.2}
-      />
-      <Dot cx={cx} cy={cy - r} r={3} animate={animate} delay={0.5} />
-      <Dot cx={endX} cy={endY} r={6} animate={animate} delay={0.9} />
-      <ValuePill x={cx} y={cy} animate={animate} delay={0.7}>
+      <DrawCircle cx={cx} cy={cy} r={r} dashed order={0} className="stroke-ivory/35" />
+      <DrawPath d={`M ${cx} ${cy - r} A ${r} ${r} 0 ${large} 1 ${endX} ${endY}`} order={0} />
+      <Dot cx={cx} cy={cy - r} r={3} order={1} />
+      <Dot cx={endX} cy={endY} r={7} order={2} />
+      <ValuePill x={cx} y={cy} order={3}>
         {display}
       </ValuePill>
     </svg>
@@ -132,26 +105,18 @@ export function ArcChart({
 }
 
 /** Concentric rings: outer dashed context, inner solid value. */
-export function RingsChart({
-  pct,
-  display,
-  animate,
-}: {
-  pct: number
-  display: string
-  animate: boolean
-}) {
+export function RingsChart({ pct, display }: { pct: number; display: string }) {
   const cx = VB.w / 2
   const cy = VB.h / 2
-  const outer = 86
+  const outer = 108
   const inner = outer * Math.sqrt(pct / 100)
 
   return (
     <svg viewBox={`0 0 ${VB.w} ${VB.h}`} className="w-full" role="img">
-      <DrawCircle cx={cx} cy={cy} r={outer} dashed animate={animate} className="stroke-ivory/35" />
-      <DrawCircle cx={cx} cy={cy} r={inner} animate={animate} delay={0.25} />
-      <Dot cx={cx + inner} cy={cy} r={5} animate={animate} delay={0.7} />
-      <ValuePill x={cx} y={cy} animate={animate} delay={0.6}>
+      <DrawCircle cx={cx} cy={cy} r={outer} dashed order={0} className="stroke-ivory/35" />
+      <DrawCircle cx={cx} cy={cy} r={inner} order={0} />
+      <Dot cx={cx + inner} cy={cy} r={6} order={1} />
+      <ValuePill x={cx} y={cy} order={2}>
         {display}
       </ValuePill>
     </svg>
@@ -163,20 +128,18 @@ export function UnitCircles({
   filled,
   total,
   display,
-  animate,
 }: {
   filled: number
   total: number
   display: string
-  animate: boolean
 }) {
-  const cols = Math.min(total, 10)
+  const cols = Math.min(total, 5)
   const rows = Math.ceil(total / cols)
-  const r = 17
-  const gapX = r * 2.05
-  const gapY = r * 2.2
+  const r = 26
+  const gapX = r * 2.15
+  const gapY = r * 2.3
   const startX = VB.w / 2 - ((cols - 1) * gapX) / 2
-  const startY = VB.h / 2 - ((rows - 1) * gapY) / 2 - 12
+  const startY = VB.h / 2 - ((rows - 1) * gapY) / 2 - 18
 
   return (
     <svg viewBox={`0 0 ${VB.w} ${VB.h}`} className="w-full" role="img">
@@ -191,17 +154,14 @@ export function UnitCircles({
             cy={cy}
             r={r}
             dashed={!on}
-            animate={animate}
-            delay={i * 0.04}
+            order={i}
             className={on ? 'stroke-ivory' : 'stroke-ivory/35'}
           />
         )
       })}
-      <ValuePill x={VB.w / 2} y={VB.h - 34} animate={animate} delay={0.7}>
+      <ValuePill x={VB.w / 2} y={VB.h - 36} order={total}>
         {display}
       </ValuePill>
     </svg>
   )
 }
-
-

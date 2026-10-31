@@ -78,7 +78,12 @@ function CostTable() {
 }
 
 export default function TheNumbers() {
-  useEffect(() => window.scrollTo(0, 0), [])
+  // A block body on purpose: Lenis patches window.scrollTo and its return
+  // value is not undefined, so an arrow shorthand hands React something it
+  // treats as a cleanup function and the page crashes on unmount.
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   const rest = [...RESEARCH_PARTNERS, ...RESEARCH_PEOPLE].filter(
     (card) => !HOME_FIGURES.has(card.figure),

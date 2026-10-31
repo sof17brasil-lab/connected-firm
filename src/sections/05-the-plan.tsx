@@ -6,11 +6,11 @@ import { PILOT_TOTAL_LABEL, PROGRAMS } from '@/lib/data'
 
 export function ThePlan() {
   return (
-    <Band id="the-plan" className="py-24 md:py-32">
+    <Band id="the-plan" className="py-16 md:py-24">
       <Reveal>
         <Eyebrow>03 — The plan</Eyebrow>
       </Reveal>
-      <Rule className="mt-6 mb-12" />
+      <Rule className="mt-5 mb-10" />
 
       <div className="grid gap-x-16 gap-y-6 lg:grid-cols-[1.25fr_1fr]">
         <Reveal>
@@ -25,11 +25,11 @@ export function ThePlan() {
         </Reveal>
       </div>
 
-      <div className="mt-16">
+      <div className="mt-12">
         <ProgramPanels programs={PROGRAMS} />
       </div>
 
-      <Rule className="mt-20 mb-12" />
+      <Rule className="mt-16 mb-10" />
       <WhatThisMeans>
         {'the whole year costs less than one failed hire, and every part of it can be stopped without drama.'}
       </WhatThisMeans>

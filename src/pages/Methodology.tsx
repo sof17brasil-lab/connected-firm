@@ -35,7 +35,12 @@ function AssumptionsTable() {
 }
 
 export default function Methodology() {
-  useEffect(() => window.scrollTo(0, 0), [])
+  // A block body on purpose: Lenis patches window.scrollTo and its return
+  // value is not undefined, so an arrow shorthand hands React something it
+  // treats as a cleanup function and the page crashes on unmount.
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   return (
     <Band className="pb-28 pt-32 md:pt-40">

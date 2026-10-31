@@ -24,9 +24,8 @@ function buildCards(): DeckCard[] {
       caveat: cost.caveat,
       sources: cost.sources,
       tone: 'navy',
-      chart: (animate) => (
+      chart: () => (
         <OutlineBars
-          animate={animate}
           max={5}
           data={[
             { label: 'one failed partner', value: 4.0392, display: '$4.04M', highlight: true },
@@ -43,8 +42,8 @@ function buildCards(): DeckCard[] {
       caveat: lateral.caveat,
       sources: lateral.sources,
       tone: 'slate',
-      chart: (animate) => (
-        <UnitCircles animate={animate} filled={3.4} total={10} display="~1 in 3" />
+      chart: () => (
+        <UnitCircles filled={3.4} total={10} display="~1 in 3" />
       ),
     },
     {
@@ -54,7 +53,7 @@ function buildCards(): DeckCard[] {
       body: 'scored above average on the UCLA loneliness scale, the highest of any profession studied.',
       sources: lonely.sources,
       tone: 'navy',
-      chart: (animate) => <ArcChart animate={animate} pct={61} display="61%" />,
+      chart: () => <ArcChart pct={61} display="61%" />,
     },
     {
       figure: '18% vs 61%',
@@ -63,9 +62,8 @@ function buildCards(): DeckCard[] {
       caveat: belonging.caveat,
       sources: belonging.sources,
       tone: 'sky',
-      chart: (animate) => (
+      chart: () => (
         <OutlineBars
-          animate={animate}
           max={70}
           data={[
             { label: 'feels they belong', value: 18, display: '18%', highlight: true },
@@ -82,22 +80,22 @@ export function TheProblem() {
 
   return (
     <section id="the-problem" className="relative">
-      <Band className="pt-24 md:pt-32">
+      <Band className="pb-4 pt-16 md:pb-6 md:pt-20">
         <Reveal>
-          <Eyebrow>02 — The problem</Eyebrow>
-        </Reveal>
-        <Rule className="mt-6 mb-12" />
-        <Reveal>
-          <h2 className="text-h2 max-w-3xl text-navy">
-            Lateral partners leave, and people who feel alone leave with them.
-          </h2>
+          <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between md:gap-12">
+            <h2 className="text-h2 max-w-2xl text-navy">
+              Lateral partners leave, and people who feel alone leave with them.
+            </h2>
+            <Eyebrow className="shrink-0 pb-2">02 — The problem</Eyebrow>
+          </div>
+          <Rule className="mt-8" />
         </Reveal>
       </Band>
 
       <CardDeck cards={cards} />
 
-      <Band className="pb-24 md:pb-32">
-        <Rule className="mb-12" />
+      <Band className="pb-20 md:pb-24">
+        <Rule className="mb-10" />
         <WhatThisMeans>
           {'the expensive problem is not hiring. It is what happens in the eighteen months after someone arrives.'}
         </WhatThisMeans>

@@ -6,7 +6,12 @@ import { Band, Finding, Rule } from '@/components/site/section'
 import { ALREADY_HAS, IDEAS, OTHER_FIRMS, THURSDAY_TABLE } from '@/lib/extras'
 
 export default function CultureExtras() {
-  useEffect(() => window.scrollTo(0, 0), [])
+  // A block body on purpose: Lenis patches window.scrollTo and its return
+  // value is not undefined, so an arrow shorthand hands React something it
+  // treats as a cleanup function and the page crashes on unmount.
+  useEffect(() => {
+    window.scrollTo(0, 0)
+  }, [])
 
   return (
     <Band className="pb-28 pt-32 md:pt-40">

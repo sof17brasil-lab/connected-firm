@@ -22,11 +22,11 @@ export function WhyNow() {
         image={`${import.meta.env.BASE_URL}images/nyc-hero.jpg`}
       />
 
-      <Band className="py-24 md:py-32">
+      <Band className="py-16 md:py-24">
         <Reveal>
           <Eyebrow>01 — Why now</Eyebrow>
         </Reveal>
-        <Rule className="mt-6 mb-14" />
+        <Rule className="mt-5 mb-10" />
 
         <div className="grid gap-12 lg:grid-cols-[0.8fr_1.2fr] lg:gap-20">
           <div className="lg:sticky lg:top-28 lg:self-start">
@@ -52,7 +52,7 @@ export function WhyNow() {
           </Reveal>
         </div>
 
-        <Rule className="mt-20 mb-12" />
+        <Rule className="mt-16 mb-10" />
         <WhatThisMeans>
           {'the gap to $5bn will not close on the current trajectory, and the work that closes it runs on *relationships*.'}
         </WhatThisMeans>

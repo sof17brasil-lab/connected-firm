@@ -10,7 +10,7 @@ import { ABOUT } from '@/lib/data'
  */
 export function Closing() {
   return (
-    <Band id="close" className="pb-24 pt-24 md:pb-32 md:pt-32">
+    <Band id="close" className="pb-20 pt-16 md:pb-24 md:pt-20">
       <Reveal>
         <p className="measure font-display text-[clamp(1.7rem,3vw,2.7rem)] italic leading-snug text-navy">
           New York does not need a new program so much as a predictable calendar and someone

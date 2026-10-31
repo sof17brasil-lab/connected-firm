@@ -3,6 +3,7 @@ import { gsap } from 'gsap'
 import { ScrollTrigger } from 'gsap/ScrollTrigger'
 import { useGSAP } from '@gsap/react'
 import { Footnote } from '@/components/site/footnote'
+import { drawChart } from '@/components/charts/outline/primitives'
 import { useReducedMotion } from '@/hooks/use-reduced-motion'
 import { cn } from '@/lib/utils'
 
@@ -20,7 +21,7 @@ export interface DeckCard {
   sources: number[]
   /** Card fill while real photographs are still to come. */
   tone: 'navy' | 'slate' | 'sky'
-  chart: (animate: boolean) => React.ReactNode
+  chart: () => React.ReactNode
 }
 
 const TONE_CLASS = {
@@ -93,11 +94,13 @@ export function CardDeck({
             gsap.set(fill, { clipPath: `inset(${(1 - wipe) * 100}% 0% 0% 0%)` })
           }
 
-          // The chart draws after the wipe, and fades as the next one arrives.
+          // The chart draws itself after the wipe, scrubbed rather than
+          // played, so scrolling back un-draws it.
           const chart = charts[i]
           if (chart) {
-            const inOpacity = easeOut(clamp01((local - 0.35) / 0.35))
-            gsap.set(chart, { opacity: inOpacity * (1 - easeOut(clamp01(next / 0.3))) })
+            const fade = 1 - easeOut(clamp01(next / 0.3))
+            gsap.set(chart, { opacity: fade })
+            drawChart(chart, clamp01((local - 0.3) / 0.5))
           }
 
           // The text crosses to the other side: out on one, in on the other.
@@ -152,7 +155,7 @@ export function CardDeck({
         {cards.map((card) => (
           <div key={card.figure} className="grid gap-8 md:grid-cols-2 md:items-center">
             <div className={cn('aspect-[3/4] w-full max-w-[20rem]', TONE_CLASS[card.tone])}>
-              <div className="flex size-full items-center justify-center p-6">{card.chart(false)}</div>
+              <div className="flex size-full items-center justify-center p-6">{card.chart()}</div>
             </div>
             <div>
               <p className="font-display text-[clamp(1.8rem,3vw,2.6rem)] leading-tight text-navy">
@@ -174,7 +177,7 @@ export function CardDeck({
   }
 
   return (
-    <div ref={root} className="relative" style={{ height: `${(cards.length + 1) * 100}vh` }}>
+    <div ref={root} className="relative" style={{ height: `${60 + cards.length * 85}vh` }}>
       <div data-stage className="relative h-screen w-full overflow-hidden">
         <div className="absolute inset-0 flex items-start justify-center px-6 pt-[8vh] md:items-center md:pt-0">
           {/* The card frame: fixed once it has arrived. */}
@@ -199,7 +202,7 @@ export function CardDeck({
                 className="absolute inset-0 flex items-center justify-center p-4 md:p-6"
                 style={{ opacity: 0 }}
               >
-                <div className="w-full">{card.chart(true)}</div>
+                <div className="w-full">{card.chart()}</div>
               </div>
             ))}
           </div>

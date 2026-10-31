@@ -46,7 +46,7 @@ export function BusinessCase() {
         </Link>
       </Reveal>
 
-      <Rule className="mt-20 mb-12" />
+      <Rule className="mt-16 mb-10" />
       <WhatThisMeans>
         {'the pilot does not need to work often. It needs to work once.'}
       </WhatThisMeans>
