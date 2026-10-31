@@ -63,13 +63,20 @@ export function GrowCard({
       const standIn = easeOut(clamp01((p - 0.42) / 0.12))
       const wipe = easeOut(clamp01((p - 0.86) / 0.14))
 
-      // Starts wide enough to sit behind the heading, so white type always
-      // lands on the darkened photograph and never on bare ivory.
       gsap.set(card, {
-        width: lerp(Math.min(vw * 0.74, 980), vw, grow),
-        height: lerp(Math.min(vh * 0.6, 560), vh, grow),
+        width: lerp(Math.min(vw * 0.26, 300), vw, grow),
+        height: lerp(Math.min(vh * 0.3, 300), vh, grow),
         borderRadius: lerp(2, 0, grow),
       })
+
+      // The heading sits on ivory before the picture is behind it and on the
+      // darkened photograph after, so it needs a deeper blue at the start and
+      // the lighter one once there is something dark underneath.
+      const onPhoto = grow > 0.12
+      const title = el.querySelector<HTMLElement>('[data-title]')
+      const eyebrow = el.querySelector<HTMLElement>('[data-eyebrow]')
+      if (title) gsap.set(title, { color: onPhoto ? '#8DB4E2' : '#3D6CA6' })
+      if (eyebrow) gsap.set(eyebrow, { color: onPhoto ? 'rgba(247,244,238,0.7)' : '#6A6F7A' })
 
       gsap.set(heading, { opacity: 1 - headOut, y: -headOut * vh * 0.12 })
       if (stand) gsap.set(stand, { opacity: standIn, y: (1 - standIn) * 24 })
@@ -86,7 +93,10 @@ export function GrowCard({
   )
 
   const Heading = (
-    <h2 className="max-w-3xl font-display text-[clamp(2rem,4.6vw,4rem)] leading-[1.12] text-ivory">
+    <h2
+      data-title
+      className="max-w-3xl font-display text-[clamp(2rem,4.6vw,4rem)] leading-[1.12] text-sky-deep"
+    >
       {question.split(/\*([^*]+)\*/g).map((part, i) =>
         i % 2 === 1 ? (
           <em key={i} className="italic">
@@ -148,7 +158,10 @@ export function GrowCard({
             {/* All the type lives inside the picture, so it is never on ivory. */}
             <div className="absolute inset-0 flex flex-col items-center justify-center px-7 text-center md:px-12">
               <div data-heading>
-                <p className="eyebrow mb-6 font-display text-lg tracking-[0.08em] text-ivory/65">
+                <p
+                  data-eyebrow
+                  className="eyebrow mb-6 font-display text-lg tracking-[0.08em] text-muted-ink"
+                >
                   [{number}]
                 </p>
                 {Heading}
