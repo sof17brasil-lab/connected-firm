@@ -1,7 +1,10 @@
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import SmoothScroll from '@/components/ui/smooth-scroll'
 import { ReadingProgress } from '@/components/site/reading-progress'
-import DesignSystem from '@/pages/DesignSystem'
+import { SiteNav } from '@/components/site/nav'
+import { SiteFooter } from '@/components/site/footer'
+import Home from '@/pages/Home'
+import SourcesPage from '@/pages/Sources'
 
 export default function App() {
   return (
@@ -9,9 +12,14 @@ export default function App() {
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <SmoothScroll>
         <ReadingProgress />
-        <Routes>
-          <Route path="/" element={<DesignSystem />} />
-        </Routes>
+        <SiteNav />
+        <main>
+          <Routes>
+            <Route path="/" element={<Home />} />
+            <Route path="/sources" element={<SourcesPage />} />
+          </Routes>
+        </main>
+        <SiteFooter />
       </SmoothScroll>
     </BrowserRouter>
   )
