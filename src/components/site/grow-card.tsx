@@ -26,11 +26,14 @@ const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 export function GrowCard({
   number,
   question,
+  standfirst,
   stats,
   image,
 }: {
   number: string
   question: string
+  /** One line under the question: the numbers alone do not explain 2028. */
+  standfirst?: React.ReactNode
   stats: StatTile[]
   image: string
 }) {
@@ -121,6 +124,7 @@ export function GrowCard({
           <h2 className="mt-5 font-display text-[clamp(2rem,4.6vw,4rem)] leading-tight text-navy">
             {question.replace(/\*/g, '')}
           </h2>
+          {standfirst && <p className="measure mt-6 text-lg text-slate">{standfirst}</p>}
           <div className="relative mt-12 aspect-[16/9] overflow-hidden bg-navy">
             <img src={image} alt="" className="absolute inset-0 size-full object-cover opacity-45" />
           </div>
@@ -198,6 +202,9 @@ export function GrowCard({
               ),
             )}
           </h2>
+          {standfirst && (
+            <p className="measure mt-7 text-lg text-slate md:text-xl">{standfirst}</p>
+          )}
         </div>
 
         {/* The curtain: the next section rising to cover the stage. */}

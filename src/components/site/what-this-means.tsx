@@ -1,7 +1,7 @@
 import { useRef } from 'react'
-import { motion, useScroll, useTransform } from 'framer-motion'
 import { Reveal } from '@/components/site/reveal'
 import { useReducedMotion } from '@/hooks/use-reduced-motion'
+import { useScrollScrub } from '@/hooks/use-scroll-scrub'
 import { cn } from '@/lib/utils'
 
 /**
@@ -21,22 +21,21 @@ export function WhatThisMeans({
   className?: string
 }) {
   const ref = useRef<HTMLParagraphElement>(null)
+  const keyRef = useRef<HTMLSpanElement>(null)
   const reducedMotion = useReducedMotion()
   const dark = tone === 'dark'
 
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start 0.9', 'center 0.5'],
-  })
-
-  // Hooks cannot be conditional, so the colour is always computed.
-  const keyColor = useTransform(
-    scrollYProgress,
-    [0.25, 0.85],
-    [dark ? '#F7F4EE' : '#0E1E3A', '#8DB4E2'],
-  )
-
   const [before, key = '', after = ''] = children.split(/\*([^*]+)\*/g)
+  const base = dark ? '#F7F4EE' : '#0E1E3A'
+
+  useScrollScrub(
+    ref,
+    (p) => {
+      if (!keyRef.current) return
+      keyRef.current.style.color = p > 0.5 ? '#8DB4E2' : base
+    },
+    { start: 'top 85%', end: 'bottom 55%', scrub: 0.8 },
+  )
 
   return (
     <Reveal className={className}>
@@ -52,9 +51,9 @@ export function WhatThisMeans({
         </span>
         {before}
         {key && (
-          <motion.span style={reducedMotion ? { color: '#8DB4E2' } : { color: keyColor }}>
+          <span ref={keyRef} style={{ color: reducedMotion ? '#8DB4E2' : base }}>
             {key}
-          </motion.span>
+          </span>
         )}
         {after}
       </p>

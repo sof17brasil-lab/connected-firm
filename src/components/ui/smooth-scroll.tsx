@@ -30,9 +30,24 @@ function LenisGsapSync() {
     // Don't let GSAP compensate for dropped frames; it fights scrub smoothing.
     gsap.ticker.lagSmoothing(0)
 
-    ScrollTrigger.refresh()
+    /*
+     * Triggers are created as each section mounts, but the pinned sections
+     * change the page height afterwards, which leaves every later trigger
+     * measuring against a page that no longer exists. Refresh once everything
+     * has mounted, again on load, and again once the fonts have settled —
+     * each of those changes the layout.
+     */
+    const refresh = () => ScrollTrigger.refresh()
+    const afterMount = window.setTimeout(refresh, 0)
+    const afterSettle = window.setTimeout(refresh, 400)
+    window.addEventListener('load', refresh)
+    const fonts = (document as Document & { fonts?: FontFaceSet }).fonts
+    fonts?.ready.then(refresh)
 
     return () => {
+      window.clearTimeout(afterMount)
+      window.clearTimeout(afterSettle)
+      window.removeEventListener('load', refresh)
       lenis.off('scroll', ScrollTrigger.update)
       gsap.ticker.remove(advance)
       gsap.ticker.lagSmoothing(500, 33)

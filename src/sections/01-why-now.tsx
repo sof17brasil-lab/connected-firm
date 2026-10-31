@@ -18,6 +18,13 @@ export function WhyNow() {
       <GrowCard
         number="01"
         question="Why does *2028* matter?"
+        standfirst={
+          <>
+            Because White &amp; Case has told the market it will pass $5bn by then
+            <SourcePill id={3} label="Bloomberg Law" />. These four numbers are where
+            the firm is starting from.
+          </>
+        }
         stats={WHY_NOW_STATS}
         image={`${import.meta.env.BASE_URL}images/nyc-hero.jpg`}
       />
