@@ -1,27 +1,24 @@
 import { useRef } from 'react'
 import { gsap } from 'gsap'
-import { ScrollTrigger } from 'gsap/ScrollTrigger'
-import { useGSAP } from '@gsap/react'
 import { Footnote } from '@/components/site/footnote'
 import { useReducedMotion } from '@/hooks/use-reduced-motion'
+import { useScrollScrub } from '@/hooks/use-scroll-scrub'
 import type { StatTile } from '@/lib/data'
-
-gsap.registerPlugin(ScrollTrigger, useGSAP)
 
 const clamp01 = (n: number) => (n < 0 ? 0 : n > 1 ? 1 : n)
 const easeOut = (t: number) => 1 - Math.pow(1 - t, 3)
 const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 
 /**
- * Move 1: the chapter opener's picture grows until it fills the screen, the
- * stats appear over it one at a time, and the next section wipes up to cover
- * it, switching the page from the dark image back to ivory.
+ * Move 1: the picture grows until it fills the screen, then the standfirst
+ * and the four numbers arrive over it, and the next section wipes up to
+ * cover the lot.
  *
- * Everything is scrubbed from one pinned ScrollTrigger — no timers — so the
- * whole move runs forwards and backwards with the scroll.
- *
- * Under reduced motion the whole thing collapses to a static panel with the
- * stats listed beneath it, which is the end state of the sequence.
+ * Every piece of text here sits on the photograph, so all of it is ivory and
+ * the photograph carries a heavy navy scrim the whole way through. The
+ * picture starts large enough to sit behind the heading at its widest, which
+ * is what lets the heading be white from the first frame rather than
+ * switching colour partway.
  */
 export function GrowCard({
   number,
@@ -32,7 +29,7 @@ export function GrowCard({
 }: {
   number: string
   question: string
-  /** One line under the question: the numbers alone do not explain 2028. */
+  /** Appears only once the picture is full screen. */
   standfirst?: React.ReactNode
   stats: StatTile[]
   image: string
@@ -40,127 +37,134 @@ export function GrowCard({
   const root = useRef<HTMLDivElement>(null)
   const reducedMotion = useReducedMotion()
 
-  useGSAP(
-    () => {
-      if (reducedMotion || !root.current) return
+  useScrollScrub(
+    root,
+    (p) => {
       const el = root.current
+      if (!el) return
 
-      const stage = el.querySelector<HTMLElement>('[data-stage]')
       const card = el.querySelector<HTMLElement>('[data-card]')
       const heading = el.querySelector<HTMLElement>('[data-heading]')
-      const title = el.querySelector<HTMLElement>('[data-title]')
+      const stand = el.querySelector<HTMLElement>('[data-standfirst]')
       const curtain = el.querySelector<HTMLElement>('[data-curtain]')
-      const statEls = gsap.utils.toArray<HTMLElement>('[data-stat]', el)
-      if (!stage || !card || !heading || !curtain) return
+      const statEls = Array.from(el.querySelectorAll<HTMLElement>('[data-stat]'))
+      if (!card || !heading || !curtain) return
 
-      const apply = (p: number) => {
-        const vw = window.innerWidth
-        const vh = window.innerHeight
+      const vw = window.innerWidth
+      const vh = window.innerHeight
 
-        // 0.00 - 0.42: the heading leaves and the picture grows to full bleed.
-        // 0.45 - 0.78: the numbers arrive, one after another.
-        // 0.80 - 1.00: the next panel wipes up and covers everything.
-        const grow = easeOut(clamp01(p / 0.42))
-        const wipe = easeOut(clamp01((p - 0.8) / 0.2))
+      // 0.00 - 0.34  the picture grows to full bleed, heading over it
+      // 0.34 - 0.44  the heading leaves
+      // 0.42 - 0.54  the standfirst arrives, full screen reached
+      // 0.56 - 0.84  the numbers, one at a time
+      // 0.86 - 1.00  the next panel wipes up
+      const grow = easeOut(clamp01(p / 0.34))
+      const headOut = easeOut(clamp01((p - 0.34) / 0.1))
+      const standIn = easeOut(clamp01((p - 0.42) / 0.12))
+      const wipe = easeOut(clamp01((p - 0.86) / 0.14))
 
-        gsap.set(heading, { opacity: 1 - clamp01(grow * 2.4), y: -grow * vh * 0.3 })
-
-        // Light blue throughout, but a deeper one before the dark picture is
-        // behind it, so it never sits washed out on ivory.
-        if (title) {
-          gsap.set(title, { color: grow > 0.12 ? '#8DB4E2' : '#3D6CA6' })
-        }
-
-        gsap.set(card, {
-          width: lerp(Math.min(vw * 0.26, 300), vw, grow),
-          height: lerp(Math.min(vh * 0.3, 300), vh, grow),
-          borderRadius: lerp(2, 0, grow),
-        })
-
-        statEls.forEach((node, i) => {
-          const slot = 0.45 + (i * 0.33) / statEls.length
-          const local = easeOut(clamp01((p - slot) / (0.33 / statEls.length)))
-          gsap.set(node, { opacity: local, y: (1 - local) * 30 })
-        })
-
-        gsap.set(curtain, { yPercent: (1 - wipe) * 100 })
-      }
-
-      apply(0)
-
-      const proxy = { p: 0 }
-      const tween = gsap.to(proxy, {
-        p: 1,
-        ease: 'none',
-        onUpdate: () => apply(proxy.p),
-        scrollTrigger: {
-          trigger: el,
-          start: 'top top',
-          end: 'bottom bottom',
-          scrub: 1,
-          pin: stage,
-          pinSpacing: false,
-          invalidateOnRefresh: true,
-        },
+      // Starts wide enough to sit behind the heading, so white type always
+      // lands on the darkened photograph and never on bare ivory.
+      gsap.set(card, {
+        width: lerp(Math.min(vw * 0.74, 980), vw, grow),
+        height: lerp(Math.min(vh * 0.6, 560), vh, grow),
+        borderRadius: lerp(2, 0, grow),
       })
 
-      const onResize = () => apply(proxy.p)
-      window.addEventListener('resize', onResize)
-      return () => {
-        window.removeEventListener('resize', onResize)
-        tween.scrollTrigger?.kill()
-        tween.kill()
-      }
+      gsap.set(heading, { opacity: 1 - headOut, y: -headOut * vh * 0.12 })
+      if (stand) gsap.set(stand, { opacity: standIn, y: (1 - standIn) * 24 })
+
+      statEls.forEach((node, i) => {
+        const slot = 0.56 + (i * 0.28) / statEls.length
+        const local = easeOut(clamp01((p - slot) / (0.28 / statEls.length)))
+        gsap.set(node, { opacity: local, y: (1 - local) * 30 })
+      })
+
+      gsap.set(curtain, { yPercent: (1 - wipe) * 100 })
     },
-    { scope: root, dependencies: [reducedMotion] },
+    { start: 'top top', end: 'bottom bottom', scrub: 0.8 },
   )
 
-  // Reduced motion: the end state, with nothing moving.
+  const Heading = (
+    <h2 className="max-w-3xl font-display text-[clamp(2rem,4.6vw,4rem)] leading-[1.12] text-ivory">
+      {question.split(/\*([^*]+)\*/g).map((part, i) =>
+        i % 2 === 1 ? (
+          <em key={i} className="italic">
+            {part}
+          </em>
+        ) : (
+          <span key={i}>{part}</span>
+        ),
+      )}
+    </h2>
+  )
+
   if (reducedMotion) {
     return (
-      <section id="why-now" className="relative py-24">
-        <div className="mx-auto w-full max-w-[1200px] px-6 md:px-10">
-          <p className="eyebrow text-muted-ink">[{number}]</p>
-          <h2 className="mt-5 font-display text-[clamp(2rem,4.6vw,4rem)] leading-tight text-navy">
-            {question.replace(/\*/g, '')}
-          </h2>
-          {standfirst && <p className="measure mt-6 text-lg text-slate">{standfirst}</p>}
-          <div className="relative mt-12 aspect-[16/9] overflow-hidden bg-navy">
-            <img src={image} alt="" className="absolute inset-0 size-full object-cover opacity-45" />
+      <section id="why-now" className="relative py-20">
+        <div className="relative mx-auto w-full max-w-[1200px] px-6 md:px-10">
+          <div className="relative isolate overflow-hidden bg-navy p-8 md:p-14">
+            <img src={image} alt="" aria-hidden="true" className="absolute inset-0 size-full object-cover" />
+            <div aria-hidden="true" className="absolute inset-0 bg-navy/80" />
+            <div className="relative">
+              <p className="eyebrow text-ivory/70">[{number}]</p>
+              <div className="mt-5">{Heading}</div>
+              {standfirst && (
+                <p className="measure mt-6 text-lg text-ivory/85">{standfirst}</p>
+              )}
+              <dl className="mt-12 grid gap-10 sm:grid-cols-2">
+                {stats.map((stat) => (
+                  <div key={stat.label}>
+                    <dt className="font-display text-[clamp(2.4rem,6vw,5rem)] leading-none text-ivory">
+                      {stat.value}
+                    </dt>
+                    <dd className="mt-2 text-ivory/80">
+                      {stat.label}
+                      <Footnote ids={stat.sources} tone="dark" className="ml-1" />
+                    </dd>
+                  </div>
+                ))}
+              </dl>
+            </div>
           </div>
-          <dl className="mt-12 grid gap-8 sm:grid-cols-2 lg:grid-cols-4">
-            {stats.map((stat) => (
-              <div key={stat.label}>
-                <dt className="font-display text-4xl text-navy">{stat.value}</dt>
-                <dd className="mt-3 text-slate">
-                  {stat.label}
-                  <Footnote ids={stat.sources} className="ml-1" />
-                </dd>
-              </div>
-            ))}
-          </dl>
         </div>
       </section>
     )
   }
 
   return (
-    <div ref={root} id="why-now" className="relative h-[400vh]">
-      <div data-stage className="relative h-screen w-full overflow-hidden">
-
-        {/* The growing card. */}
+    <div ref={root} id="why-now" className="relative h-[420vh]">
+      <div className="sticky top-0 h-screen w-full overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center">
           <div data-card className="relative overflow-hidden bg-navy">
             <img src={image} alt="" aria-hidden="true" className="absolute inset-0 size-full object-cover" />
-            <div aria-hidden="true" className="absolute inset-0 bg-navy/72" />
+            {/* Heavy scrim: every word in this section sits on this picture. */}
+            <div aria-hidden="true" className="absolute inset-0 bg-navy/78" />
             <div
               aria-hidden="true"
-              className="absolute inset-0 bg-gradient-to-t from-midnight/85 via-navy/30 to-transparent"
+              className="absolute inset-0 bg-gradient-to-t from-midnight/80 via-navy/35 to-navy/45"
             />
 
-            {/* Stats, arriving one at a time over the full-bleed image. */}
-            <div className="absolute inset-0 flex items-center justify-center p-7 md:p-12">
-              <dl className="grid w-full max-w-[1100px] grid-cols-1 gap-x-16 gap-y-10 text-center sm:grid-cols-2">
+            {/* All the type lives inside the picture, so it is never on ivory. */}
+            <div className="absolute inset-0 flex flex-col items-center justify-center px-7 text-center md:px-12">
+              <div data-heading>
+                <p className="eyebrow mb-6 font-display text-lg tracking-[0.08em] text-ivory/65">
+                  [{number}]
+                </p>
+                {Heading}
+              </div>
+
+              {standfirst && (
+                <p
+                  data-standfirst
+                  style={{ opacity: 0 }}
+                  className="absolute inset-x-7 top-[14vh] mx-auto max-w-2xl text-lg text-ivory/90 md:inset-x-12 md:text-xl"
+                >
+                  {standfirst}
+                </p>
+              )}
+
+              <dl className="grid w-full max-w-[1100px] grid-cols-1 gap-x-16 gap-y-10 sm:grid-cols-2">
                 {stats.map((stat) => (
                   <div key={stat.label} data-stat style={{ opacity: 0 }}>
                     <dt className="font-display text-[clamp(2.6rem,7vw,6rem)] leading-[0.92] text-ivory">
@@ -170,7 +174,7 @@ export function GrowCard({
                       {stat.label}
                       <Footnote ids={stat.sources} tone="dark" className="ml-1" />
                       {stat.note && (
-                        <span className="text-caption mt-1 block text-ivory/55">{stat.note}</span>
+                        <span className="text-caption mt-1 block text-ivory/60">{stat.note}</span>
                       )}
                     </dd>
                   </div>
@@ -180,34 +184,6 @@ export function GrowCard({
           </div>
         </div>
 
-        {/* The heading, which leaves as the card grows. */}
-        <div
-          data-heading
-          className="pointer-events-none absolute inset-0 z-20 flex flex-col items-center justify-center px-6 text-center"
-        >
-          <p className="eyebrow font-display text-lg tracking-[0.08em] text-muted-ink">
-            [{number}]
-          </p>
-          <h2
-            data-title
-            className="mt-6 max-w-3xl font-display text-[clamp(2rem,4.6vw,4rem)] leading-[1.12] text-sky-deep"
-          >
-            {question.split(/\*([^*]+)\*/g).map((part, i) =>
-              i % 2 === 1 ? (
-                <em key={i} className="italic">
-                  {part}
-                </em>
-              ) : (
-                <span key={i}>{part}</span>
-              ),
-            )}
-          </h2>
-          {standfirst && (
-            <p className="measure mt-7 text-lg text-slate md:text-xl">{standfirst}</p>
-          )}
-        </div>
-
-        {/* The curtain: the next section rising to cover the stage. */}
         <div
           data-curtain
           aria-hidden="true"

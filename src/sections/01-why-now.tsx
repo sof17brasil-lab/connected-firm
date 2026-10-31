@@ -20,9 +20,9 @@ export function WhyNow() {
         question="Why does *2028* matter?"
         standfirst={
           <>
-            Because White &amp; Case has told the market it will pass $5bn by then
-            <SourcePill id={3} label="Bloomberg Law" />. These four numbers are where
-            the firm is starting from.
+            White &amp; Case aims to pass $5bn in revenue by 2028. Here&rsquo;s where
+            it&rsquo;s starting from.
+            <SourcePill id={3} label="Bloomberg Law" tone="dark" />
           </>
         }
         stats={WHY_NOW_STATS}
