@@ -3,7 +3,8 @@ import { ArcChart, OutlineBars, UnitCircles } from '@/components/charts/outline/
 import { Footnote } from '@/components/site/footnote'
 import { Reveal } from '@/components/site/reveal'
 import { SourcePill } from '@/components/site/source-pill'
-import { Band, Eyebrow, Finding, Rule, WhatThisMeans } from '@/components/site/section'
+import { Band, Eyebrow, Finding, Rule } from '@/components/site/section'
+import { WhatThisMeans } from '@/components/site/what-this-means'
 import { RESEARCH_PARTNERS, RESEARCH_PEOPLE } from '@/lib/data'
 
 /** The research not told as a card, set as a findings list. */
@@ -81,6 +82,7 @@ export function TheProblem() {
 
         <Reveal delay={0.08}>
           <StatCard
+            from="right"
             figure="61%"
             connector="of"
             subject="lawyers"
@@ -93,6 +95,7 @@ export function TheProblem() {
 
       <Reveal className="mt-10">
         <StatCard
+          from="right"
           figure="18% vs 61%"
           subject="considered quitting"
           body="Workers satisfied with their sense of belonging, against those who were not."
@@ -142,8 +145,7 @@ export function TheProblem() {
 
       <Rule className="mt-24 mb-12" />
       <WhatThisMeans>
-        the expensive problem is not hiring. It is what happens in the eighteen months after
-        someone arrives.
+        {'the expensive problem is not hiring. It is what happens in the *eighteen months* after someone arrives.'}
       </WhatThisMeans>
     </Band>
   )

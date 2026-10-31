@@ -2,16 +2,16 @@ import { CompetitorChart } from '@/components/charts/competitor-chart'
 import { RevenueChart } from '@/components/charts/revenue-chart'
 import { StatCard } from '@/components/charts/stat-card'
 import { OutlineBars, ProportionRect } from '@/components/charts/outline/charts'
-import { CountUp } from '@/components/site/count-up'
+import { StatTiles } from '@/components/charts/stat-tiles'
 import { EstimateTag, Footnote } from '@/components/site/footnote'
 import { Reveal } from '@/components/site/reveal'
 import { SourcePill } from '@/components/site/source-pill'
-import { Band, Eyebrow, Rule, WhatThisMeans } from '@/components/site/section'
+import { Band, Eyebrow, Rule } from '@/components/site/section'
+import { WhatThisMeans } from '@/components/site/what-this-means'
 import {
   BIG_LAW_AVERAGE,
   REVENUE_GAP_LABEL,
   REVENUE_SHARE_OF_GOAL,
-  WHY_NOW_STATS,
 } from '@/lib/data'
 
 export function WhyNow() {
@@ -38,32 +38,8 @@ export function WhyNow() {
         </Reveal>
       </div>
 
-      {/* Stat row, hairline-divided. */}
-      <div className="mt-20 grid grid-cols-1 gap-px border-t border-stone bg-stone sm:grid-cols-2 lg:grid-cols-4">
-        {WHY_NOW_STATS.map((stat, i) => (
-          <Reveal key={stat.label} delay={i * 0.07} className="bg-transparent">
-            <div className="flex h-full flex-col py-9 sm:px-6 sm:first:pl-0">
-              <p className="font-display text-[clamp(2.4rem,3.6vw,3.4rem)] leading-none text-navy">
-                {stat.countTo != null ? (
-                  <CountUp
-                    to={stat.countTo}
-                    prefix={stat.prefix}
-                    suffix={stat.suffix}
-                    decimals={stat.decimals ?? 0}
-                    display={stat.value}
-                  />
-                ) : (
-                  stat.value
-                )}
-              </p>
-              <p className="mt-4 text-base font-medium text-slate">
-                {stat.label}
-                <Footnote ids={stat.sources} className="ml-1" />
-              </p>
-              {stat.note && <p className="text-caption mt-2 text-muted-ink">{stat.note}</p>}
-            </div>
-          </Reveal>
-        ))}
+      <div className="mt-20">
+        <StatTiles />
       </div>
 
       {/* The revenue trajectory needs a real line chart; it stays, restyled. */}
@@ -131,6 +107,7 @@ export function WhyNow() {
       {/* Card 02 — how far along the road to $5bn the firm already is. */}
       <Reveal className="mt-24">
         <StatCard
+          from="right"
           figure="$3.594bn"
           connector="of"
           subject="$5bn"
@@ -145,8 +122,7 @@ export function WhyNow() {
 
       <Rule className="mt-28 mb-12" />
       <WhatThisMeans>
-        the gap to $5bn will not close on the current trajectory, and the work that closes it
-        runs on relationships.
+        {'the gap to $5bn will not close on the current trajectory, and the work that closes it runs on *relationships*.'}
       </WhatThisMeans>
     </Band>
   )

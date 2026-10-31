@@ -1,5 +1,4 @@
 import { cn } from '@/lib/utils'
-import { Reveal } from '@/components/site/reveal'
 
 export function Eyebrow({
   children,
@@ -14,32 +13,6 @@ export function Eyebrow({
     <p className={cn('eyebrow', tone === 'light' ? 'text-sky-deep' : 'text-sky', className)}>
       {children}
     </p>
-  )
-}
-
-export function WhatThisMeans({
-  children,
-  tone = 'light',
-  className,
-}: {
-  children: React.ReactNode
-  tone?: 'light' | 'dark'
-  className?: string
-}) {
-  return (
-    <Reveal className={className}>
-      <p
-        className={cn(
-          'measure font-display text-2xl italic leading-snug md:text-3xl',
-          tone === 'light' ? 'text-navy' : 'text-ivory',
-        )}
-      >
-        <span className={tone === 'light' ? 'text-muted-ink' : 'text-ivory/60'}>
-          What this means:{' '}
-        </span>
-        {children}
-      </p>
-    </Reveal>
   )
 }
 

@@ -3,8 +3,10 @@ import { StatCard } from '@/components/charts/stat-card'
 import { Constellation } from '@/components/charts/outline/charts'
 import { Footnote } from '@/components/site/footnote'
 import { Reveal } from '@/components/site/reveal'
+import { Skyline } from '@/components/site/skyline'
 import { SourcePill } from '@/components/site/source-pill'
-import { Band, Eyebrow, Rule, WhatThisMeans } from '@/components/site/section'
+import { Band, Eyebrow, Rule } from '@/components/site/section'
+import { WhatThisMeans } from '@/components/site/what-this-means'
 import { GAP_ROWS, LONDON_CALLOUT } from '@/lib/data'
 
 /**
@@ -117,9 +119,9 @@ export function WhatExists() {
 
       <Rule className="mt-24 mb-12" />
       <WhatThisMeans>
-        New York does not need a new program so much as a predictable calendar and someone
-        whose job it is to keep it.
+        {'New York does not need a new program so much as a *predictable calendar* and someone whose job it is to keep it.'}
       </WhatThisMeans>
+      <Skyline className="mt-14 opacity-70" />
     </Band>
   )
 }

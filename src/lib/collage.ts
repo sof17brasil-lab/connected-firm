@@ -1,62 +1,55 @@
 /**
- * Collage piece layout.
+ * Collage layout.
  *
- * Each piece has two positions: `from`, a tight cluster off to one side, and
- * `to`, a point on a loose ring around the headline. Scrolling moves pieces
- * between the two at different rates, so the cluster appears to disperse.
- *
- * Positions are percentages of the section box. The ring deliberately leaves a
- * gap through the middle so nothing ever lands on the words.
+ * Pieces are squares in four sizes. They begin gathered on one side and then
+ * travel along a circular path until they sit evenly spaced around the
+ * heading, like a slow orbit. Positions are polar — interpolating the angle is
+ * what curves the path, rather than sliding in a straight line.
  */
 export interface CollagePiece {
-  /** Placeholder fill until real photos arrive. */
   tone: 'navy' | 'sky' | 'stone'
-  /** Index into the supplied photo list, when there are photos. */
   photo?: number
-  w: number
-  h: number
-  from: { x: number; y: number }
-  to: { x: number; y: number }
-  /** 0.4 slow, 1.4 fast — what makes the pieces separate as they travel. */
-  speed: number
-  rotate: number
+  /** Square side in px. */
+  size: number
+  /** Start and end angle in degrees, swept in one direction. */
+  a0: number
+  a1: number
+  /** Start and end distance from centre, as a fraction of the ring radius. */
+  r0: number
+  r1: number
+  /** Where in the scroll this piece starts and how long it takes. */
+  delay: number
+  span: number
 }
 
+const SIZES = [110, 56, 72, 44, 88, 56, 110, 72, 44, 88, 56, 72]
 const TONES = ['stone', 'sky', 'navy', 'stone', 'sky', 'stone', 'navy', 'sky'] as const
 
 /**
- * Builds a ring of pieces deterministically, so the layout is stable between
- * renders but still looks scattered. `side` decides which edge they start from.
+ * `side` is where the cluster starts. Pieces always sweep in one direction so
+ * they read as a single orbiting group rather than scattering.
  */
-export function buildCollage(count: number, side: 'left' | 'right' = 'left'): CollagePiece[] {
+export function buildCollage(count = 10, side: 'left' | 'right' = 'left'): CollagePiece[] {
+  const base = side === 'left' ? 180 : 0
   const pieces: CollagePiece[] = []
-  const originX = side === 'left' ? 16 : 84
 
   for (let i = 0; i < count; i++) {
-    // Even spread around the ring, nudged so it never looks like a clock face.
-    const angle = (i / count) * Math.PI * 2 + (i % 3) * 0.22
-    const radiusX = 34 + ((i * 7) % 11)
-    const radiusY = 30 + ((i * 5) % 13)
-
-    // Sizes stay small, 2.2%-7% of width, as in the reference.
-    const w = 2.6 + ((i * 13) % 5) * 1.1
-    const h = w * (0.62 + ((i * 7) % 4) * 0.16)
+    // Evenly spaced final positions, offset so none lands straight above the
+    // heading where it would crowd the first line.
+    const step = 360 / count
+    const a1 = base + 40 + i * step
 
     pieces.push({
       tone: TONES[i % TONES.length],
       photo: i,
-      w,
-      h,
-      from: {
-        x: originX + ((i * 11) % 13) - 6,
-        y: 20 + ((i * 17) % 60),
-      },
-      to: {
-        x: 50 + Math.cos(angle) * radiusX,
-        y: 50 + Math.sin(angle) * radiusY,
-      },
-      speed: 0.5 + ((i * 3) % 7) * 0.14,
-      rotate: (((i * 23) % 9) - 4) * 0.8,
+      size: SIZES[i % SIZES.length],
+      // The cluster is a narrow fan on one side, close to the centre.
+      a0: base + (i % 4) * 7 - 10,
+      a1,
+      r0: 0.22 + (i % 3) * 0.05,
+      r1: 0.92 + ((i * 7) % 5) * 0.04,
+      delay: (i % 5) * 0.05,
+      span: 0.62 + ((i * 3) % 4) * 0.08,
     })
   }
 

@@ -23,6 +23,8 @@ export interface StatCardProps {
   photo?: string
   caveat?: string
   className?: string
+  /** Which way the card slides in from; alternate it down a column. */
+  from?: 'left' | 'right'
 }
 
 /**
@@ -42,6 +44,7 @@ export function StatCard({
   photo,
   caveat,
   className,
+  from = 'left',
 }: StatCardProps) {
   const reducedMotion = useReducedMotion()
   const { ref, inView } = useInViewOnce<HTMLDivElement>()
@@ -64,7 +67,14 @@ export function StatCard({
   const animate = inView && !reducedMotion
 
   return (
-    <figure ref={ref} className={cn('w-full', className)}>
+    <motion.figure
+      ref={ref}
+      className={cn('w-full max-w-[34rem]', className)}
+      initial={reducedMotion ? false : { opacity: 0, scale: 0.88, x: from === 'left' ? -56 : 56, y: 72 }}
+      whileInView={{ opacity: 1, scale: 1, x: 0, y: 0 }}
+      viewport={{ once: true, margin: '-12% 0px -12% 0px' }}
+      transition={{ duration: 1.1, ease: EASE }}
+    >
       <div className="relative isolate overflow-hidden rounded-sm bg-navy">
         {photo && (
           <img src={photo} alt="" aria-hidden="true" className="absolute inset-0 size-full object-cover" />
@@ -72,22 +82,22 @@ export function StatCard({
         {/* Scrim: keeps thin ivory strokes readable over any photograph. */}
         <div aria-hidden="true" className="absolute inset-0 bg-navy/85" />
 
-        <div className="relative px-6 py-12 md:px-12 md:py-16">
+        <div className="relative px-6 py-10 md:px-10 md:py-12">
           {index != null && (
             <p className="eyebrow tabular absolute right-5 top-5 text-ivory/45">
               {String(index).padStart(2, '0')}
             </p>
           )}
 
-          <div className="mx-auto max-w-md">{chart(animate)}</div>
+          <div className="mx-auto max-w-sm">{chart(animate)}</div>
 
           <motion.figcaption
-            className="mt-10 text-center"
+            className="mt-8 text-center"
             initial={reducedMotion ? false : { opacity: 0, y: 12 }}
             animate={inView ? { opacity: 1, y: 0 } : undefined}
             transition={{ duration: 0.8, ease: EASE, delay: 0.5 }}
           >
-            <p className="font-display text-[clamp(2rem,4vw,3.25rem)] leading-tight text-sky">
+            <p className="font-display text-[clamp(1.9rem,3.2vw,2.75rem)] leading-tight text-sky">
               {figure}
               {connector && <em className="italic text-ivory/70"> {connector} </em>}
               {!connector && ' '}
@@ -101,6 +111,6 @@ export function StatCard({
           </motion.figcaption>
         </div>
       </div>
-    </figure>
+    </motion.figure>
   )
 }

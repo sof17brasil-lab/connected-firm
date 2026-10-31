@@ -1,8 +1,12 @@
 import { useRef } from 'react'
-import { motion, useScroll, useTransform, type MotionValue } from 'framer-motion'
+import { gsap } from 'gsap'
+import { ScrollTrigger } from 'gsap/ScrollTrigger'
+import { useGSAP } from '@gsap/react'
 import type { CollagePiece } from '@/lib/collage'
 import { useReducedMotion } from '@/hooks/use-reduced-motion'
 import { cn } from '@/lib/utils'
+
+gsap.registerPlugin(ScrollTrigger, useGSAP)
 
 const TONE_CLASS = {
   navy: 'bg-navy',
@@ -10,53 +14,17 @@ const TONE_CLASS = {
   stone: 'bg-stone',
 } as const
 
-function Piece({
-  piece,
-  progress,
-  photos,
-}: {
-  piece: CollagePiece
-  progress: MotionValue<number>
-  photos?: string[]
-}) {
-  // Faster pieces finish their journey earlier, which is what separates them.
-  const end = Math.min(0.35 + piece.speed * 0.5, 0.95)
-  const x = useTransform(progress, [0, end], [`${piece.from.x}%`, `${piece.to.x}%`])
-  const y = useTransform(progress, [0, end], [`${piece.from.y}%`, `${piece.to.y}%`])
-  const opacity = useTransform(progress, [0, 0.12, 0.85, 1], [0, 1, 1, 0.65])
-  const scale = useTransform(progress, [0, end], [0.72, 1])
-
-  const photo = photos && piece.photo != null ? photos[piece.photo % photos.length] : undefined
-
-  return (
-    <motion.div
-      className="absolute"
-      style={{
-        left: x,
-        top: y,
-        width: `${piece.w}%`,
-        aspectRatio: `${piece.w} / ${piece.h}`,
-        opacity,
-        scale,
-        rotate: piece.rotate,
-        translateX: '-50%',
-        translateY: '-50%',
-      }}
-    >
-      {photo ? (
-        <img src={photo} alt="" aria-hidden="true" className="size-full object-cover" />
-      ) : (
-        <div className={cn('size-full', TONE_CLASS[piece.tone])} />
-      )}
-    </motion.div>
-  )
-}
+const RAD = Math.PI / 180
+const clamp01 = (n: number) => (n < 0 ? 0 : n > 1 ? 1 : n)
+const easeOut = (t: number) => 1 - Math.pow(1 - t, 3)
+const lerp = (a: number, b: number, t: number) => a + (b - a) * t
 
 /**
- * Decorative collage layer. Pieces gather and spread with scroll.
+ * Decorative collage. Pieces orbit from a cluster on one side to an even ring
+ * around the heading, scrubbed to scroll.
  *
- * Purely ornamental: hidden from screen readers, dropped entirely under
- * reduced motion, and never placed where it could sit over the headline.
+ * Ornamental only: hidden from screen readers. Under reduced motion the
+ * pieces are placed at their final ring positions and never move.
  */
 export function Collage({
   pieces,
@@ -67,25 +35,108 @@ export function Collage({
   photos?: string[]
   className?: string
 }) {
-  const ref = useRef<HTMLDivElement>(null)
+  const root = useRef<HTMLDivElement>(null)
   const reducedMotion = useReducedMotion()
 
-  const { scrollYProgress } = useScroll({
-    target: ref,
-    offset: ['start end', 'end start'],
-  })
+  useGSAP(
+    () => {
+      const el = root.current
+      if (!el) return
 
-  if (reducedMotion) return null
+      const nodes = gsap.utils.toArray<HTMLElement>('[data-piece]', el)
+      if (nodes.length === 0) return
+
+      // The ring is sized from the box, so it stays clear of the heading on
+      // small screens as well as large ones.
+      const radius = () => {
+        const { width, height } = el.getBoundingClientRect()
+        return Math.min(Math.max(Math.min(width, height) * 0.42, 150), 460)
+      }
+
+      const place = (progress: number) => {
+        const r = radius()
+        nodes.forEach((node, i) => {
+          const piece = pieces[i]
+          if (!piece) return
+          const local = easeOut(clamp01((progress - piece.delay) / piece.span))
+          const angle = lerp(piece.a0, piece.a1, local) * RAD
+          const dist = lerp(piece.r0, piece.r1, local) * r
+          gsap.set(node, {
+            x: Math.cos(angle) * dist,
+            y: Math.sin(angle) * dist,
+            scale: lerp(0.6, 1, local),
+            opacity: Math.min(local * 3.5, 1),
+          })
+        })
+      }
+
+      if (reducedMotion) {
+        place(1)
+        return
+      }
+
+      place(0)
+
+      // One scrubbed proxy drives every piece: a single trigger, and `scrub`
+      // gives the whole group the same eased lag behind the scroll.
+      const proxy = { p: 0 }
+      const tween = gsap.to(proxy, {
+        p: 1,
+        ease: 'none',
+        onUpdate: () => place(proxy.p),
+        scrollTrigger: {
+          trigger: el,
+          start: 'top bottom',
+          end: 'bottom top',
+          scrub: 1,
+          invalidateOnRefresh: true,
+        },
+      })
+
+      const onResize = () => place(proxy.p)
+      window.addEventListener('resize', onResize)
+
+      return () => {
+        window.removeEventListener('resize', onResize)
+        tween.scrollTrigger?.kill()
+        tween.kill()
+      }
+    },
+    { scope: root, dependencies: [pieces, reducedMotion] },
+  )
 
   return (
     <div
-      ref={ref}
+      ref={root}
       aria-hidden="true"
       className={cn('pointer-events-none absolute inset-0 overflow-hidden', className)}
     >
-      {pieces.map((piece, i) => (
-        <Piece key={i} piece={piece} progress={scrollYProgress} photos={photos} />
-      ))}
+      {/* Centre anchor: every piece is offset from the middle of the box. */}
+      <div className="absolute left-1/2 top-1/2">
+        {pieces.map((piece, i) => {
+          const photo = photos && piece.photo != null ? photos[piece.photo % photos.length] : undefined
+          return (
+            <div
+              key={i}
+              data-piece
+              className="absolute"
+              style={{
+                width: piece.size,
+                height: piece.size,
+                marginLeft: -piece.size / 2,
+                marginTop: -piece.size / 2,
+                opacity: 0,
+              }}
+            >
+              {photo ? (
+                <img src={photo} alt="" className="size-full object-cover" />
+              ) : (
+                <div className={cn('size-full', TONE_CLASS[piece.tone])} />
+              )}
+            </div>
+          )
+        })}
+      </div>
     </div>
   )
 }
