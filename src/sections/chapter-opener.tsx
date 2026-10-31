@@ -11,18 +11,23 @@ export interface ChapterOpenerProps {
   side?: 'left' | 'right'
   dark?: boolean
   id?: string
+  /** Opener 06 is deliberately quiet, with no collage. */
+  collage?: boolean
+  /** A shorter opener, for the ones that are not act breaks. */
+  compact?: boolean
 }
 
 /**
  * Renders "What keeps *people* at a firm?" with the starred word in italic.
  */
-function Question({ text, dark }: { text: string; dark: boolean }) {
+function Question({ text, dark, compact }: { text: string; dark: boolean; compact?: boolean }) {
   const parts = text.split(/\*([^*]+)\*/g)
   return (
     <h2
       className={cn(
-        'text-center font-display text-[clamp(2rem,4.6vw,4rem)] leading-[1.12]',
-        dark ? 'text-ivory' : 'text-navy',
+        'text-center font-display leading-[1.12]',
+        compact ? 'text-[clamp(1.7rem,3.2vw,2.6rem)]' : 'text-[clamp(2rem,4.6vw,4rem)]',
+      dark ? 'text-ivory' : 'text-navy',
       )}
     >
       {parts.map((part, i) =>
@@ -48,6 +53,8 @@ export function ChapterOpener({
   side = 'left',
   dark = false,
   id,
+  collage = true,
+  compact = false,
 }: ChapterOpenerProps) {
   const pieces = buildCollage(11, side)
 
@@ -55,21 +62,25 @@ export function ChapterOpener({
     <section
       id={id}
       aria-label={`Chapter ${number}`}
-      className="relative isolate flex min-h-screen items-center overflow-hidden"
+      className={cn(
+        'relative isolate flex items-center overflow-hidden',
+        compact ? 'min-h-[56vh]' : 'min-h-screen',
+      )}
     >
-      <Collage pieces={pieces} />
+      {collage && <Collage pieces={pieces} />}
 
       <div className="relative mx-auto w-full max-w-3xl px-6">
         <Reveal>
           <p
             className={cn(
-              'mb-7 text-center font-display text-lg tracking-[0.08em]',
+              'mb-7 text-center font-display tracking-[0.08em]',
+              compact ? 'text-base' : 'text-lg',
               dark ? 'text-ivory/70' : 'text-muted-ink',
             )}
           >
             [{number}]
           </p>
-          <Question text={question} dark={dark} />
+          <Question text={question} dark={dark} compact={compact} />
         </Reveal>
       </div>
     </section>

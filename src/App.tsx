@@ -10,6 +10,7 @@ import { SiteFooter } from '@/components/site/footer'
 import Home from '@/pages/Home'
 import SourcesPage from '@/pages/Sources'
 import CultureExtras from '@/pages/CultureExtras'
+import TheNumbers from '@/pages/TheNumbers'
 import Methodology from '@/pages/Methodology'
 
 export default function App() {
@@ -26,6 +27,7 @@ export default function App() {
           <main>
             <Routes>
               <Route path="/" element={<Home />} />
+              <Route path="/the-numbers" element={<TheNumbers />} />
               <Route path="/culture-extras" element={<CultureExtras />} />
               <Route path="/methodology" element={<Methodology />} />
               <Route path="/sources" element={<SourcesPage />} />

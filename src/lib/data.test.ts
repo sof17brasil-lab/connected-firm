@@ -21,6 +21,12 @@ import {
   SCORECARD,
   RISKS,
 } from './data'
+import {
+  MEASUREMENT_LIST,
+  LEANER_OPTION,
+  COST_NEUTRAL_OPTION,
+} from './data'
+import { calculate, DEFAULTS, money } from './calculator'
 import { ALREADY_HAS, ASSUMPTIONS, OTHER_FIRMS, STILL_TO_VERIFY } from './extras'
 import { SOURCES, SOURCE_BY_ID, sourceYearLabel } from './sources'
 
@@ -337,5 +343,43 @@ describe('Reference pages', () => {
 
   it('lists the four items still to verify', () => {
     expect(STILL_TO_VERIFY).toHaveLength(4)
+  })
+})
+
+describe('What moved to /the-numbers', () => {
+  const homeFigures = ['$4.04M', '30-38%', '61%', '18% vs 61%']
+  const all = [...RESEARCH_PARTNERS, ...RESEARCH_PEOPLE]
+
+  it('keeps the four strongest research figures available for the home page', () => {
+    for (const figure of homeFigures) {
+      expect(all.map((c) => c.figure)).toContain(figure)
+    }
+  })
+
+  it('still carries every other research figure for the detail page', () => {
+    const rest = all.filter((c) => !homeFigures.includes(c.figure))
+    expect(rest.length).toBe(all.length - homeFigures.length)
+    for (const card of rest) {
+      expect(card.sources.length).toBeGreaterThan(0)
+    }
+  })
+
+  it('derives the home page headline from the calculator defaults', () => {
+    // "1 in 100 lawyers ... about 19 fewer departures ... roughly $3.9 million"
+    const out = calculate(DEFAULTS)
+    expect(Math.round(out.departuresAvoided)).toBe(20)
+    expect(out.departuresAvoided).toBe(19.5)
+    expect(money(out.savings)).toBe('$3.9M')
+    expect(DEFAULTS.pilotCost).toBe(PILOT_TOTAL)
+  })
+
+  it('keeps the measurement list and scorecard for /methodology', () => {
+    expect(MEASUREMENT_LIST.length).toBeGreaterThan(5)
+    expect(SCORECARD.length).toBeGreaterThan(5)
+  })
+
+  it('keeps the cost options for /the-numbers', () => {
+    expect(LEANER_OPTION.body).toContain('$13,500')
+    expect(COST_NEUTRAL_OPTION.body).toContain('$30,000')
   })
 })

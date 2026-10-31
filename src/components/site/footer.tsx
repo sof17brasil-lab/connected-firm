@@ -5,6 +5,7 @@ import { CONTACT_EMAIL } from '@/lib/data'
 import { SECTIONS } from '@/lib/sections'
 
 const PAGES = [
+  { to: '/the-numbers', label: 'The numbers' },
   { to: '/culture-extras', label: 'Culture extras' },
   { to: '/methodology', label: 'Methodology' },
   { to: '/sources', label: 'Sources' },

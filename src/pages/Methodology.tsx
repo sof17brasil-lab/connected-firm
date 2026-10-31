@@ -6,6 +6,7 @@ import { PageHeader } from '@/components/site/page-header'
 import { Reveal } from '@/components/site/reveal'
 import { Band, Rule } from '@/components/site/section'
 import { ASSUMPTIONS, FORMULAS, STILL_TO_VERIFY } from '@/lib/extras'
+import { MEASUREMENT_LIST, SCORECARD } from '@/lib/data'
 
 function AssumptionsTable() {
   return (
@@ -72,6 +73,46 @@ export default function Methodology() {
               </div>
             </Reveal>
           ))}
+        </div>
+      </div>
+
+      <div className="mt-20">
+        <h2 className="font-display text-[clamp(1.7rem,2.4vw,2.3rem)] text-navy">
+          What I&apos;d actually track
+        </h2>
+        <div className="mt-8 grid gap-x-16 lg:grid-cols-2">
+          <ul className="space-y-4">
+            {MEASUREMENT_LIST.map((item) => (
+              <li key={item} className="border-t border-stone pt-4 text-slate">
+                {item}
+              </li>
+            ))}
+          </ul>
+
+          <div className="mt-10 border border-stone lg:mt-0">
+            <div className="flex flex-wrap items-baseline justify-between gap-3 border-b border-stone px-5 py-4">
+              <p className="font-display text-lg text-navy">Event Impact Scorecard</p>
+              <p className="eyebrow text-muted-ink">Sample layout · monthly</p>
+            </div>
+            <table className="w-full border-collapse text-left">
+              <tbody>
+                {SCORECARD.map((metric) => (
+                  <tr key={metric.name} className="border-b border-stone/50 last:border-0">
+                    <td className="px-5 py-3 text-sm text-slate">{metric.name}</td>
+                    <td className="px-5 py-3 text-caption text-muted-ink">
+                      {metric.target ?? '—'}
+                    </td>
+                    <td className="px-5 py-3 text-right text-stone" aria-label="No data yet">
+                      —
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+            <p className="text-caption border-t border-stone px-5 py-3 text-muted-ink">
+              Empty by design. The figures arrive once the pilot runs.
+            </p>
+          </div>
         </div>
       </div>
 

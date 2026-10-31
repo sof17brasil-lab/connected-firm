@@ -219,3 +219,13 @@
         scroll-behavior: auto !important;
     }
 }
+
+/* Marquee for the measure strip: one copy's width, so the loop is seamless. */
+@keyframes marquee {
+    from {
+        transform: translateX(0);
+    }
+    to {
+        transform: translateX(-50%);
+    }
+}

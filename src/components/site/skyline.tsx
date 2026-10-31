@@ -44,7 +44,7 @@ export function Skyline({ className }: { className?: string }) {
 
   const { scrollYProgress } = useScroll({
     target: ref,
-    offset: ['start 0.95', 'center 0.5'],
+    offset: ['start 0.95', 'center 0.6'],
   })
 
   const pathLength = useTransform(scrollYProgress, [0, 1], [0, 1])
@@ -55,9 +55,11 @@ export function Skyline({ className }: { className?: string }) {
         <motion.path
           d={PATH}
           stroke="var(--color-navy)"
-          strokeWidth="1.25"
+          strokeOpacity={0.3}
+          strokeWidth="1.5"
           strokeLinecap="round"
           strokeLinejoin="round"
+          vectorEffect="non-scaling-stroke"
           style={reducedMotion ? { pathLength: 1 } : { pathLength }}
         />
       </svg>

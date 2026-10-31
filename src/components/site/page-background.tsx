@@ -51,9 +51,10 @@ export function PageBackground({ fallback = 'ivory' as Tone }) {
         }
       }
 
-      // Blend across the final 30% of the current section.
+      // Blend across a short band at the very end of the section, which is
+      // padding rather than text, so no paragraph is ever mid-fade.
       const span = Math.max(current.bottom - current.top, 1)
-      const blendStart = current.bottom - span * 0.3
+      const blendStart = current.bottom - Math.min(span * 0.12, window.innerHeight * 0.5)
       const t =
         next === current || probe < blendStart
           ? 0

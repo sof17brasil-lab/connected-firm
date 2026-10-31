@@ -37,7 +37,7 @@ const TextRevealByWord: FC<TextRevealByWordProps> = ({ text, className }) => {
   }
 
   return (
-    <div ref={targetRef} className={cn('relative z-0 h-[180vh]', className)}>
+    <div ref={targetRef} className={cn('relative z-0 h-[120vh]', className)}>
       <div className="sticky top-0 flex h-screen items-center">
         <p className="mx-auto flex max-w-4xl flex-wrap px-6 font-display text-3xl leading-[1.25] md:text-4xl lg:text-5xl">
           {words.map((word, i) => {

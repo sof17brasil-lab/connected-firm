@@ -98,6 +98,12 @@ function MenuPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
             </ul>
 
             <div className="flex flex-col gap-2 px-6 py-6">
+              <Link to="/the-numbers" onClick={onClose} className="eyebrow text-muted-ink hover:text-navy">
+                The numbers
+              </Link>
+              <Link to="/methodology" onClick={onClose} className="eyebrow text-muted-ink hover:text-navy">
+                Methodology
+              </Link>
               <Link to="/sources" onClick={onClose} className="eyebrow text-muted-ink hover:text-navy">
                 Sources
               </Link>
