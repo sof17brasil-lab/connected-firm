@@ -1,0 +1,10 @@
+node_modules
+dist
+*.local
+.DS_Store
+.vscode/*
+!.vscode/extensions.json
+
+# Large source assets live here; the optimized copies in public/images ship.
+_source/nyc.jpg
+_source/sofia-headshot.jpg

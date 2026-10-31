@@ -1,0 +1,221 @@
+@import "tailwindcss";
+@import "tw-animate-css";
+
+/* ---------------------------------------------------------------------------
+   The Connected Firm — design system
+   Single light theme by design. Palette, type scale and motion rules all live
+   here so sections stay free of one-off colours and sizes.
+   --------------------------------------------------------------------------- */
+
+@theme {
+    /* Brand palette */
+    --color-navy: #0e1e3a;
+    --color-midnight: #081428;
+    --color-ivory: #f7f4ee;
+    --color-stone: #e6e1d6;
+    --color-slate: #2b3445;
+    --color-sky: #8db4e2;
+    --color-sky-deep: #3d6ca6;
+    --color-muted-ink: #6a6f7a;
+
+    /* Type */
+    --font-sans: "Manrope", ui-sans-serif, system-ui, sans-serif;
+    --font-display: "Instrument Serif", ui-serif, Georgia, serif;
+
+    /* Hairlines and near-square corners keep the page feeling like print */
+    --radius: 4px;
+}
+
+@theme inline {
+    --font-heading: var(--font-display);
+    --color-background: var(--background);
+    --color-foreground: var(--foreground);
+    --color-card: var(--card);
+    --color-card-foreground: var(--card-foreground);
+    --color-popover: var(--popover);
+    --color-popover-foreground: var(--popover-foreground);
+    --color-primary: var(--primary);
+    --color-primary-foreground: var(--primary-foreground);
+    --color-secondary: var(--secondary);
+    --color-secondary-foreground: var(--secondary-foreground);
+    --color-muted: var(--muted);
+    --color-muted-foreground: var(--muted-foreground);
+    --color-accent: var(--accent);
+    --color-accent-foreground: var(--accent-foreground);
+    --color-destructive: var(--destructive);
+    --color-border: var(--border);
+    --color-input: var(--input);
+    --color-ring: var(--ring);
+    --color-chart-1: var(--chart-1);
+    --color-chart-2: var(--chart-2);
+    --color-chart-3: var(--chart-3);
+    --color-chart-4: var(--chart-4);
+    --color-chart-5: var(--chart-5);
+    --radius-sm: 2px;
+    --radius-md: 3px;
+    --radius-lg: var(--radius);
+    --radius-xl: var(--radius);
+    --radius-2xl: var(--radius);
+    --radius-3xl: var(--radius);
+    --radius-4xl: var(--radius);
+}
+
+:root {
+    --background: var(--color-ivory);
+    --foreground: var(--color-slate);
+    --card: var(--color-ivory);
+    --card-foreground: var(--color-slate);
+    --popover: var(--color-ivory);
+    --popover-foreground: var(--color-slate);
+    --primary: var(--color-navy);
+    --primary-foreground: var(--color-ivory);
+    --secondary: var(--color-stone);
+    --secondary-foreground: var(--color-navy);
+    --muted: var(--color-stone);
+    --muted-foreground: var(--color-muted-ink);
+    --accent: var(--color-sky);
+    --accent-foreground: var(--color-navy);
+    /* Nothing on this site turns red: up/down signals use sky-deep and slate. */
+    --destructive: var(--color-slate);
+    --border: var(--color-stone);
+    --input: var(--color-stone);
+    --ring: var(--color-sky-deep);
+
+    /* Chart series, in the order they should be reached for */
+    --chart-1: var(--color-navy);
+    --chart-2: var(--color-sky);
+    --chart-3: var(--color-stone);
+    --chart-4: var(--color-sky-deep);
+    --chart-5: var(--color-muted-ink);
+}
+
+@layer base {
+    * {
+        @apply border-border outline-ring/50;
+    }
+
+    html {
+        @apply font-sans;
+        -webkit-font-smoothing: antialiased;
+    }
+
+    body {
+        @apply bg-background text-foreground;
+        font-size: 17px;
+        line-height: 1.65;
+    }
+
+    @media (width >= 48rem) {
+        body {
+            font-size: 18px;
+        }
+    }
+
+    h1,
+    h2,
+    h3,
+    h4 {
+        @apply font-display text-navy;
+        font-weight: 400;
+        text-wrap: balance;
+        line-height: 1.05;
+        letter-spacing: -0.01em;
+    }
+
+    /* Numbers should line up in columns wherever they appear */
+    table,
+    .tabular {
+        font-variant-numeric: tabular-nums;
+    }
+
+    a:focus-visible,
+    button:focus-visible,
+    [role="slider"]:focus-visible,
+    [tabindex]:focus-visible {
+        @apply outline-2 outline-offset-2 outline-sky-deep;
+    }
+
+    ::selection {
+        background: var(--color-sky);
+        color: var(--color-navy);
+    }
+}
+
+/* --- Type scale -------------------------------------------------------- */
+
+/* 44px phone -> 96px desktop */
+@utility text-hero {
+    font-size: clamp(2.75rem, 6.5vw, 6rem);
+    line-height: 1.02;
+    letter-spacing: -0.02em;
+}
+
+/* 40px -> 56px */
+@utility text-h2 {
+    font-size: clamp(2.5rem, 4.5vw, 3.5rem);
+    line-height: 1.08;
+    letter-spacing: -0.015em;
+}
+
+/* 64px -> 88px: the one big number per section.
+   Display face, per the brief: headlines, big numbers and pull quotes.
+   Number *columns* stay in Manrope via `.tabular`, which lines up better. */
+@utility text-stat {
+    font-family: var(--font-display);
+    font-weight: 400;
+    font-size: clamp(3.5rem, 6.5vw, 5.5rem);
+    line-height: 0.95;
+    letter-spacing: -0.01em;
+}
+
+@utility text-caption {
+    font-size: 13px;
+    line-height: 1.5;
+}
+
+/* Small-caps section labels: "01 - Why now" */
+@utility eyebrow {
+    font-family: var(--font-sans);
+    font-size: 12px;
+    font-weight: 600;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    line-height: 1.2;
+}
+
+/* Paragraphs cap at roughly 65 characters */
+@utility measure {
+    max-width: 65ch;
+}
+
+/* --- Hairlines -------------------------------------------------------- */
+
+@utility hairline {
+    border: 0;
+    border-top: 1px solid var(--color-stone);
+    height: 0;
+}
+
+@utility hairline-light {
+    border: 0;
+    border-top: 1px solid color-mix(in srgb, var(--color-ivory) 30%, transparent);
+    height: 0;
+}
+
+/* --- Motion ----------------------------------------------------------- */
+
+/*
+ * Content is readable at rest. Reveal animations start from their finished
+ * state and are only moved by JS when motion is allowed, so nothing is ever
+ * stranded at opacity 0.
+ */
+@media (prefers-reduced-motion: reduce) {
+    *,
+    *::before,
+    *::after {
+        animation-duration: 0.01ms !important;
+        animation-iteration-count: 1 !important;
+        transition-duration: 0.01ms !important;
+        scroll-behavior: auto !important;
+    }
+}
