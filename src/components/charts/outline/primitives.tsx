@@ -1,7 +1,14 @@
+import { cn } from '@/lib/utils'
+
 /**
  * Pieces of the outline chart language: thin strokes only, solid where the
  * value is the point and dashed where it is context, values in a pill on the
  * mark itself, no axis and no legend.
+ *
+ * Strokes are `currentColor`, so the same chart reads ivory on the navy
+ * stretch of the home page and navy on /the-numbers without a second set of
+ * components. `faint` dims a context mark through stroke-opacity rather than
+ * element opacity, because `drawChart` owns the opacity attribute.
  *
  * Drawing is driven from outside rather than animated here. Every stroked
  * shape carries `pathLength="1"` with a normalised dash, so a parent can set
@@ -31,14 +38,17 @@ function popAttrs(order: number) {
 export function DrawPath({
   d,
   dashed,
+  faint,
   order = 0,
-  className = 'stroke-ivory',
+  className = 'stroke-current',
 }: {
   d: string
   dashed?: boolean
+  faint?: boolean
   order?: number
   className?: string
 }) {
+  const strokeOpacity = faint ? 0.4 : 1
   // A dashed context stroke cannot also use the dash array to draw itself, so
   // it fades in with the pop group instead.
   if (dashed) {
@@ -48,12 +58,22 @@ export function DrawPath({
         fill="none"
         strokeWidth={STROKE}
         strokeDasharray={DASH}
+        strokeOpacity={strokeOpacity}
         className={className}
         {...popAttrs(order)}
       />
     )
   }
-  return <path d={d} fill="none" strokeWidth={STROKE} className={className} {...drawAttrs(order)} />
+  return (
+    <path
+      d={d}
+      fill="none"
+      strokeWidth={STROKE}
+      strokeOpacity={strokeOpacity}
+      className={className}
+      {...drawAttrs(order)}
+    />
+  )
 }
 
 export function DrawRect({
@@ -62,17 +82,20 @@ export function DrawRect({
   width,
   height,
   dashed,
+  faint,
   order = 0,
-  className = 'stroke-ivory',
+  className = 'stroke-current',
 }: {
   x: number
   y: number
   width: number
   height: number
   dashed?: boolean
+  faint?: boolean
   order?: number
   className?: string
 }) {
+  const strokeOpacity = faint ? 0.4 : 1
   if (dashed) {
     return (
       <rect
@@ -83,6 +106,7 @@ export function DrawRect({
         fill="none"
         strokeWidth={STROKE}
         strokeDasharray={DASH}
+        strokeOpacity={strokeOpacity}
         className={className}
         {...popAttrs(order)}
       />
@@ -96,6 +120,7 @@ export function DrawRect({
       height={height}
       fill="none"
       strokeWidth={STROKE}
+      strokeOpacity={strokeOpacity}
       className={className}
       {...drawAttrs(order)}
     />
@@ -107,16 +132,22 @@ export function DrawCircle({
   cy,
   r,
   dashed,
+  faint,
+  fill,
   order = 0,
-  className = 'stroke-ivory',
+  className = 'stroke-current',
 }: {
   cx: number
   cy: number
   r: number
   dashed?: boolean
+  faint?: boolean
+  /** Fill class, for the one filled circle in a pictograph. */
+  fill?: string
   order?: number
   className?: string
 }) {
+  const strokeOpacity = faint ? 0.4 : 1
   if (dashed) {
     return (
       <circle
@@ -126,6 +157,7 @@ export function DrawCircle({
         fill="none"
         strokeWidth={STROKE}
         strokeDasharray={DASH}
+        strokeOpacity={strokeOpacity}
         className={className}
         {...popAttrs(order)}
       />
@@ -138,7 +170,8 @@ export function DrawCircle({
       r={r}
       fill="none"
       strokeWidth={STROKE}
-      className={className}
+      strokeOpacity={strokeOpacity}
+      className={cn(className, fill)}
       {...drawAttrs(order)}
     />
   )
@@ -149,7 +182,7 @@ export function Dot({
   cy,
   r = 4,
   order = 0,
-  className = 'fill-ivory',
+  className = 'fill-current',
 }: {
   cx: number
   cy: number
@@ -194,7 +227,8 @@ export function AxisLabel({ x, y, children }: { x: number; y: number; children: 
       x={x}
       y={y}
       textAnchor="middle"
-      className="fill-ivory/70"
+      className="fill-current"
+      fillOpacity={0.7}
       style={{ fontSize: 12, fontFamily: 'Manrope, sans-serif' }}
     >
       {children}

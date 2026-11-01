@@ -1,5 +1,12 @@
 import { useEffect } from 'react'
 import { Calculator } from '@/components/charts/calculator'
+import {
+  CompetitorFigure,
+  LateralFlowFigure,
+  PilotSplitFigure,
+  RevenueGapFigure,
+  SensitivityFigure,
+} from '@/components/charts/outline/figures'
 import { GlassdoorBars } from '@/components/charts/glassdoor-bars'
 import { StatsWithText } from '@/components/ui/stats-section-with-text'
 import XScroll from '@/components/ui/x-scroll'
@@ -97,8 +104,27 @@ export default function TheNumbers() {
         intro="The home page makes the argument in one pass. This is everything underneath it: the model you can move yourself, the full research, the costs and the objections."
       />
 
-      {/* --- The calculator --- */}
+      {/* --- The five charts --- */}
       <div className="mt-20">
+        <SubHeading>Five charts</SubHeading>
+        <p className="measure mt-5 text-slate">
+          The argument drawn out: the gap the firm has to close, how fast its rivals are
+          moving, where the pilot&rsquo;s money goes, what one year of lateral hiring puts at
+          risk, and how the model behaves if the effect is smaller than assumed.
+        </p>
+        <div className="mt-14 flex flex-col gap-20">
+          <RevenueGapFigure />
+          <CompetitorFigure />
+          <PilotSplitFigure />
+          <LateralFlowFigure />
+          <SensitivityFigure />
+        </div>
+      </div>
+
+      <Rule className="mt-24" />
+
+      {/* --- The calculator --- */}
+      <div className="mt-16">
         <SubHeading>Try the assumptions yourself</SubHeading>
         <p className="measure mt-5 text-slate">
           Move any slider and every figure updates. The model is deliberately blunt: it will

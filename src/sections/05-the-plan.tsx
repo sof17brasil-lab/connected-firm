@@ -25,11 +25,13 @@ export function ThePlan() {
         </Reveal>
       </div>
 
-      <div className="mt-12">
+      <div className="mt-10">
         <ProgramPanels programs={PROGRAMS} />
       </div>
 
-      <Rule className="mt-16 mb-10" />
+      {/* The cost block and the line that reads it belong to the same group,
+          so the rule between them is a small gap, not a section break. */}
+      <Rule className="mt-8 mb-6" />
       <WhatThisMeans>
         {'the whole year costs less than one failed hire, and every part of it can be stopped without drama.'}
       </WhatThisMeans>

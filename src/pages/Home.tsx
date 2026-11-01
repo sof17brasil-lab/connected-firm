@@ -28,9 +28,10 @@ export default function Home() {
 
       <ThePlan />
 
-      {/* Everything from here to the logistics line reads on navy. */}
+      {/* Everything from here to the logistics line reads on navy. The 04
+          opener lives inside BusinessCase, because the same block is both
+          the trigger for the swap and the heading that pins. */}
       <InvertZone>
-        <ChapterOpener number="04" question="What is it *worth*?" collage={false} compact />
         <BusinessCase />
         <HowIdMeasure />
       </InvertZone>

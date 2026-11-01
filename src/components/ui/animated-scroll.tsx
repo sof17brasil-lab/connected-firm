@@ -23,17 +23,17 @@ const easeOut = (t: number) => 1 - Math.pow(1 - t, 3)
  */
 function Stacked({ programs }: { programs: Program[] }) {
   return (
-    <div className="flex flex-col gap-14">
+    <div className="flex flex-col gap-20">
       {programs.map((program, i) => (
-        <div key={program.name} className="grid gap-8 md:grid-cols-2 md:items-center md:gap-14">
+        <div key={program.name} className="grid gap-6 md:grid-cols-2 md:items-center md:gap-14">
           <div>
             <p className="eyebrow text-sky-deep">
               Program {String(i + 1).padStart(2, '0')}
               {program.lead && ' · I would lead this'}
             </p>
-            <h3 className="mt-4 font-display text-3xl text-navy">{program.name}</h3>
-            <p className="measure mt-4 text-slate">{program.blurb}</p>
-            <p className="text-caption mt-4 text-muted-ink">
+            <h3 className="mt-6 font-display text-3xl text-navy">{program.name}</h3>
+            <p className="measure mt-6 text-slate">{program.blurb}</p>
+            <p className="text-caption mt-6 text-muted-ink">
               {program.calculation}
               <Footnote ids={program.sources} className="ml-1" />
               {program.estimate && <EstimateTag kind="estimate" className="ml-2" />}
@@ -153,10 +153,10 @@ export function ProgramPanels({ programs }: { programs: Program[] }) {
                     Program {String(i + 1).padStart(2, '0')}
                     {program.lead && ' · I would lead this'}
                   </p>
-                  <h3 className="mt-5 font-display text-[clamp(2rem,3.4vw,3rem)] leading-tight text-navy">
+                  <h3 className="mt-6 font-display text-[clamp(2rem,3.4vw,3rem)] leading-tight text-navy">
                     {program.name}
                   </h3>
-                  <p className="measure mt-5 text-slate">{program.blurb}</p>
+                  <p className="measure mt-6 text-slate">{program.blurb}</p>
                   <p className="text-caption mt-6 text-muted-ink">
                     {program.calculation}
                     <Footnote ids={program.sources} className="ml-1" />

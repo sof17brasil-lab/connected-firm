@@ -5,6 +5,7 @@ import { useGSAP } from '@gsap/react'
 import { Footnote } from '@/components/site/footnote'
 import { drawChart } from '@/components/charts/outline/primitives'
 import { useReducedMotion } from '@/hooks/use-reduced-motion'
+import { STAT_PHOTOS } from '@/lib/photos'
 import { cn } from '@/lib/utils'
 
 gsap.registerPlugin(ScrollTrigger, useGSAP)
@@ -19,7 +20,7 @@ export interface DeckCard {
   body: string
   caveat?: string
   sources: number[]
-  /** Card fill while real photographs are still to come. */
+  /** The colour behind the photograph, which shows while it loads. */
   tone: 'navy' | 'slate' | 'sky'
   chart: () => React.ReactNode
 }
@@ -29,6 +30,37 @@ const TONE_CLASS = {
   slate: 'bg-slate',
   sky: 'bg-sky-deep',
 } as const
+
+/**
+ * The face of a card: a black-and-white photograph under a navy scrim.
+ *
+ * The scrim is what lets the ivory outline chart and the value pills sit on
+ * top of any of the four pictures and stay readable. The tone underneath
+ * only shows while the photograph is still loading.
+ */
+function CardFace({
+  card,
+  className,
+  ...rest
+}: { card: DeckCard } & React.HTMLAttributes<HTMLDivElement>) {
+  const photo = STAT_PHOTOS[card.figure]
+  return (
+    <div className={cn('isolate overflow-hidden', TONE_CLASS[card.tone], className)} {...rest}>
+      {photo && (
+        <img
+          src={photo.src}
+          alt={photo.alt}
+          width={940}
+          height={1200}
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 -z-10 size-full object-cover"
+        />
+      )}
+      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-navy/70" />
+    </div>
+  )
+}
 
 /**
  * Move 2: one tall portrait card, pinned, that rises from the bottom of the
@@ -157,8 +189,11 @@ export function CardDeck({
       <div className="flex flex-col gap-16">
         {cards.map((card) => (
           <div key={card.figure} className="grid gap-8 md:grid-cols-2 md:items-center">
-            <div className={cn('aspect-[3/4] w-full max-w-[20rem]', TONE_CLASS[card.tone])}>
-              <div className="flex size-full items-center justify-center p-6">{card.chart()}</div>
+            <div className="relative aspect-[3/4] w-full max-w-[20rem]">
+              <CardFace card={card} className="absolute inset-0" />
+              <div className="relative flex size-full items-center justify-center p-6 text-ivory">
+                {card.chart()}
+              </div>
             </div>
             <div>
               <p className="font-display text-[clamp(1.8rem,3vw,2.6rem)] leading-tight text-navy">
@@ -190,10 +225,11 @@ export function CardDeck({
             style={{ opacity: 0 }}
           >
             {cards.map((card, i) => (
-              <div
+              <CardFace
                 key={`fill-${i}`}
+                card={card}
                 data-fill
-                className={cn('absolute inset-0', TONE_CLASS[card.tone])}
+                className="absolute inset-0"
                 style={{ clipPath: 'inset(100% 0% 0% 0%)' }}
               />
             ))}
@@ -202,7 +238,7 @@ export function CardDeck({
               <div
                 key={`chart-${i}`}
                 data-chart
-                className="absolute inset-0 flex items-center justify-center p-4 md:p-6"
+                className="absolute inset-0 flex items-center justify-center p-4 text-ivory md:p-6"
                 style={{ opacity: 0 }}
               >
                 <div className="w-full">{card.chart()}</div>

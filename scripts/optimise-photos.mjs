@@ -7,13 +7,17 @@ import sharp from 'sharp'
  * Everything is WebP; nothing is upscaled, and crops are centred on the
  * subject so no photo is ever stretched.
  *
- *   collage  800px square   small detail shots in the collages
- *   card    1200px wide     programme cards
- *   full    2400px wide     the growing picture
+ *   collage  800px square     small detail shots in the collages
+ *   card    1200px wide       programme cards
+ *   stat     940x1200 portrait the four stat cards, forced to black and white
+ *   full    2400px wide       the growing picture
  */
 const SRC = '_source/photos'
 const OUT = 'public/images/photos'
 const SIZES = { collage: 800, card: 1200 }
+
+/** The stat card frame is 58vh wide by 74vh tall, so the crop is portrait. */
+const STAT = { width: 940, height: 1200 }
 
 const FROM = {
   justice: 'albert-stoynov-kIM48Mpp9iY-unsplash.jpg',
@@ -31,13 +35,13 @@ const FROM = {
 }
 
 const PLAN = {
-  justice: ['collage'],
+  justice: ['collage', 'stat'],
   steps: ['collage', 'card'],
-  atrium: ['collage'],
+  atrium: ['collage', 'stat'],
   'skyline-window': ['collage', 'card'],
   reception: ['collage', 'card'],
-  staircase: ['collage', 'card'],
-  louvres: ['collage'],
+  staircase: ['collage', 'card', 'stat'],
+  louvres: ['collage', 'stat'],
   writing: ['collage', 'card'],
   'long-table': ['collage', 'card'],
   signing: ['collage', 'card'],
@@ -56,12 +60,19 @@ for (const [slug, sizes] of Object.entries(PLAN)) {
     continue
   }
   for (const size of sizes) {
-    const width = SIZES[size]
     const pipeline = sharp(path.join(SRC, file)).rotate()
-    const resized =
-      size === 'collage'
-        ? pipeline.resize(width, width, { fit: 'cover', position: 'attention' })
-        : pipeline.resize({ width, withoutEnlargement: true })
+    let resized
+    if (size === 'collage') {
+      resized = pipeline.resize(SIZES.collage, SIZES.collage, { fit: 'cover', position: 'attention' })
+    } else if (size === 'stat') {
+      // Portrait crop for the card frame, and black and white whatever the
+      // source, so the four stat cards read as one set.
+      resized = pipeline
+        .resize(STAT.width, STAT.height, { fit: 'cover', position: 'attention' })
+        .greyscale()
+    } else {
+      resized = pipeline.resize({ width: SIZES[size], withoutEnlargement: true })
+    }
     const out = path.join(OUT, `${slug}-${size}.webp`)
     const info = await resized.webp({ quality: 72 }).toFile(out)
     made.push([out, info.width, info.height, Math.round(info.size / 1024)])

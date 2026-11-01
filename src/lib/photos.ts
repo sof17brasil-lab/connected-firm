@@ -8,7 +8,7 @@
  */
 const base = import.meta.env.BASE_URL
 
-const photo = (slug: string, size: 'collage' | 'card') =>
+const photo = (slug: string, size: 'collage' | 'card' | 'stat') =>
   `${base}images/photos/${slug}-${size}.webp`
 
 /** Small square detail shots, for the drifting collage pieces. */
@@ -44,6 +44,30 @@ export const PROGRAM_PHOTOS: Record<string, { src: string; alt: string }> = {
   'Client Roundtables': {
     src: photo('signing', 'card'),
     alt: 'Two people signing a document across a desk.',
+  },
+}
+
+/**
+ * One photograph per stat card, keyed by the figure it sits behind. All four
+ * are black and white, and the card lays a navy scrim over them so the
+ * outline chart and the figure stay readable.
+ */
+export const STAT_PHOTOS: Record<string, { src: string; alt: string }> = {
+  '$4.04M': {
+    src: photo('justice', 'stat'),
+    alt: 'A statue of Justice holding scales beneath a glass and steel roof.',
+  },
+  '30-38%': {
+    src: photo('staircase', 'stat'),
+    alt: 'A blurred crowd moving down a wide stone staircase.',
+  },
+  '61%': {
+    src: photo('atrium', 'stat'),
+    alt: 'A man standing alone on his phone outside a glass office building.',
+  },
+  '18% vs 61%': {
+    src: photo('louvres', 'stat'),
+    alt: 'A man standing beside an empty bench in front of a ribbed wall.',
   },
 }
 
