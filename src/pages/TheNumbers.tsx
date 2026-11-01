@@ -1,15 +1,5 @@
 import { useEffect } from 'react'
-import { Link } from 'react-router-dom'
 import { Calculator } from '@/components/charts/calculator'
-import {
-  CostSplitChart,
-  Drawn,
-  GrowthRankingChart,
-  LateralFlowChart,
-  RevenueGapChart,
-  SensitivityChart,
-} from '@/components/charts/analysis-charts'
-import { lateralSteps } from '@/lib/analysis'
 import { GlassdoorBars } from '@/components/charts/glassdoor-bars'
 import { StatsWithText } from '@/components/ui/stats-section-with-text'
 import XScroll from '@/components/ui/x-scroll'
@@ -106,57 +96,6 @@ export default function TheNumbers() {
         title="The workings behind the proposal."
         intro="The home page makes the argument in one pass. This is everything underneath it: the model you can move yourself, the full research, the costs and the objections."
       />
-
-      {/* --- The charts --- */}
-      <div className="mt-20 flex flex-col gap-20">
-        {[
-          {
-            take: 'At the pace of the last three years, 2028 lands short of the goal.',
-            chart: <RevenueGapChart />,
-            source: 'Revenue 2023-2025 [1][2]; $5bn goal [3]; projection and shortfall are my calculation.',
-          },
-          {
-            take: 'Eight comparable firms grew faster in 2025.',
-            chart: <GrowthRankingChart />,
-            source: '2025 revenue growth, Am Law 100 [4]. Big Law average [2]. Kirkland is not in the source.',
-          },
-          {
-            take: 'Two thirds of the pilot goes to the two programs aimed at retention.',
-            chart: <CostSplitChart />,
-            source: 'Program costs as calculated in Section 3 [28]. The ~15 NY partners figure is my estimate.',
-          },
-          {
-            take: 'One year of lateral hiring puts tens of millions at risk.',
-            chart: <LateralFlowChart steps={lateralSteps()} />,
-            source: 'Hires [1][5]; failure rate [6]; cost per failed partner [7]. Illustrative scenario.',
-          },
-          {
-            take: 'Even a quarter point of lower attrition is worth far more than the pilot costs.',
-            chart: <SensitivityChart />,
-            source: 'Calculated with the model below, at its default assumptions. My estimate.',
-          },
-        ].map((item) => (
-          <figure key={item.take}>
-            <h3 className="measure font-display text-[clamp(1.3rem,2.1vw,1.9rem)] leading-snug text-navy">
-              {item.take}
-            </h3>
-            <Drawn>
-              <div className="mt-8">{item.chart}</div>
-            </Drawn>
-            <figcaption className="text-caption mt-6 text-muted-ink">{item.source}</figcaption>
-          </figure>
-        ))}
-      </div>
-
-      <p className="text-caption mt-10 text-muted-ink">
-        Charts built from public sources and my own estimates; method on the{' '}
-        <Link to="/methodology" className="text-sky-deep underline-offset-2 hover:underline">
-          Methodology page
-        </Link>
-        .
-      </p>
-
-      <Rule className="mt-20" />
 
       {/* --- The calculator --- */}
       <div className="mt-20">

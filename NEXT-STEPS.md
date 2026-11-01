@@ -9,23 +9,6 @@ Detail lives on /the-numbers, /methodology, /culture-extras, /sources.
 
 56 tests pass (`npm test`). Build is clean (`npm run build`).
 
-## Stopped mid-round (usage limit)
-
-Done in the last round: the 2028 opener (smaller square, heading lifted onto
-its own layer above the photo, staged standfirst), the programs rebuilt as
-four square cards running a diagonal with a line-by-line closing paragraph,
-"What is it worth?" as a midnight panel that rises inset and widens, the
-skyline redrawn as ONE continuous stroke, and five outline charts on
-/the-numbers with tests tying them to data.ts and the calculator.
-
-NOT done, still outstanding from that round:
-- Item 4, the spacing pass: one consistent scale (120px desktop / 80px
-  mobile), remove leftover spacers and pin-spacing at the ends of pinned
-  sections, and list each gap before and after.
-- None of the new moves has been checked in a browser. The skyline in
-  particular should first be rendered with `<Skyline still />` to confirm the
-  whole shape is there before trusting the animation.
-
 ## Still to do
 
 **Design, from the last review**
