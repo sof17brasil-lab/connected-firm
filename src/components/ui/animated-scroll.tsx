@@ -47,8 +47,12 @@ function Stacked({ programs }: { programs: Program[] }) {
 }
 
 /**
- * The cost block: a photograph under a navy scrim heavy enough that ivory
- * type stays readable whatever the picture behind it.
+ * The cost block: a photograph under a navy scrim.
+ *
+ * The scrim is light enough to leave the photograph visible, and the
+ * gradient does the heavy lifting only at the bottom, where the figure and
+ * its label actually sit. A flat scrim dark enough for the type turned
+ * every card into a navy rectangle.
  */
 function CostBlock({
   program,
@@ -71,10 +75,14 @@ function CostBlock({
           className="absolute inset-0 -z-10 size-full object-cover"
         />
       )}
-      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-navy/78" />
+      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-navy/30" />
       <div
         aria-hidden="true"
-        className="absolute inset-0 -z-10 bg-gradient-to-t from-midnight/85 to-transparent"
+        className="absolute inset-0 -z-10"
+        style={{
+          backgroundImage:
+            'linear-gradient(to top, rgba(9,20,40,0.95) 0%, rgba(9,20,40,0.72) 30%, rgba(9,20,40,0) 65%)',
+        }}
       />
       <p
         className={cn(

@@ -1,7 +1,4 @@
-import { Collage } from '@/components/site/collage'
 import { Reveal } from '@/components/site/reveal'
-import { buildCollage } from '@/lib/collage'
-import { COLLAGE_PHOTOS } from '@/lib/photos'
 import { cn } from '@/lib/utils'
 
 export interface ChapterOpenerProps {
@@ -9,11 +6,8 @@ export interface ChapterOpenerProps {
   number: string
   /** The question, with the emphasised word wrapped in asterisks. */
   question: string
-  side?: 'left' | 'right'
   dark?: boolean
   id?: string
-  /** Opener 06 is deliberately quiet, with no collage. */
-  collage?: boolean
   /** A shorter opener, for the ones that are not act breaks. */
   compact?: boolean
 }
@@ -45,32 +39,26 @@ function Question({ text, dark, compact }: { text: string; dark: boolean; compac
 }
 
 /**
- * Full-screen chapter opener: a bracketed number over a centred question,
- * with the collage gathering and spreading around it as you scroll.
+ * Chapter opener: a bracketed number over a centred question, and nothing
+ * else. The question carries the section on its own.
  */
 export function ChapterOpener({
   number,
   question,
-  side = 'left',
   dark = false,
   id,
-  collage = true,
   compact = false,
 }: ChapterOpenerProps) {
-  const pieces = buildCollage(11, side)
-
   return (
     <section
       id={id}
       aria-label={`Chapter ${number}`}
       className={cn(
-        'relative isolate flex items-center overflow-hidden',
+        'relative flex items-center',
         compact ? 'min-h-[34vh] pb-2 pt-10' : 'min-h-[62vh]',
       )}
     >
-      {collage && <Collage pieces={pieces} photos={COLLAGE_PHOTOS} />}
-
-      <div className="relative mx-auto w-full max-w-3xl px-6">
+      <div className="mx-auto w-full max-w-3xl px-6">
         <Reveal>
           <p
             className={cn(

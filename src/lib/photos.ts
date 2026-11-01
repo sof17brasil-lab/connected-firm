@@ -8,24 +8,8 @@
  */
 const base = import.meta.env.BASE_URL
 
-const photo = (slug: string, size: 'collage' | 'card' | 'stat') =>
+const photo = (slug: string, size: 'card' | 'stat') =>
   `${base}images/photos/${slug}-${size}.webp`
-
-/** Small square detail shots, for the drifting collage pieces. */
-export const COLLAGE_PHOTOS = [
-  photo('louvres', 'collage'),
-  photo('writing', 'collage'),
-  photo('atrium', 'collage'),
-  photo('crossing', 'collage'),
-  photo('signing', 'collage'),
-  photo('staircase', 'collage'),
-  photo('justice', 'collage'),
-  photo('concourse', 'collage'),
-  photo('long-table', 'collage'),
-  photo('skyline-window', 'collage'),
-  photo('reception', 'collage'),
-  photo('steps', 'collage'),
-]
 
 /** One photograph per programme, in the order the programmes are listed. */
 export const PROGRAM_PHOTOS: Record<string, { src: string; alt: string }> = {
@@ -38,12 +22,12 @@ export const PROGRAM_PHOTOS: Record<string, { src: string; alt: string }> = {
     alt: 'A crowded room at an evening reception.',
   },
   'Global Table': {
-    src: photo('concourse', 'card'),
-    alt: 'People crossing a busy concourse, seen from above.',
+    src: photo('earth', 'card'),
+    alt: 'The earth at night from orbit, city lights spread across it.',
   },
   'Client Roundtables': {
-    src: photo('signing', 'card'),
-    alt: 'Two people signing a document across a desk.',
+    src: photo('dinner', 'card'),
+    alt: 'A long table laid for dinner, plates of food down the middle.',
   },
 }
 
@@ -54,8 +38,8 @@ export const PROGRAM_PHOTOS: Record<string, { src: string; alt: string }> = {
  */
 export const STAT_PHOTOS: Record<string, { src: string; alt: string }> = {
   '$4.04M': {
-    src: photo('justice', 'stat'),
-    alt: 'A statue of Justice holding scales beneath a glass and steel roof.',
+    src: photo('suit', 'stat'),
+    alt: 'A man in a suit fastening his jacket button.',
   },
   '30-38%': {
     src: photo('staircase', 'stat'),
