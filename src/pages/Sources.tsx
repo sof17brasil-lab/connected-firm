@@ -5,6 +5,7 @@ import { PageHeader } from '@/components/site/page-header'
 import { Reveal } from '@/components/site/reveal'
 import { Band } from '@/components/site/section'
 import { SOURCES, sourceYearLabel } from '@/lib/sources'
+import { PHOTO_CREDIT } from '@/lib/photos'
 
 /**
  * Every figure on the site footnotes back to a numbered entry here.
@@ -70,6 +71,11 @@ export default function SourcesPage() {
           </Reveal>
         ))}
       </ol>
+
+      <p className="text-caption mt-10 text-muted-ink">
+        {PHOTO_CREDIT} They illustrate the argument and do not show White &amp; Case, its
+        offices or its people.
+      </p>
     </Band>
   )
 }

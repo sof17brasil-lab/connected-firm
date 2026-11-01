@@ -20,8 +20,18 @@ function LenisGsapSync() {
   useEffect(() => {
     if (!lenis) return
 
-    // ScrollTrigger reads scroll position from Lenis, not from the window.
+    /*
+     * ScrollTrigger is driven from Lenis, and also straight from the window.
+     *
+     * Lenis alone is not enough: if its scroll event stops reaching us for
+     * any reason, every scrubbed effect on the site silently freezes while
+     * the page still scrolls, which is almost impossible to spot from the
+     * code. The native listener is the floor under that — updating twice in
+     * a frame is harmless, ScrollTrigger coalesces it.
+     */
     lenis.on('scroll', ScrollTrigger.update)
+    const onNativeScroll = () => ScrollTrigger.update()
+    window.addEventListener('scroll', onNativeScroll, { passive: true })
 
     // gsap.ticker drives Lenis: `time` is in seconds, Lenis wants milliseconds.
     const advance = (time: number) => lenis.raf(time * 1000)
@@ -48,6 +58,7 @@ function LenisGsapSync() {
       window.clearTimeout(afterMount)
       window.clearTimeout(afterSettle)
       window.removeEventListener('load', refresh)
+      window.removeEventListener('scroll', onNativeScroll)
       lenis.off('scroll', ScrollTrigger.update)
       gsap.ticker.remove(advance)
       gsap.ticker.lagSmoothing(500, 33)

@@ -1,109 +1,179 @@
-import { useRef } from 'react'
+import { useCallback, useEffect, useRef, useState } from 'react'
 import { useScrollScrub } from '@/hooks/use-scroll-scrub'
-import { cn } from '@/lib/utils'
 
 /**
- * An original single-line New York skyline, drawn rather than traced.
+ * The skyline as one continuous pen line that leaves the "N" of New York.
  *
- * Split into separate paths rather than one `d` with several subpaths: each
- * gets its own `pathLength="1"`, so each one's dash offset runs cleanly from
- * 1 to 0 and no part of the drawing can be left unfinished. They draw left to
- * right, so it reads as one continuous scribble.
+ * The line starts at the foot of the N's left stroke, drops below the
+ * sentence, turns, and sketches the skyline left to right. It is a single
+ * stroked path with `fill="none"` and exactly one `M`: a second subpath
+ * would restart the line and leave that piece undrawn.
  *
- * The baseline is continuous by construction — every segment below starts on
- * the point the previous one ended on, which `skyline.test.ts` asserts.
+ * The N's position is measured from the DOM rather than guessed, and
+ * remeasured whenever the text rewraps, so the join holds at any width.
  */
-export interface Segment {
-  /** Where the stroke begins, for the continuity check. */
-  from: [number, number]
-  /** Where it ends. */
-  to: [number, number]
-  d: string
-  /** Crown details float above the roofline and join nothing. */
-  detached?: boolean
-}
 
-export const SKYLINE: Segment[] = [
-  {
-    from: [0, 150],
-    to: [300, 150],
-    d: 'M 0 150 L 46 150 L 46 118 L 74 118 L 74 150 L 104 150 L 104 96 L 112 88 L 120 96 L 120 150 L 150 150 L 150 124 L 186 124 L 186 150 L 208 150 L 208 72 L 214 72 L 214 56 L 216 56 L 216 72 L 222 72 L 222 150 L 248 150 L 248 110 L 278 110 L 278 150 L 300 150',
-  },
-  {
-    // Empire State: three setbacks into a tapered mast.
-    from: [300, 150],
-    to: [386, 150],
-    d: 'M 300 150 L 300 92 L 312 92 L 312 64 L 320 64 L 320 44 L 328 44 L 328 22 L 330 22 L 330 8 L 332 8 L 332 22 L 334 22 L 334 44 L 342 44 L 342 64 L 350 64 L 350 92 L 362 92 L 362 150 L 386 150',
-  },
-  {
-    from: [386, 150],
-    to: [436, 150],
-    d: 'M 386 150 L 386 116 L 412 116 L 412 150 L 436 150',
-  },
-  {
-    // Chrysler: up one side, over the crown, back down the other.
-    from: [436, 150],
-    to: [468, 150],
-    d: 'M 436 150 L 436 78 Q 452 60 468 78 L 468 150',
-  },
-  { from: [440, 72], to: [464, 72], d: 'M 440 72 Q 452 56 464 72', detached: true },
-  { from: [444, 62], to: [460, 62], d: 'M 444 62 Q 452 50 460 62', detached: true },
-  { from: [452, 50], to: [452, 24], d: 'M 452 50 L 452 24', detached: true },
-  {
-    from: [468, 150],
-    to: [640, 150],
-    d: 'M 468 150 L 498 150 L 498 104 L 536 104 L 536 150 L 560 150 L 560 130 L 578 130 L 578 112 L 598 112 L 598 150 L 640 150',
-  },
+/** Skyline in normalised units: x across the run, y up from the baseline. */
+const SHAPE: Array<[number, number]> = [
+  [0.00, 0.00], [0.07, 0.00], [0.07, 0.22], [0.11, 0.22], [0.11, 0.00],
+  [0.15, 0.00], [0.15, 0.40], [0.168, 0.46], [0.186, 0.40], [0.186, 0.00],
+  [0.22, 0.00], [0.22, 0.18], [0.28, 0.18], [0.28, 0.00],
+  [0.31, 0.00], [0.31, 0.55], [0.322, 0.55], [0.322, 0.70], [0.328, 0.70],
+  [0.328, 0.55], [0.34, 0.55], [0.34, 0.00],
+  [0.38, 0.00], [0.38, 0.28], [0.43, 0.28], [0.43, 0.00],
+  // Empire State: setbacks up, mast, setbacks down.
+  [0.47, 0.00], [0.47, 0.40], [0.49, 0.40], [0.49, 0.60], [0.503, 0.60],
+  [0.503, 0.74], [0.516, 0.74], [0.516, 0.90], [0.52, 0.90], [0.52, 1.00],
+  [0.524, 1.00], [0.524, 0.90], [0.528, 0.90], [0.528, 0.74], [0.541, 0.74],
+  [0.541, 0.60], [0.554, 0.60], [0.554, 0.40], [0.574, 0.40], [0.574, 0.00],
+  [0.615, 0.00], [0.615, 0.24], [0.657, 0.24], [0.657, 0.00],
 ]
 
-export function Skyline({ className }: { className?: string }) {
-  const ref = useRef<HTMLDivElement>(null)
-  const paths = useRef<SVGPathElement[]>([])
+/** The Chrysler crown, as curves, then the right flank back to the baseline. */
+const CROWN_START: [number, number] = [0.70, 0.00]
+const RIGHT: Array<[number, number]> = [
+  [0.79, 0.00], [0.79, 0.33], [0.85, 0.33], [0.85, 0.00],
+  [0.885, 0.00], [0.885, 0.14], [0.915, 0.14], [0.915, 0.26],
+  [0.947, 0.26], [0.947, 0.00], [1.00, 0.00],
+]
+
+export interface Anchor {
+  /** Where the pen leaves the letter, in overlay pixels. */
+  x: number
+  y: number
+}
+
+export function buildPath(
+  anchor: Anchor,
+  baselineY: number,
+  right: number,
+  height: number,
+): string {
+  const startX = Math.max(anchor.x, 2)
+  const run = Math.max(right - startX, 120)
+  const px = (nx: number) => startX + nx * run
+  const py = (ny: number) => baselineY - ny * height
+
+  const parts = [`M ${anchor.x.toFixed(1)} ${anchor.y.toFixed(1)}`]
+  // Down from the letter, then the turn onto the baseline.
+  parts.push(`L ${startX.toFixed(1)} ${(baselineY - height * 0.06).toFixed(1)}`)
+  parts.push(`Q ${startX.toFixed(1)} ${baselineY.toFixed(1)} ${(startX + height * 0.06).toFixed(1)} ${baselineY.toFixed(1)}`)
+
+  for (const [nx, ny] of SHAPE) {
+    parts.push(`L ${px(nx).toFixed(1)} ${py(ny).toFixed(1)}`)
+  }
+
+  // Chrysler: up the flank, stepped arcs to the needle, back down.
+  const cx = px(CROWN_START[0])
+  parts.push(`L ${cx.toFixed(1)} ${baselineY.toFixed(1)}`)
+  parts.push(`L ${cx.toFixed(1)} ${py(0.42).toFixed(1)}`)
+  parts.push(`Q ${px(0.705).toFixed(1)} ${py(0.56).toFixed(1)} ${px(0.722).toFixed(1)} ${py(0.64).toFixed(1)}`)
+  parts.push(`Q ${px(0.732).toFixed(1)} ${py(0.74).toFixed(1)} ${px(0.742).toFixed(1)} ${py(0.82).toFixed(1)}`)
+  parts.push(`L ${px(0.744).toFixed(1)} ${py(1.0).toFixed(1)}`)
+  parts.push(`L ${px(0.747).toFixed(1)} ${py(1.0).toFixed(1)}`)
+  parts.push(`L ${px(0.749).toFixed(1)} ${py(0.82).toFixed(1)}`)
+  parts.push(`Q ${px(0.759).toFixed(1)} ${py(0.74).toFixed(1)} ${px(0.769).toFixed(1)} ${py(0.64).toFixed(1)}`)
+  parts.push(`Q ${px(0.786).toFixed(1)} ${py(0.56).toFixed(1)} ${px(0.79).toFixed(1)} ${py(0.42).toFixed(1)}`)
+  parts.push(`L ${px(0.79).toFixed(1)} ${baselineY.toFixed(1)}`)
+
+  for (const [nx, ny] of RIGHT) {
+    parts.push(`L ${px(nx).toFixed(1)} ${py(ny).toFixed(1)}`)
+  }
+
+  return parts.join(' ')
+}
+
+export function Skyline({
+  /** Ref to the span wrapping the letter the line comes out of. */
+  letterRef,
+  /** Render it finished, with no animation, to check the shape. */
+  still = false,
+  className,
+}: {
+  letterRef: React.RefObject<HTMLElement | null>
+  still?: boolean
+  className?: string
+}) {
+  const host = useRef<HTMLDivElement>(null)
+  const pathRef = useRef<SVGPathElement>(null)
+  const [box, setBox] = useState({ w: 0, h: 0, d: '' })
+
+  const measure = useCallback(() => {
+    const el = host.current
+    const letter = letterRef.current
+    if (!el) return
+
+    const rect = el.getBoundingClientRect()
+    const height = Math.max(Math.min(rect.width * 0.17, 230), 90)
+    const baselineY = rect.height - 8
+
+    // Where the letter sits, in this overlay's own coordinates.
+    const anchor = letter
+      ? (() => {
+          const l = letter.getBoundingClientRect()
+          return { x: l.left - rect.left + 1, y: l.bottom - rect.top - 2 }
+        })()
+      : { x: 2, y: 0 }
+
+    setBox({
+      w: rect.width,
+      h: rect.height,
+      d: buildPath(anchor, baselineY, rect.width, height),
+    })
+  }, [letterRef])
+
+  useEffect(() => {
+    measure()
+    const ro = new ResizeObserver(measure)
+    if (host.current) ro.observe(host.current)
+    window.addEventListener('resize', measure)
+    const fonts = (document as Document & { fonts?: FontFaceSet }).fonts
+    fonts?.ready.then(measure)
+    return () => {
+      ro.disconnect()
+      window.removeEventListener('resize', measure)
+    }
+  }, [measure])
 
   useScrollScrub(
-    ref,
+    host,
     (p) => {
-      const nodes = paths.current
-      nodes.forEach((node, i) => {
-        if (!node) return
-        // Overlapping slices: each segment starts before the last finishes,
-        // so the line keeps moving instead of stepping.
-        const slice = 1 / nodes.length
-        const start = i * slice * 0.86
-        const local = Math.min(Math.max((p - start) / slice, 0), 1)
-        node.setAttribute('stroke-dashoffset', String(1 - local))
-      })
+      if (still) return
+      pathRef.current?.setAttribute('stroke-dashoffset', String(1 - p))
     },
-    { start: 'top bottom', end: 'top 58%', scrub: 0.7 },
+    { start: 'top 95%', end: 'bottom 62%', scrub: 0.7 },
   )
 
   return (
-    <div ref={ref} className={cn('w-full', className)} aria-hidden="true">
-      <svg
-        viewBox="0 0 640 160"
-        preserveAspectRatio="xMidYMax meet"
-        className="h-[clamp(9rem,22vw,20rem)] w-full"
-        fill="none"
-      >
-        {SKYLINE.map((segment, i) => (
+    <div
+      ref={host}
+      aria-hidden="true"
+      className={className}
+      style={{ position: 'absolute', inset: 0, pointerEvents: 'none' }}
+    >
+      {box.w > 0 && (
+        <svg
+          width={box.w}
+          height={box.h}
+          viewBox={`0 0 ${box.w} ${box.h}`}
+          className="overflow-visible"
+          fill="none"
+        >
           <path
-            key={i}
-            ref={(node) => {
-              if (node) paths.current[i] = node
-            }}
-            d={segment.d}
+            ref={pathRef}
+            d={box.d}
+            fill="none"
             stroke="var(--color-navy)"
-            strokeOpacity={0.32}
+            strokeOpacity={0.34}
             strokeWidth="1.5"
             strokeLinecap="round"
             strokeLinejoin="round"
-            vectorEffect="non-scaling-stroke"
             pathLength={1}
             strokeDasharray="1 1"
-            strokeDashoffset={0}
+            strokeDashoffset={still ? 0 : 1}
           />
-        ))}
-      </svg>
+        </svg>
+      )}
     </div>
   )
 }

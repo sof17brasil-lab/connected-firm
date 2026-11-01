@@ -6,6 +6,7 @@ import { EstimateTag, Footnote } from '@/components/site/footnote'
 import { useReducedMotion } from '@/hooks/use-reduced-motion'
 import { useScrollScrub } from '@/hooks/use-scroll-scrub'
 import type { Program } from '@/lib/data'
+import { PROGRAM_PHOTOS } from '@/lib/photos'
 import { cn } from '@/lib/utils'
 
 const clamp01 = (n: number) => (n < 0 ? 0 : n > 1 ? 1 : n)
@@ -38,12 +39,52 @@ function Stacked({ programs }: { programs: Program[] }) {
               {program.estimate && <EstimateTag kind="estimate" className="ml-2" />}
             </p>
           </div>
-          <div className="flex aspect-[4/3] max-h-[42vh] flex-col justify-end bg-navy p-8">
-            <p className="font-display text-5xl leading-none text-ivory">{program.costLabel}</p>
-            <p className="eyebrow mt-3 text-sky">Cost for the year</p>
-          </div>
+          <CostBlock program={program} className="max-h-[42vh] p-8" />
         </div>
       ))}
+    </div>
+  )
+}
+
+/**
+ * The cost block: a photograph under a navy scrim heavy enough that ivory
+ * type stays readable whatever the picture behind it.
+ */
+function CostBlock({
+  program,
+  className,
+  big,
+}: {
+  program: Program
+  className?: string
+  big?: boolean
+}) {
+  const photo = PROGRAM_PHOTOS[program.name]
+  return (
+    <div className={cn('relative isolate flex aspect-[4/3] flex-col justify-end overflow-hidden bg-navy', className)}>
+      {photo && (
+        <img
+          src={photo.src}
+          alt={photo.alt}
+          loading="lazy"
+          decoding="async"
+          className="absolute inset-0 -z-10 size-full object-cover"
+        />
+      )}
+      <div aria-hidden="true" className="absolute inset-0 -z-10 bg-navy/78" />
+      <div
+        aria-hidden="true"
+        className="absolute inset-0 -z-10 bg-gradient-to-t from-midnight/85 to-transparent"
+      />
+      <p
+        className={cn(
+          'font-display leading-none text-ivory',
+          big ? 'text-[clamp(2.6rem,5vw,4.5rem)]' : 'text-5xl',
+        )}
+      >
+        {program.costLabel}
+      </p>
+      <p className="eyebrow mt-4 text-sky">Cost for the year</p>
     </div>
   )
 }
@@ -124,12 +165,7 @@ export function ProgramPanels({ programs }: { programs: Program[] }) {
                 </div>
 
                 <div data-panel-block>
-                  <div className="flex aspect-[4/3] max-h-[46vh] flex-col justify-end bg-navy p-8 md:p-10">
-                    <p className="font-display text-[clamp(2.6rem,5vw,4.5rem)] leading-none text-ivory">
-                      {program.costLabel}
-                    </p>
-                    <p className="eyebrow mt-4 text-sky">Cost for the year</p>
-                  </div>
+                  <CostBlock program={program} className="max-h-[46vh] p-8 md:p-10" big />
                 </div>
               </div>
             </div>

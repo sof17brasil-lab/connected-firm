@@ -7,6 +7,7 @@ import { ThePlan } from '@/sections/05-the-plan'
 import { BusinessCase } from '@/sections/06-business-case'
 import { HowIdMeasure } from '@/sections/07-how-id-measure'
 import { Closing } from '@/sections/10-closing'
+import { InvertZone } from '@/components/site/invert-zone'
 
 /**
  * One pass through the argument: there is a problem, it costs real money,
@@ -22,15 +23,18 @@ export default function Home() {
       {/* Opener 01 and the Section 1 numbers are one continuous move. */}
       <WhyNow />
 
-      <ChapterOpener number="02" question="What keeps *people* at a firm?" collage={false} />
+      <ChapterOpener number="02" question="What keeps *people* at a firm?" compact />
       <TheProblem />
 
       <ThePlan />
 
-      <ChapterOpener number="04" question="What is it *worth*?" collage={false} compact />
-      <BusinessCase />
+      {/* Everything from here to the logistics line reads on navy. */}
+      <InvertZone>
+        <ChapterOpener number="04" question="What is it *worth*?" collage={false} compact />
+        <BusinessCase />
+        <HowIdMeasure />
+      </InvertZone>
 
-      <HowIdMeasure />
       <Closing />
     </>
   )

@@ -2,6 +2,7 @@ import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import SmoothScroll from '@/components/ui/smooth-scroll'
 import { ReadingProgress } from '@/components/site/reading-progress'
 import { PageBackground } from '@/components/site/page-background'
+import { InvertProvider } from '@/components/site/invert-zone'
 import { Loader } from '@/components/site/loader'
 import { SiteNav } from '@/components/site/nav'
 import { DotNav } from '@/components/site/dot-nav'
@@ -19,6 +20,7 @@ export default function App() {
     <BrowserRouter basename={import.meta.env.BASE_URL}>
       <SmoothScroll>
         <CardCounterProvider>
+          <InvertProvider>
           <PageBackground />
           <Loader />
           <ReadingProgress />
@@ -35,6 +37,7 @@ export default function App() {
           </main>
           <CardCounter />
           <SiteFooter />
+          </InvertProvider>
         </CardCounterProvider>
       </SmoothScroll>
     </BrowserRouter>

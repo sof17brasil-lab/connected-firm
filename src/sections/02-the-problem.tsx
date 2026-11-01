@@ -80,7 +80,7 @@ export function TheProblem() {
 
   return (
     <section id="the-problem" className="relative">
-      <Band className="pb-4 pt-16 md:pb-6 md:pt-20">
+      <Band className="pb-4 pt-2 md:pb-6 md:pt-4">
         <Reveal>
           <div className="flex flex-col gap-5 md:flex-row md:items-end md:justify-between md:gap-12">
             <h2 className="text-h2 max-w-2xl text-navy">

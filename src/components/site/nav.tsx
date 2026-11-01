@@ -7,15 +7,19 @@ import { SECTIONS } from '@/lib/sections'
 import { scrollToSection } from '@/hooks/use-active-section'
 import { EASE } from '@/components/site/reveal'
 import { CONTACT_EMAIL } from '@/lib/data'
+import { useInverted } from '@/components/site/invert-zone'
 import { cn } from '@/lib/utils'
 
 /** The wordmark plus three colour bars, echoing the loader. */
-function Mark() {
+function Mark({ inverted }: { inverted: number }) {
+  const on = inverted > 0.5
   return (
     <Link to="/" className="flex flex-col items-center gap-1.5" aria-label="The Connected Firm, home">
-      <span className="font-display text-xl leading-none text-navy">TCF</span>
+      <span className={cn('font-display text-xl leading-none', on ? 'text-ivory' : 'text-navy')}>
+        TCF
+      </span>
       <span className="flex gap-1">
-        <span className="block h-[3px] w-3 bg-navy" />
+        <span className={cn('block h-[3px] w-3', on ? 'bg-ivory' : 'bg-navy')} />
         <span className="block h-[3px] w-3 bg-sky" />
         <span className="block h-[3px] w-3 bg-stone" />
       </span>
@@ -125,6 +129,8 @@ function MenuPanel({ open, onClose }: { open: boolean; onClose: () => void }) {
 export function SiteNav() {
   const [open, setOpen] = useState(false)
   const [scrolled, setScrolled] = useState(false)
+  const inverted = useInverted()
+  const on = inverted > 0.5
 
   useEffect(() => {
     const onScroll = () => setScrolled(window.scrollY > 120)
@@ -139,7 +145,7 @@ export function SiteNav() {
         <div className="mx-auto flex w-full max-w-[1400px] items-start justify-between px-6 py-5 md:px-10">
           <div className="w-24" />
           <div className="pointer-events-auto">
-            <Mark />
+            <Mark inverted={inverted} />
           </div>
 
           <div className="flex w-24 justify-end">
@@ -152,16 +158,22 @@ export function SiteNav() {
             >
               <span
                 className={cn(
-                  'eyebrow hidden text-navy transition-opacity duration-500 md:inline',
+                  'eyebrow hidden transition-opacity duration-500 md:inline',
+                  on ? 'text-ivory' : 'text-navy',
                   scrolled ? 'opacity-100' : 'opacity-0',
                 )}
               >
                 Menu
               </span>
-              <span className="flex size-11 items-center justify-center rounded-full bg-ivory/90 shadow-sm backdrop-blur-sm transition-colors hover:bg-ivory">
+              <span
+                className={cn(
+                  'flex size-11 items-center justify-center rounded-full shadow-sm backdrop-blur-sm transition-colors',
+                  on ? 'bg-navy/80 hover:bg-navy' : 'bg-ivory/90 hover:bg-ivory',
+                )}
+              >
                 <span className="flex flex-col gap-[3px]">
-                  <span className="block h-px w-4 bg-navy" />
-                  <span className="block h-px w-4 bg-navy" />
+                  <span className={cn('block h-px w-4', on ? 'bg-ivory' : 'bg-navy')} />
+                  <span className={cn('block h-px w-4', on ? 'bg-ivory' : 'bg-navy')} />
                 </span>
               </span>
             </button>

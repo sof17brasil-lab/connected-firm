@@ -1,6 +1,7 @@
 import { Collage } from '@/components/site/collage'
 import { Reveal } from '@/components/site/reveal'
 import { buildCollage } from '@/lib/collage'
+import { COLLAGE_PHOTOS } from '@/lib/photos'
 import { cn } from '@/lib/utils'
 
 export interface ChapterOpenerProps {
@@ -64,10 +65,10 @@ export function ChapterOpener({
       aria-label={`Chapter ${number}`}
       className={cn(
         'relative isolate flex items-center overflow-hidden',
-        compact ? 'min-h-[30vh] pt-8' : 'min-h-[62vh]',
+        compact ? 'min-h-[34vh] pb-2 pt-10' : 'min-h-[62vh]',
       )}
     >
-      {collage && <Collage pieces={pieces} />}
+      {collage && <Collage pieces={pieces} photos={COLLAGE_PHOTOS} />}
 
       <div className="relative mx-auto w-full max-w-3xl px-6">
         <Reveal>

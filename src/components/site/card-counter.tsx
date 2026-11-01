@@ -1,5 +1,7 @@
 import { createContext, useCallback, useContext, useMemo, useState } from 'react'
 import { Link } from 'react-router-dom'
+import { useInverted } from '@/components/site/invert-zone'
+import { cn } from '@/lib/utils'
 
 interface CounterState {
   total: number
@@ -45,17 +47,27 @@ const pad = (n: number) => String(n).padStart(2, '0')
 /** Fixed bottom-centre HUD: the card counter and a link to the sources. */
 export function CardCounter() {
   const counter = useCardCounter()
+  const on = useInverted() > 0.5
   if (!counter || counter.total === 0) return null
 
   return (
     <div className="pointer-events-none fixed inset-x-0 bottom-5 z-30 flex justify-center">
-      <div className="pointer-events-auto flex items-center gap-1 rounded-full bg-ivory/85 p-1 shadow-sm backdrop-blur-sm">
-        <span className="eyebrow tabular px-3 text-muted-ink">
-          {pad(counter.current)} <span className="text-stone">/</span> {pad(counter.total)}
+      <div
+        className={cn(
+          'pointer-events-auto flex items-center gap-1 rounded-full p-1 shadow-sm backdrop-blur-sm transition-colors',
+          on ? 'bg-navy/80' : 'bg-ivory/85',
+        )}
+      >
+        <span className={cn('eyebrow tabular px-3', on ? 'text-ivory/70' : 'text-muted-ink')}>
+          {pad(counter.current)} <span className={on ? 'text-ivory/35' : 'text-stone'}>/</span>{' '}
+          {pad(counter.total)}
         </span>
         <Link
           to="/sources"
-          className="eyebrow rounded-full bg-ivory px-4 py-2 text-navy shadow-sm transition-colors hover:bg-sky"
+          className={cn(
+            'eyebrow rounded-full px-4 py-2 shadow-sm transition-colors hover:bg-sky',
+            on ? 'bg-ivory text-navy' : 'bg-ivory text-navy',
+          )}
         >
           All sources
         </Link>

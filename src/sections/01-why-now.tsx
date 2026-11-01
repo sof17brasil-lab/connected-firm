@@ -6,6 +6,7 @@ import { SourcePill } from '@/components/site/source-pill'
 import { Band, Eyebrow, Rule } from '@/components/site/section'
 import { WhatThisMeans } from '@/components/site/what-this-means'
 import { WHY_NOW_STATS } from '@/lib/data'
+import { HERO_PHOTO } from '@/lib/photos'
 
 /**
  * Move 1 carries this section: the opener's centre square grows to fill the
@@ -26,7 +27,7 @@ export function WhyNow() {
           </>
         }
         stats={WHY_NOW_STATS}
-        image={`${import.meta.env.BASE_URL}images/nyc-hero.jpg`}
+        image={HERO_PHOTO}
       />
 
       <Band className="py-16 md:py-24">

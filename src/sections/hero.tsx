@@ -1,6 +1,7 @@
 import { useRef } from 'react'
 import { Collage } from '@/components/site/collage'
 import { buildCollage } from '@/lib/collage'
+import { COLLAGE_PHOTOS } from '@/lib/photos'
 import { useScrollScrub } from '@/hooks/use-scroll-scrub'
 
 const PIECES = buildCollage(9, 'right')
@@ -27,7 +28,7 @@ export function Hero() {
 
   return (
     <section ref={ref} id="hero" className="relative isolate min-h-[92vh] overflow-hidden">
-      <Collage pieces={PIECES} />
+      <Collage pieces={PIECES} photos={COLLAGE_PHOTOS} />
 
       <div className="relative mx-auto flex min-h-[92vh] w-full max-w-[1400px] flex-col justify-center px-6 py-32 md:px-10">
         <div ref={titleRef}>
