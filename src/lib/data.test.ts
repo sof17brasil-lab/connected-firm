@@ -7,6 +7,8 @@ import {
   FAILED_LATERAL_TIERS,
   GAP_ROWS,
   GLASSDOOR_BARS,
+  GLASSDOOR_CHECKED,
+  GLASSDOOR_CONTEXT,
   GLASSDOOR_NOTE,
   HEADLINE_CALLOUT,
   KEEP_FOUR,
@@ -157,19 +159,47 @@ describe('Section 2 — research cards', () => {
 })
 
 describe('Section 3 — Glassdoor', () => {
-  it('matches Exact data', () => {
+  // Read off the live page on 2 November 2026. The earlier figures came
+  // from the source PDF and had drifted: overall 3.9 -> 3.7, culture 3.9
+  // -> 3.8, and career opportunities 3.7 -> 3.3.
+  it('matches what the page showed when it was read', () => {
     expect(GLASSDOOR_BARS.map((b) => [b.label, b.value])).toEqual([
-      ['Compensation & benefits', 4.3],
-      ['Overall', 3.9],
-      ['Culture & values', 3.9],
-      ['Career opportunities', 3.7],
-      ['Work-life balance', 3.4],
+      ['Compensation and benefits', 4.3],
+      ['Diversity & inclusion', 3.9],
+      ['Culture & values', 3.8],
+      ['Work/life balance', 3.4],
+      ['Senior management', 3.4],
+      ['Career opportunities', 3.3],
     ])
   })
 
-  it('carries the recommend rate and review count', () => {
-    expect(GLASSDOOR_NOTE).toContain('75%')
-    expect(GLASSDOOR_NOTE).toContain('601')
+  it('shows every category Glassdoor lists, not a chosen few', () => {
+    expect(GLASSDOOR_BARS).toHaveLength(6)
+  })
+
+  it('carries the overall, the recommend rate, the count and the date', () => {
+    expect(GLASSDOOR_NOTE).toContain('3.7')
+    expect(GLASSDOOR_NOTE).toContain('74%')
+    expect(GLASSDOOR_NOTE).toContain('606')
+    expect(GLASSDOOR_NOTE).toContain(GLASSDOOR_CHECKED)
+  })
+
+  it('dates figures that move, so they are never read as permanent', () => {
+    expect(GLASSDOOR_CHECKED).toMatch(/\d{1,2} \w+ \d{4}/)
+  })
+
+  it('says the overall is in line with the industry', () => {
+    expect(GLASSDOOR_CONTEXT).toMatch(/in line with the average/)
+    expect(GLASSDOOR_CONTEXT).toMatch(/3\.7/)
+  })
+
+  it('makes no comparison the page does not show', () => {
+    const text = JSON.stringify(GLASSDOOR_BARS) + GLASSDOOR_NOTE + GLASSDOOR_CONTEXT
+    // "7% below similar legal employers" and the by-role split were both
+    // on the site and on neither the page nor anywhere else I could find.
+    expect(text).not.toMatch(/7% below/)
+    expect(text).not.toMatch(/Legal Assistants/)
+    expect(text).not.toMatch(/Practice Assistants/)
   })
 
   it('drops the New York office figure', () => {

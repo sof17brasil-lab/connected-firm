@@ -32,7 +32,7 @@ import {
   CLIENT_FACTS,
   COST_NEUTRAL_OPTION,
   GAP_ROWS,
-  GLASSDOOR_BY_ROLE,
+  GLASSDOOR_CONTEXT,
   GLASSDOOR_FRAMING,
   GLASSDOOR_NOTE,
   HEADLINE_CALLOUT,
@@ -584,7 +584,7 @@ export default function TheNumbers() {
             reviewer is identified.
           </p>
           <p className="text-caption mt-6 text-muted-ink">{GLASSDOOR_NOTE}</p>
-          <p className="text-caption mt-2 text-muted-ink">{GLASSDOOR_BY_ROLE}</p>
+          <p className="measure text-caption mt-3 text-muted-ink">{GLASSDOOR_CONTEXT}</p>
           <p className="measure mt-8 font-display text-xl italic text-navy">
             &ldquo;{GLASSDOOR_FRAMING}&rdquo;
           </p>

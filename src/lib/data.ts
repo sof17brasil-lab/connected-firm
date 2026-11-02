@@ -228,20 +228,40 @@ export interface RatingBar {
   note?: string
 }
 
-/** Glassdoor category ratings, out of 5. Summary figures only. */
+/**
+ * Glassdoor category ratings, out of 5. Summary figures only, no review is
+ * quoted and no reviewer identified.
+ *
+ * These move continuously, so they are read off the page rather than carried
+ * over, dated, and shown in full: all six categories Glassdoor lists, not a
+ * chosen five. Checked 2 November 2026.
+ */
 export const GLASSDOOR_BARS: RatingBar[] = [
-  { label: 'Compensation & benefits', value: 4.3, note: 'Strongest category' },
-  { label: 'Overall', value: 3.9 },
-  { label: 'Culture & values', value: 3.9 },
-  { label: 'Career opportunities', value: 3.7 },
-  { label: 'Work-life balance', value: 3.4, note: '7% below similar legal employers' },
+  { label: 'Compensation and benefits', value: 4.3, note: 'Highest category' },
+  { label: 'Diversity & inclusion', value: 3.9 },
+  { label: 'Culture & values', value: 3.8 },
+  { label: 'Work/life balance', value: 3.4 },
+  { label: 'Senior management', value: 3.4 },
+  { label: 'Career opportunities', value: 3.3, note: 'Lowest category' },
 ]
 
 export const GLASSDOOR_SCALE_MAX = 5
-export const GLASSDOOR_NOTE = '75% would recommend · 601 reviews'
-export const GLASSDOOR_BY_ROLE = 'By role, Legal Assistants rate the firm 4.7 and Practice Assistants 3.5.'
+export const GLASSDOOR_OVERALL = 3.7
+export const GLASSDOOR_REVIEWS = 606
+export const GLASSDOOR_CHECKED = '2 November 2026'
+
+export const GLASSDOOR_NOTE = `Overall ${GLASSDOOR_OVERALL} out of 5 · 74% would recommend · ${GLASSDOOR_REVIEWS} reviews · read ${GLASSDOOR_CHECKED}`
+
+/**
+ * The comparison matters: without it the section reads as "this firm has a
+ * culture problem", which the data does not say and a partner would reject
+ * on sight. What the spread does show is where the gap is.
+ */
+export const GLASSDOOR_CONTEXT =
+  'Glassdoor puts that 3.7 in line with the average for employers in the legal industry, which is also 3.7. The firm is not an outlier; the spread inside it is the interesting part.'
+
 export const GLASSDOOR_FRAMING =
-  'People praise their colleagues. The opportunity is making that experience consistent across every team and office.'
+  'Pay is the highest score and career opportunity the lowest, a full point below it. That gap is about whether people can see a path and the people who shape it — which is the kind of thing a calendar of small, deliberate introductions can move, and money cannot.'
 
 /* -- Section 4: What already exists, and the gaps ----------------------- */
 
