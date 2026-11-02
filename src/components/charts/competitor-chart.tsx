@@ -26,7 +26,9 @@ export function CompetitorChart() {
           <BarChart
             data={data}
             layout="vertical"
-            margin={{ top: 24, right: 48, bottom: 8, left: 8 }}
+            // Room at the top for the aggregate label and at the bottom for
+            // the median one. At 8px the lower label was clipped in half.
+            margin={{ top: 24, right: 48, bottom: 30, left: 8 }}
             barCategoryGap={8}
           >
             <XAxis type="number" domain={[0, 24]} hide />
