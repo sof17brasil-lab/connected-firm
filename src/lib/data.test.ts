@@ -27,7 +27,7 @@ import {
 } from './data'
 import { COST_NEUTRAL_OPTION, LEANER_OPTION } from './data'
 import { calculate, DEFAULTS, money } from './calculator'
-import { ALREADY_HAS, ASSUMPTIONS, OTHER_FIRMS, STILL_TO_VERIFY } from './extras'
+import { ALREADY_HAS, ASSUMPTIONS, FORMULAS, OTHER_FIRMS, STILL_TO_VERIFY } from './extras'
 import { SOURCES, SOURCE_BY_ID, sourceYearLabel } from './sources'
 
 /**
@@ -460,5 +460,21 @@ describe('Citations the review flagged', () => {
     for (const card of [...RESEARCH_PARTNERS, ...RESEARCH_PEOPLE]) {
       for (const id of card.sources) expect(ids.has(id)).toBe(true)
     }
+  })
+})
+
+describe('Figures match their own arithmetic, not a truncation of it', () => {
+  it('rounds the value at risk rather than cutting it short', () => {
+    // 19.4 x 4,039,200 = 78,360,480, which is $78.4M. The label read
+    // $78.3M, which is the truncation and understates it by $60,480.
+    const high = (LATERAL_FUNNEL.leaveHigh * 4_039_200) / 1e6
+    const low = (LATERAL_FUNNEL.leaveLow * 4_039_200) / 1e6
+    expect(LATERAL_FUNNEL.atRiskLabel).toBe(`$${low.toFixed(1)}M-$${high.toFixed(1)}M`)
+  })
+
+  it('agrees with the formula listed on the methodology page', () => {
+    const row = FORMULAS.find((f) => f.name === 'Value at risk')
+    expect(row).toBeDefined()
+    expect(row?.result).toBe(LATERAL_FUNNEL.atRiskLabel)
   })
 })

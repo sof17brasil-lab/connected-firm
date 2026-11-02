@@ -16,7 +16,7 @@ export const SOURCES: Source[] = [
   { id: 1, publisher: 'Global Legal Post', title: 'White & Case revenue hits $3.6bn', year: 2026, url: 'https://www.globallegalpost.com/news/white-case-revenue-hits-36bn-as-pep-jumps-10-290647087' },
   { id: 2, publisher: 'Bloomberg Law', title: 'White & Case posts $3.6 billion revenue', year: 2026, url: 'https://news.bloomberglaw.com/business-and-practice/white-case-posts-3-6-billion-revenue-as-profits-also-tick-up' },
   { id: 3, publisher: 'Bloomberg Law', title: 'White & Case targets $5 billion', year: 2026, url: 'https://news.bloomberglaw.com/ip-law/white-case-targets-5-billion-revenue-in-ambitious-growth-plan' },
-  { id: 4, publisher: 'Above the Law', title: '2026 Am Law 100', year: 2026, url: 'https://abovethelaw.com/?p=1182247' },
+  { id: 4, publisher: 'Above the Law', title: '2026 Am Law 100', year: 2026, url: 'https://abovethelaw.com/2026/04/the-2026-am-law-100-is-out-and-surprise-the-rich-law-firms-got-richer/' },
   { id: 5, publisher: 'Legal Cheek', title: 'White & Case 2025 results and partner count', year: 2026, url: 'https://www.legalcheek.com/2026/03/white-case-hits-2-7-billion-revenues-lifting-average-partner-earnings-to-3-3-million/amp/' },
   { id: 6, publisher: 'Above the Law', title: 'A third of lateral partners gone in 5 years', year: 2026, url: 'https://abovethelaw.com/2026/05/a-third-of-lateral-partners-are-gone-in-5-years-and-biglaw-keeps-failing-to-understand-why/' },
   { id: 7, publisher: 'ALM Intelligence / Decipher', title: 'Playing with Fire: Three Warning Signs for Law Firm Lateral Hiring', year: 2022, url: 'https://images.law.com/contrib/content/uploads/documents/292/ALM-Intelligence-Fellows-Playing-with-Fire-Michael-Ellenhorn-Final-March-2022-1.pdf' },

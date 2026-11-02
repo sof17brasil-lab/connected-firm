@@ -179,7 +179,7 @@ export const FORMULAS: Formula[] = [
   {
     name: 'Value at risk',
     expression: '15.3 × $4,039,200;  19.4 × $4,039,200',
-    result: '$61.8M-$78.3M',
+    result: '$61.8M-$78.4M',
   },
   {
     name: 'Firmwide First 90 Days',

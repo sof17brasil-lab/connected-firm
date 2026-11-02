@@ -391,7 +391,8 @@ export const LATERAL_FUNNEL = {
   leaveLow: 15.3,
   leaveHigh: 19.4,
   leaveLabel: '~15-19',
-  atRiskLabel: '$61.8M-$78.3M',
+  // 15.3 x 4,039,200 = 61,799,760 and 19.4 x 4,039,200 = 78,360,480.
+  atRiskLabel: '$61.8M-$78.4M',
   firmwideCost: 91800,
   firmwideCostLabel: '$91,800',
   returnMultiple: 44,
