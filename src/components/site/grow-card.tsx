@@ -114,7 +114,16 @@ export function GrowCard({
       <section id="why-now" className="relative py-20">
         <div className="relative mx-auto w-full max-w-[1200px] px-6 md:px-10">
           <div className="relative isolate overflow-hidden bg-navy p-8 md:p-14">
-            <img src={image} alt="" aria-hidden="true" className="absolute inset-0 size-full object-cover" />
+            <img
+              src={image}
+              alt=""
+              aria-hidden="true"
+              width={2400}
+              height={1350}
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 size-full object-cover"
+            />
             <div aria-hidden="true" className="absolute inset-0 bg-navy/80" />
             <div className="relative">
               <p className="eyebrow text-ivory/70">[{number}]</p>
@@ -147,7 +156,16 @@ export function GrowCard({
       <div className="sticky top-0 h-screen w-full overflow-hidden">
         <div className="absolute inset-0 flex items-center justify-center">
           <div data-card className="relative overflow-hidden bg-navy">
-            <img src={image} alt="" aria-hidden="true" className="absolute inset-0 size-full object-cover" />
+            <img
+              src={image}
+              alt=""
+              aria-hidden="true"
+              width={2400}
+              height={1350}
+              loading="lazy"
+              decoding="async"
+              className="absolute inset-0 size-full object-cover"
+            />
             {/* Heavy scrim: every word in this section sits on this picture. */}
             <div aria-hidden="true" className="absolute inset-0 bg-navy/78" />
             <div

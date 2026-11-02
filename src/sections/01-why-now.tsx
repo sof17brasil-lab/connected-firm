@@ -1,4 +1,5 @@
-import { CompetitorChart } from '@/components/charts/competitor-chart'
+import { Suspense, lazy } from 'react'
+import { useInViewOnce } from '@/hooks/use-in-view-once'
 import { GrowCard } from '@/components/site/grow-card'
 import { Footnote } from '@/components/site/footnote'
 import { Reveal } from '@/components/site/reveal'
@@ -9,6 +10,38 @@ import { WHY_NOW_STATS } from '@/lib/data'
 import { HERO_PHOTO } from '@/lib/photos'
 import { AM_LAW_REVENUE_PER_LAWYER_GROWTH, BIG_LAW_AVERAGE } from '@/lib/data'
 import { COMPETITOR_MEDIAN, WHITE_CASE_GROWTH, WHITE_CASE_RANK } from '@/lib/figures'
+
+/**
+ * The only charting-library component on the home page, and it sits well
+ * below the fold.
+ *
+ * `lazy` alone does not defer it: React starts the import as soon as the
+ * element renders, which is when the route mounts, so the ninety kilobytes
+ * of charting library would land in the first download anyway. Gating the
+ * render on the reader getting near it is what actually keeps it out —
+ * with a wide margin so it is already there by the time they arrive, and a
+ * timer so it loads regardless once the page has settled.
+ */
+const CompetitorChart = lazy(() =>
+  import('@/components/charts/competitor-chart').then((m) => ({ default: m.CompetitorChart })),
+)
+
+function CompetitorChartWhenNear() {
+  const { ref, inView } = useInViewOnce<HTMLDivElement>({
+    rootMargin: '800px 0px',
+    fallbackMs: 4000,
+  })
+
+  return (
+    <div ref={ref} className="min-h-[420px]">
+      {inView && (
+        <Suspense fallback={<div className="min-h-[420px]" />}>
+          <CompetitorChart />
+        </Suspense>
+      )}
+    </div>
+  )
+}
 
 /**
  * Move 1 carries this section: the opener's centre square grows to fill the
@@ -60,7 +93,7 @@ export function WhyNow() {
           </div>
 
           <Reveal delay={0.1}>
-            <CompetitorChart />
+            <CompetitorChartWhenNear />
           </Reveal>
         </div>
 

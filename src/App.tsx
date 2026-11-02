@@ -1,3 +1,4 @@
+import { Suspense, lazy } from 'react'
 import { BrowserRouter, Route, Routes } from 'react-router-dom'
 import SmoothScroll from '@/components/ui/smooth-scroll'
 import { ReadingProgress } from '@/components/site/reading-progress'
@@ -9,10 +10,16 @@ import { DotNav } from '@/components/site/dot-nav'
 import { CardCounter, CardCounterProvider } from '@/components/site/card-counter'
 import { SiteFooter } from '@/components/site/footer'
 import Home from '@/pages/Home'
-import SourcesPage from '@/pages/Sources'
-import CultureExtras from '@/pages/CultureExtras'
-import TheNumbers from '@/pages/TheNumbers'
-import Methodology from '@/pages/Methodology'
+
+/**
+ * Only the home page is in the first download. The reference pages behind
+ * it — and the charting library three of them lean on — arrive when they
+ * are asked for, which is what keeps the opening screen quick on a phone.
+ */
+const SourcesPage = lazy(() => import('@/pages/Sources'))
+const CultureExtras = lazy(() => import('@/pages/CultureExtras'))
+const TheNumbers = lazy(() => import('@/pages/TheNumbers'))
+const Methodology = lazy(() => import('@/pages/Methodology'))
 
 export default function App() {
   return (
@@ -27,13 +34,18 @@ export default function App() {
           <SiteNav />
           <DotNav />
           <main>
-            <Routes>
-              <Route path="/" element={<Home />} />
-              <Route path="/the-numbers" element={<TheNumbers />} />
-              <Route path="/culture-extras" element={<CultureExtras />} />
-              <Route path="/methodology" element={<Methodology />} />
-              <Route path="/sources" element={<SourcesPage />} />
-            </Routes>
+            {/* A blank screen rather than a spinner: the pages arrive in a
+                few hundred milliseconds and a flashing spinner reads worse
+                than nothing at that length. */}
+            <Suspense fallback={<div className="min-h-screen" />}>
+              <Routes>
+                <Route path="/" element={<Home />} />
+                <Route path="/the-numbers" element={<TheNumbers />} />
+                <Route path="/culture-extras" element={<CultureExtras />} />
+                <Route path="/methodology" element={<Methodology />} />
+                <Route path="/sources" element={<SourcesPage />} />
+              </Routes>
+            </Suspense>
           </main>
           <CardCounter />
           <SiteFooter />
