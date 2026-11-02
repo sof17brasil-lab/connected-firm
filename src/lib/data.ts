@@ -149,8 +149,10 @@ export const RESEARCH_PARTNERS: ResearchCard[] = [
   {
     figure: '30-38%',
     body: 'of lateral partners leave within five years.',
-    caveat: 'Older studies found up to 47%, so this range is conservative.',
-    sources: [6],
+    caveat:
+      'Published estimates disagree, so this is the conservative middle rather than any one source: Above the Law reports roughly a third, and Decipher, which sells lateral vetting, puts it at 48% within five years. The higher figures would strengthen the case; the lower one is used throughout.',
+    estimate: true,
+    sources: [6, 30],
   },
   {
     figure: '$4.04M',
@@ -180,8 +182,10 @@ export const RESEARCH_PEOPLE: ResearchCard[] = [
     sources: [10],
   },
   {
-    figure: '37% vs 49%',
-    body: 'were willing to leave, with versus without a best friend at work. Only 2 in 10 US employees have one.',
+    figure: '2 in 10',
+    body: 'US employees report having a best friend at work, and Gallup links having one to retention and to intent to leave.',
+    caveat:
+      'Gallup, from a June 2022 survey. Gallup publishes the link to intent to leave without a percentage split, so no split is quoted here.',
     sources: [11],
   },
   {
@@ -274,15 +278,20 @@ export const GAP_ROWS: GapRow[] = [
   },
 ]
 
+/**
+ * Grades move with each year's survey, so these are quoted with the survey
+ * they come from and were checked against the live scorecard rather than
+ * carried over from an earlier edition.
+ */
 export const LONDON_CALLOUT = {
-  title: 'Proven inside White & Case: London',
+  title: 'What London already scores well on',
   points: [
-    'Quarterly team socials, office-wide events, a local bar with a White & Case discount, a free in-house restaurant (Broad St Kitchen), and supervisor and buddy lunches for newcomers.',
-    "Junior lawyers grade London's social life A to A* and peer support A*.",
-    'Lesson for New York: put socializing on a predictable calendar, use the cafeteria as a hub, give every newcomer a buddy. The published evidence for buddy pairing is faster ramp-up and higher satisfaction, not retention; retention is what the pilot would test.',
+    'In the Legal Cheek Trainee and Junior Lawyer Survey 2026-27, of over 2,000 trainees and junior associates, the London office scores A for peer support, A* for training, A for quality of work and A* for perks.',
+    'Social life scores B, so the raw ingredients are there without the calendar that would make the most of them.',
+    'Lesson for New York: put socializing on a predictable calendar and give every newcomer a buddy. The published evidence for buddy pairing is faster ramp-up and higher satisfaction, not retention; retention is what the pilot would test.',
   ],
   caveat:
-    'Honest caveat: London still grades C on work-life balance. Connection helps people stay; it does not fix long hours.',
+    'Honest caveat: the same survey grades London D on work-life balance, its lowest score. Connection helps people stay; it does not fix long hours.',
   sources: [22],
 }
 
@@ -427,11 +436,6 @@ export const CLIENT_FACTS = [
     figure: '5.7×',
     body: 'Clients served by three practice groups generate 5.7 times the revenue of clients served by one.',
     sources: [18],
-  },
-  {
-    figure: '27%',
-    body: 'Clients spend about twice as much with firms that ask for formal feedback, yet only 27% are asked.',
-    sources: [19],
   },
   {
     figure: '~4 days',

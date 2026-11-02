@@ -2,6 +2,7 @@ import { describe, expect, it } from 'vitest'
 import {
   BIG_LAW_AVERAGE,
   BIG_LAW_AVERAGE_LABEL,
+  CLIENT_FACTS,
   COMPETITOR_DATA,
   FAILED_LATERAL_TIERS,
   GAP_ROWS,
@@ -136,7 +137,10 @@ describe('Section 2 — research cards', () => {
       '30-38%',
       '$4.04M',
       '61%',
-      '37% vs 49%',
+      // '37% vs 49%' was dropped: neither the page it cited nor Gallup's
+      // own publishes that split, so the card now carries only the figure
+      // Gallup does publish.
+      '2 in 10',
       '18% vs 61%',
       '4-5 points',
       '$200K-$500K',
@@ -476,5 +480,46 @@ describe('Figures match their own arithmetic, not a truncation of it', () => {
     const row = FORMULAS.find((f) => f.name === 'Value at risk')
     expect(row).toBeDefined()
     expect(row?.result).toBe(LATERAL_FUNNEL.atRiskLabel)
+  })
+})
+
+/**
+ * Checked against the live sources on 2 November 2026. Each of these
+ * replaced a claim the cited page did not actually carry.
+ */
+describe('Claims match what the cited page says', () => {
+  it('quotes only the best-friend figure Gallup publishes', () => {
+    const card = RESEARCH_PEOPLE.find((c) => c.figure === '2 in 10')!
+    expect(card.sources).toEqual([11])
+    expect(SOURCE_BY_ID.get(11)?.publisher).toBe('Gallup')
+    const everything = JSON.stringify(RESEARCH_PEOPLE)
+    expect(everything).not.toMatch(/37% vs 49%/)
+  })
+
+  it('says where the lateral range comes from, and labels it an estimate', () => {
+    const card = RESEARCH_PARTNERS.find((c) => c.figure === '30-38%')!
+    expect(card.estimate).toBe(true)
+    expect(card.caveat).toMatch(/roughly a third/)
+    expect(card.caveat).toMatch(/48%/)
+    expect(card.sources).toEqual([6, 30])
+  })
+
+  it('quotes London against the survey it names', () => {
+    const text = LONDON_CALLOUT.points.join(' ') + LONDON_CALLOUT.caveat
+    expect(text).toMatch(/2026-27/)
+    expect(text).toMatch(/A for peer support/)
+    expect(text).toMatch(/Social life scores B/)
+    expect(text).toMatch(/D on work-life balance/)
+    // The older edition's claims, none of which the live page carries.
+    expect(text).not.toMatch(/A\*? to A\*/)
+    expect(text).not.toMatch(/Broad St/)
+    expect(text).not.toMatch(/grades C on work-life/)
+  })
+
+  it('drops the client-feedback figure whose source has gone', () => {
+    expect(JSON.stringify(CLIENT_FACTS)).not.toMatch(/27%/)
+    for (const fact of CLIENT_FACTS) {
+      for (const id of fact.sources) expect(SOURCE_BY_ID.get(id)).toBeDefined()
+    }
   })
 })

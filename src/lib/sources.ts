@@ -23,7 +23,7 @@ export const SOURCES: Source[] = [
   { id: 8, publisher: 'National Law Review', title: 'Integration predicts lateral success', year: null, url: 'https://natlawreview.com/article/work-doesn-t-stop-once-you-hire-lateral' },
   { id: 9, publisher: 'Nexl', title: 'Law firm lateral integration', year: 2026, url: 'https://nexl.cloud/resources/article-law-firm-lateral-integration' },
   { id: 10, publisher: 'ABA Journal', title: 'Lawyers rank highest on loneliness scale, reporting Achor et al., Harvard Business Review / BetterUp', year: 2018, url: 'https://abajournal.com/news/article/lawyers_rank_highest_on_loneliness_scale_study_finds' },
-  { id: 11, publisher: 'Employee Benefit News', title: 'Gallup best friend at work data', year: 2022, url: 'https://www.benefitnews.com/news/workplace-friendships-boost-engagement-and-lower-turnover' },
+  { id: 11, publisher: 'Gallup', title: 'The Increasing Importance of a Best Friend at Work', year: 2022, url: 'https://www.gallup.com/workplace/397058/increasing-importance-best-friend-work.aspx' },
   { id: 12, publisher: 'SHRM', title: 'Q3 2026 Global Employee Monitor', year: 2026, url: 'https://www.shrm.org/in/about/press-room/shrm-global-employee-monitor-finds-belonging-is-key-to-engagemen' },
   { id: 13, publisher: 'RFBerlin', title: 'Friends at Work field experiment', year: null, url: 'https://www.rfberlin.com/?p=26042' },
   { id: 14, publisher: 'Above the Law', title: 'Cost of associate attrition (NALP)', year: 2017, url: 'https://abovethelaw.com/legal-innovation-center/member-content/how-does-associate-attrition-impact-the-bottom-line/?rf=1' },
