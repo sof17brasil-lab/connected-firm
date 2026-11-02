@@ -40,7 +40,7 @@ export function WhyNow() {
           <div className="lg:sticky lg:top-28 lg:self-start">
             <Reveal>
               <h2 className="text-h2 text-navy">
-                Growing, but slower than its rivals.
+                White &amp; Case is growing, but not fast enough for 2028.
               </h2>
               <p className="measure mt-6 text-slate">
                 White &amp; Case grew 8.36% in 2025 against a Big Law average of about 13%

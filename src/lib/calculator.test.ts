@@ -23,7 +23,7 @@ describe('Calculator defaults', () => {
 
 describe('Calculator bounds', () => {
   it('matches the specified slider ranges', () => {
-    expect(BOUNDS.lawyers).toMatchObject({ min: 200, max: 1950, step: 50 })
+    expect(BOUNDS.lawyers).toMatchObject({ min: 40, max: 1950, step: 10 })
     expect(BOUNDS.attrition.min).toBe(5)
     expect(BOUNDS.attrition.max).toBe(30)
     expect(BOUNDS.costPerDeparture).toMatchObject({ min: 100000, max: 500000, step: 25000 })

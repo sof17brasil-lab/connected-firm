@@ -7,7 +7,11 @@
  */
 
 export interface CalculatorInputs {
-  /** Non-partner lawyers in scope. */
+  /**
+   * Non-partner lawyers in scope. 1,950 is the firmwide figure (2,643
+   * lawyers less 693 partners); the New York pilot itself reaches on the
+   * order of 150, which lib/cost.ts sets out.
+   */
   lawyers: number
   /** Annual attrition, in percent. */
   attrition: number
@@ -38,7 +42,9 @@ export const DEFAULTS: CalculatorInputs = {
 }
 
 export const BOUNDS = {
-  lawyers: { min: 200, max: 1950, step: 50 },
+  // Down to 40 so the pilot's own reach can actually be modelled: the
+  // old floor of 200 put every honest scenario off the end of the slider.
+  lawyers: { min: 40, max: 1950, step: 10 },
   attrition: { min: 5, max: 30, step: 1 },
   costPerDeparture: { min: 100000, max: 500000, step: 25000 },
   reduction: { min: 0, max: 5, step: 0.5 },

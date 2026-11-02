@@ -29,7 +29,7 @@ function Stacked({ programs }: { programs: Program[] }) {
           <div>
             <p className="eyebrow text-sky-deep">
               Program {String(i + 1).padStart(2, '0')}
-              {program.lead && ' · I would lead this'}
+              {program.runsFor && ` · I'd coordinate this for ${program.runsFor}`}
             </p>
             <h3 className="mt-6 font-display text-3xl text-navy">{program.name}</h3>
             <p className="measure mt-6 text-slate">{program.blurb}</p>
@@ -159,7 +159,7 @@ export function ProgramPanels({ programs }: { programs: Program[] }) {
                 <div data-panel-text>
                   <p className="eyebrow text-sky-deep">
                     Program {String(i + 1).padStart(2, '0')}
-                    {program.lead && ' · I would lead this'}
+                    {program.runsFor && ` · I'd coordinate this for ${program.runsFor}`}
                   </p>
                   <h3 className="mt-6 font-display text-[clamp(2rem,3.4vw,3rem)] leading-tight text-navy">
                     {program.name}

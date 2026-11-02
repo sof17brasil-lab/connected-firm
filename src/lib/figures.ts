@@ -7,6 +7,8 @@
  * checks each derivation against the source numbers.
  */
 import {
+  AM_LAW_REVENUE_PER_LAWYER,
+  AM_LAW_REVENUE_PER_LAWYER_GROWTH,
   BIG_LAW_AVERAGE,
   BIG_LAW_AVERAGE_LABEL,
   COMPETITOR_DATA,
@@ -38,7 +40,7 @@ export const REVENUE_END = REVENUE_PROJECTED[REVENUE_PROJECTED.length - 1]
 export const REVENUE_GAP = REVENUE_GOAL - (REVENUE_END.y ?? 0)
 export const REVENUE_GAP_DISPLAY = `$${Math.round(REVENUE_GAP * 1000)}M short`
 
-/* -- b. Growing slower than rivals --------------------------------------- */
+/* -- b. Growing, but not fast enough -------------------------------------- */
 
 export const COMPETITOR_BARS = COMPETITOR_DATA.map((firm) => ({
   label: firm.firm,
@@ -48,7 +50,30 @@ export const COMPETITOR_BARS = COMPETITOR_DATA.map((firm) => ({
 }))
 
 export const COMPETITOR_REFERENCE = BIG_LAW_AVERAGE
-export const COMPETITOR_REFERENCE_LABEL = `~${BIG_LAW_AVERAGE}% ${BIG_LAW_AVERAGE_LABEL.toLowerCase()}`
+export const COMPETITOR_REFERENCE_LABEL = BIG_LAW_AVERAGE_LABEL
+
+/**
+ * The median of the nine firms actually plotted.
+ *
+ * The 13.0% line is the Am Law 100's aggregate, which is revenue-weighted
+ * across a hundred firms and is dragged up here by one outlier. Against
+ * the median of this chart's own nine, White & Case sits just below the
+ * middle — which is the fair comparison, and still not fast enough.
+ */
+export const COMPETITOR_MEDIAN = (() => {
+  const sorted = COMPETITOR_DATA.map((f) => f.growth).sort((a, b) => a - b)
+  const mid = Math.floor(sorted.length / 2)
+  return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid]
+})()
+
+export const COMPETITOR_MEDIAN_LABEL = `Median of these nine, ${COMPETITOR_MEDIAN}%`
+
+/** Where White & Case ranks among the nine, 1 = fastest. */
+export const WHITE_CASE_RANK =
+  COMPETITOR_DATA.filter((f) => f.growth > (COMPETITOR_DATA.find((x) => x.isWhiteCase)?.growth ?? 0))
+    .length + 1
+
+export const PER_LAWYER_NOTE = `Across the Am Law 100, revenue per lawyer rose ${AM_LAW_REVENUE_PER_LAWYER_GROWTH}% to ${AM_LAW_REVENUE_PER_LAWYER} in 2025.`
 
 /* -- c. Where the pilot goes --------------------------------------------- */
 

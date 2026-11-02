@@ -17,6 +17,18 @@ import { ExpandableCard } from '@/components/site/expandable-card'
 import { SourcePill } from '@/components/site/source-pill'
 import { Band, Finding, Rule } from '@/components/site/section'
 import {
+  ALL_IN,
+  ALL_IN_MID,
+  COORDINATOR_LOADED_COST,
+  COORDINATOR_SHARE,
+  MID_RATE,
+  PILOT_SHARE_OF_FAILED_LATERAL,
+  REACH_RESULTS,
+  TIME_LINES,
+  TOTAL_HOURS,
+} from '@/lib/cost'
+import { money, round } from '@/lib/calculator'
+import {
   CLIENT_FACTS,
   COST_NEUTRAL_OPTION,
   GAP_ROWS,
@@ -30,6 +42,7 @@ import {
   LEANER_OPTION,
   LONDON_CALLOUT,
   MOMENTUM_SCENARIOS,
+  FAILED_LATERAL_TIERS,
   PILOT_TOTAL_LABEL,
   PROGRAMS,
   RESEARCH_PARTNERS,
@@ -84,6 +97,131 @@ function CostTable() {
   )
 }
 
+/** The hours each programme takes, and what each assumption is. */
+function TimeTable() {
+  return (
+    <table className="w-full min-w-[620px] border-collapse text-left">
+      <thead>
+        <tr className="border-b border-stone">
+          <th className="eyebrow py-4 pr-6 font-semibold text-navy">Programme</th>
+          <th className="eyebrow py-4 pr-6 font-semibold text-navy">Who attends, for how long</th>
+          <th className="eyebrow py-4 text-right font-semibold text-navy">Person-hours</th>
+        </tr>
+      </thead>
+      <tbody>
+        {TIME_LINES.map((line) => (
+          <tr key={line.programme} className="border-b border-stone/70">
+            <td className="py-5 pr-6 font-medium text-navy">{line.programme}</td>
+            <td className="py-5 pr-6 text-caption text-muted-ink">{line.assumption}</td>
+            <td className="tabular py-5 text-right text-slate">
+              {line.hours.toLocaleString('en-US')}
+            </td>
+          </tr>
+        ))}
+        <tr>
+          <td className="py-5 font-display text-xl text-navy" colSpan={2}>
+            Total
+          </td>
+          <td className="tabular py-5 text-right font-display text-xl text-navy">
+            {TOTAL_HOURS.toLocaleString('en-US')}
+          </td>
+        </tr>
+      </tbody>
+    </table>
+  )
+}
+
+/** Cash, hours and coordinator share, at three defensible hourly rates. */
+function AllInTable() {
+  return (
+    <table className="w-full min-w-[680px] border-collapse text-left">
+      <thead>
+        <tr className="border-b border-stone">
+          <th className="eyebrow py-4 pr-6 font-semibold text-navy">Rate for lawyer time</th>
+          <th className="eyebrow py-4 pr-6 text-right font-semibold text-navy">Cash</th>
+          <th className="eyebrow py-4 pr-6 text-right font-semibold text-navy">
+            {TOTAL_HOURS.toLocaleString('en-US')} hours
+          </th>
+          <th className="eyebrow py-4 pr-6 text-right font-semibold text-navy">Coordinator</th>
+          <th className="eyebrow py-4 pr-6 text-right font-semibold text-navy">All in</th>
+          <th className="eyebrow py-4 text-right font-semibold text-navy">
+            Of one failed lateral
+          </th>
+        </tr>
+      </thead>
+      <tbody>
+        {ALL_IN.map((row) => (
+          <tr key={row.rate} className="border-b border-stone/70">
+            <td className="py-5 pr-6 font-medium text-navy">
+              ${row.rate} an hour
+              {row.rate === MID_RATE && (
+                <span className="text-caption ml-2 text-muted-ink">(used on the home page)</span>
+              )}
+            </td>
+            <td className="tabular py-5 pr-6 text-right text-slate">
+              ${row.cash.toLocaleString('en-US')}
+            </td>
+            <td className="tabular py-5 pr-6 text-right text-slate">
+              ${row.time.toLocaleString('en-US')}
+            </td>
+            <td className="tabular py-5 pr-6 text-right text-slate">
+              ${row.coordinator.toLocaleString('en-US')}
+            </td>
+            <td className="tabular py-5 pr-6 text-right font-display text-xl text-navy">
+              ${Math.round(row.total).toLocaleString('en-US')}
+            </td>
+            <td className="tabular py-5 text-right text-slate">
+              {(row.shareOfFailedLateral * 100).toFixed(1)}%
+            </td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
+/** The saving, scoped to each population the pilot could be said to reach. */
+function ReachTable() {
+  return (
+    <table className="w-full min-w-[680px] border-collapse text-left">
+      <thead>
+        <tr className="border-b border-stone">
+          <th className="eyebrow py-4 pr-6 font-semibold text-navy">Population</th>
+          <th className="eyebrow py-4 pr-6 text-right font-semibold text-navy">Lawyers</th>
+          <th className="eyebrow py-4 pr-6 text-right font-semibold text-navy">
+            Departures avoided
+          </th>
+          <th className="eyebrow py-4 pr-6 text-right font-semibold text-navy">Saved</th>
+          <th className="eyebrow py-4 text-right font-semibold text-navy">× the pilot</th>
+        </tr>
+      </thead>
+      <tbody>
+        {REACH_RESULTS.map((row) => (
+          <tr key={row.who} className="border-b border-stone/70">
+            <td className="py-5 pr-6">
+              <span className="font-medium text-navy">{row.who}</span>
+              {row.scaled && (
+                <span className="eyebrow ml-2 rounded-sm border border-stone px-1.5 py-0.5 text-[10px] text-muted-ink">
+                  if scaled firmwide
+                </span>
+              )}
+              <span className="text-caption mt-1 block text-muted-ink">{row.basis}</span>
+            </td>
+            <td className="tabular py-5 pr-6 text-right text-slate">
+              {row.lawyers.toLocaleString('en-US')}
+            </td>
+            <td className="tabular py-5 pr-6 text-right text-slate">{round(row.avoided)}</td>
+            <td className="tabular py-5 pr-6 text-right font-display text-xl text-navy">
+              {money(row.savings)}
+            </td>
+            <td className="tabular py-5 text-right text-slate">{row.multiple.toFixed(1)}×</td>
+          </tr>
+        ))}
+      </tbody>
+    </table>
+  )
+}
+
 export default function TheNumbers() {
   // A block body on purpose: Lenis patches window.scrollTo and its return
   // value is not undefined, so an arrow shorthand hands React something it
@@ -103,6 +241,104 @@ export default function TheNumbers() {
         title="The workings behind the proposal."
         intro="The home page makes the argument in one pass. This is everything underneath it: the model you can move yourself, the full research, the costs and the objections."
       />
+
+      {/* --- What it really costs --- */}
+      <div className="mt-20">
+        <SubHeading>What the pilot really costs</SubHeading>
+        <p className="measure mt-5 text-slate">
+          {PILOT_TOTAL_LABEL} is the catering and venue budget. It is not the cost. The hours
+          the programmes take out of lawyers&rsquo; days are worth several times that, and a
+          share of a coordinator&rsquo;s year belongs here too &mdash; a share, not a salary,
+          because the role exists whether or not the pilot runs.
+        </p>
+
+        <Reveal className="mt-10">
+          <div>
+            <XScroll className="lg:hidden">
+              <TimeTable />
+            </XScroll>
+            <div className="hidden lg:block">
+              <TimeTable />
+            </div>
+          </div>
+        </Reveal>
+
+        <Reveal className="mt-12">
+          <div>
+            <XScroll className="lg:hidden">
+              <AllInTable />
+            </XScroll>
+            <div className="hidden lg:block">
+              <AllInTable />
+            </div>
+            <p className="text-caption mt-4 text-muted-ink">
+              Coordinator line: {Math.round(COORDINATOR_SHARE * 100)}% of one New York events
+              coordinator at ${COORDINATOR_LOADED_COST.toLocaleString('en-US')} fully loaded.
+              No White &amp; Case band is published and none is assumed.
+              <EstimateTag kind="estimate" className="ml-2" />
+            </p>
+            <p className="measure mt-5 text-slate">
+              At ${MID_RATE} an hour the whole thing comes to $
+              {Math.round(ALL_IN_MID.total).toLocaleString('en-US')}, which is{' '}
+              {(ALL_IN_MID.shareOfFailedLateral * 100).toFixed(1)}% of one failed lateral
+              partner &mdash; about a fifth, against{' '}
+              {(PILOT_SHARE_OF_FAILED_LATERAL * 100).toFixed(1)}% for the cash alone.
+            </p>
+          </div>
+        </Reveal>
+
+        <Reveal className="mt-12">
+          <div>
+            <p className="eyebrow text-sky-deep">What one failed lateral costs, by band</p>
+            <ul className="mt-5 flex flex-col gap-3">
+              {FAILED_LATERAL_TIERS.map((tier) => (
+                <li key={tier.band} className="flex items-baseline justify-between border-b border-stone/70 pb-3">
+                  <span className={tier.isUs ? 'font-medium text-navy' : 'text-muted-ink'}>
+                    {tier.band}
+                    {tier.isUs && ' — the band White & Case sits in'}
+                  </span>
+                  <span className="tabular font-display text-xl text-navy">{tier.label}</span>
+                </li>
+              ))}
+            </ul>
+            <p className="text-caption mt-4 text-muted-ink">
+              ALM Intelligence and Decipher, 2022, built from compensation data and SHRM
+              attrition costs. Decipher sells lateral vetting, so this is a vendor estimate.
+              <Footnote ids={[7, 30]} className="ml-1" />
+            </p>
+          </div>
+        </Reveal>
+      </div>
+
+      <Rule className="mt-24" />
+
+      {/* --- Who the pilot actually reaches --- */}
+      <div className="mt-16">
+        <SubHeading>Who the pilot actually reaches</SubHeading>
+        <p className="measure mt-5 text-slate">
+          A saving is only as good as the population it is drawn from. The pilot runs in New
+          York and reaches on the order of a hundred and fifty people, so that is the number
+          the model should use. The firmwide row is included because it is the obvious next
+          question, but it is a projection of what scaling the pilot everywhere would be
+          worth &mdash; not a result of this one.
+        </p>
+        <Reveal className="mt-10">
+          <div>
+            <XScroll className="lg:hidden">
+              <ReachTable />
+            </XScroll>
+            <div className="hidden lg:block">
+              <ReachTable />
+            </div>
+            <p className="text-caption mt-4 text-muted-ink">
+              Every row at one point of reduced attrition and $200,000 a departure, through
+              the same calculator below. <EstimateTag kind="illustrative" className="ml-1" />
+            </p>
+          </div>
+        </Reveal>
+      </div>
+
+      <Rule className="mt-24" />
 
       {/* --- The five charts --- */}
       <div className="mt-20">
@@ -182,7 +418,7 @@ export default function TheNumbers() {
             { value: '44×', caption: 'return if one lateral partner is saved', sources: [7], illustrative: true },
             { value: '$800K-$2M', caption: 'saved by keeping four associates', sources: [14], illustrative: true },
             { value: '1.9%', caption: HEADLINE_CALLOUT.body, sources: HEADLINE_CALLOUT.sources },
-            { value: '~$3.9M', caption: 'calculator default savings', direction: 'down', sources: [14], illustrative: true },
+            { value: '~$300K', caption: 'saved at the pilot\u2019s own New York reach of about 150 lawyers', direction: 'down', sources: [14], illustrative: true },
           ]}
         />
       </div>

@@ -12,7 +12,12 @@ import {
 import { DEFAULTS, calculate } from './calculator'
 import {
   COMPETITOR_BARS,
+  COMPETITOR_MEDIAN,
+  COMPETITOR_MEDIAN_LABEL,
   COMPETITOR_REFERENCE,
+  COMPETITOR_REFERENCE_LABEL,
+  PER_LAWYER_NOTE,
+  WHITE_CASE_RANK,
   LATERAL_STEPS,
   PROGRAM_SPLIT,
   PROGRAM_SPLIT_TOTAL,
@@ -86,9 +91,36 @@ describe('b. growing slower than rivals', () => {
     expect(highlighted[0].value).toBe(8.36)
   })
 
-  it('puts the context line at the big-law average', () => {
+  it('puts the first context line at the Am Law 100 aggregate, and says so', () => {
     expect(COMPETITOR_REFERENCE).toBe(BIG_LAW_AVERAGE)
     expect(COMPETITOR_REFERENCE).toBe(13)
+    expect(COMPETITOR_REFERENCE_LABEL).toBe('Am Law 100 aggregate, +13.0%')
+  })
+
+  it('adds the median of the nine actually plotted', () => {
+    expect(COMPETITOR_MEDIAN).toBe(9.39)
+    expect(COMPETITOR_MEDIAN_LABEL).toBe('Median of these nine, 9.39%')
+  })
+
+  it('is a median of the nine, not of some other set', () => {
+    const sorted = COMPETITOR_DATA.map((f) => f.growth).sort((a, b) => a - b)
+    expect(sorted).toHaveLength(9)
+    expect(COMPETITOR_MEDIAN).toBe(sorted[4])
+  })
+
+  it('shows the aggregate above the median, which is why both are drawn', () => {
+    // One outlier drags the aggregate well above the middle of this chart.
+    expect(COMPETITOR_REFERENCE).toBeGreaterThan(COMPETITOR_MEDIAN)
+  })
+
+  it('ranks White & Case seventh of the nine, just under the median', () => {
+    expect(WHITE_CASE_RANK).toBe(7)
+    expect(8.36).toBeLessThan(COMPETITOR_MEDIAN)
+  })
+
+  it('carries the per-lawyer figure, which is the fairer comparison', () => {
+    expect(PER_LAWYER_NOTE).toMatch(/8\.7%/)
+    expect(PER_LAWYER_NOTE).toMatch(/\$1\.39M/)
   })
 })
 

@@ -1,31 +1,31 @@
 import { describe, expect, it } from 'vitest'
 import {
   BIG_LAW_AVERAGE,
+  BIG_LAW_AVERAGE_LABEL,
   COMPETITOR_DATA,
+  FAILED_LATERAL_TIERS,
   GAP_ROWS,
   GLASSDOOR_BARS,
   GLASSDOOR_NOTE,
+  HEADLINE_CALLOUT,
+  KEEP_FOUR,
+  LATERAL_FUNNEL,
+  LONDON_CALLOUT,
+  MEASUREMENT_LIST,
+  MOMENTUM_SCENARIOS,
+  PILOT_TOTAL,
+  PROGRAMS,
+  RESEARCH_PARTNERS,
+  RESEARCH_PEOPLE,
   REVENUE_DATA,
   REVENUE_GOAL,
   REVENUE_SHARE_OF_GOAL,
-  RESEARCH_PARTNERS,
-  RESEARCH_PEOPLE,
-  WHY_NOW_STATS,
-  PROGRAMS,
-  PILOT_TOTAL,
-  ROADMAP,
-  LATERAL_FUNNEL,
-  KEEP_FOUR,
-  MOMENTUM_SCENARIOS,
-  HEADLINE_CALLOUT,
-  SCORECARD,
   RISKS,
+  ROADMAP,
+  SCORECARD,
+  WHY_NOW_STATS,
 } from './data'
-import {
-  MEASUREMENT_LIST,
-  LEANER_OPTION,
-  COST_NEUTRAL_OPTION,
-} from './data'
+import { COST_NEUTRAL_OPTION, LEANER_OPTION } from './data'
 import { calculate, DEFAULTS, money } from './calculator'
 import { ALREADY_HAS, ASSUMPTIONS, OTHER_FIRMS, STILL_TO_VERIFY } from './extras'
 import { SOURCES, SOURCE_BY_ID, sourceYearLabel } from './sources'
@@ -179,7 +179,7 @@ describe('Section 4 — gaps table', () => {
   it('has the four rows from the PDF', () => {
     expect(GAP_ROWS.map((r) => r.add)).toEqual([
       'Momentum Circles',
-      'First 90 Days (lead)',
+      'First 90 Days',
       'Global Table',
       'Client Roundtables',
     ])
@@ -187,9 +187,9 @@ describe('Section 4 — gaps table', () => {
 })
 
 describe('Sources', () => {
-  it('is numbered 1..29 with no gaps', () => {
+  it('is numbered 1..31 with no gaps', () => {
     expect(SOURCES.map((s) => s.id)).toEqual(
-      Array.from({ length: 29 }, (_, i) => i + 1),
+      Array.from({ length: 31 }, (_, i) => i + 1),
     )
   })
 
@@ -381,5 +381,84 @@ describe('What moved to /the-numbers', () => {
   it('keeps the cost options for /the-numbers', () => {
     expect(LEANER_OPTION.body).toContain('$13,500')
     expect(COST_NEUTRAL_OPTION.body).toContain('$30,000')
+  })
+})
+
+/**
+ * What the director review asked to be true, asserted so it stays true.
+ */
+describe('Tone: a coordinator runs programmes, and owns none of them', () => {
+  it('never claims to lead one', () => {
+    const everything = JSON.stringify({ PROGRAMS, GAP_ROWS, MEASUREMENT_LIST, RISKS })
+    expect(everything).not.toMatch(/\(lead\)/i)
+    expect(everything).not.toMatch(/I would lead/i)
+  })
+
+  it('names who each of the two owned programmes is run for', () => {
+    expect(PROGRAMS.find((p) => p.name === 'First 90 Days')?.runsFor).toMatch(/Talent/)
+    expect(PROGRAMS.find((p) => p.name === 'Client Roundtables')?.runsFor).toMatch(
+      /Business Development/,
+    )
+  })
+
+  it('describes attendance-counting as an industry habit, not one team’s', () => {
+    const row = GAP_ROWS.find((r) => r.exists === 'Client events')!
+    expect(row.gap).toMatch(/industry/i)
+    expect(row.gap).not.toMatch(/^Usually measured by attendance$/)
+  })
+})
+
+describe('Compliance: no individual-level profiling', () => {
+  it('reports connections by cohort, never by named partner', () => {
+    const line = MEASUREMENT_LIST.find((m) => m.includes('connection'))!
+    expect(line).toMatch(/cohort/i)
+    expect(line).toMatch(/HR-run/i)
+    expect(line).not.toMatch(/flag new partners/i)
+  })
+
+  it('no longer claims anonymised totals while flagging individuals', () => {
+    expect(MEASUREMENT_LIST.join(' ')).not.toMatch(/flag .*partners/i)
+  })
+})
+
+describe('Citations the review flagged', () => {
+  it('attributes the loneliness figure to the study, not to UCLA', () => {
+    const card = RESEARCH_PEOPLE.find((c) => c.figure === '61%')!
+    expect(card.caveat).toMatch(/Harvard Business Review/)
+    expect(card.caveat).toMatch(/BetterUp/)
+    expect(card.caveat).toMatch(/1,600/)
+    expect(card.caveat).toMatch(/UCLA wrote the scale/)
+  })
+
+  it('uses the NALP figure for attrition, with the larger-firm range', () => {
+    const card = RESEARCH_PEOPLE.find((c) => c.figure === '19%')!
+    expect(card.body).toMatch(/16-18%/)
+    expect(card.sources).toContain(15)
+    expect(SOURCE_BY_ID.get(15)?.publisher).toBe('NALP Foundation')
+  })
+
+  it('calls the failed-lateral figure a vendor estimate and shows its bands', () => {
+    const card = RESEARCH_PARTNERS.find((c) => c.figure === '$4.04M')!
+    expect(card.caveat).toMatch(/vendor estimate/i)
+    expect(card.caveat).toMatch(/ALM Intelligence/)
+    expect(FAILED_LATERAL_TIERS.map((t) => t.cost)).toEqual([715_500, 1_509_300, 4_039_200])
+  })
+
+  it('labels 13% as the Am Law 100 aggregate, not an average', () => {
+    expect(BIG_LAW_AVERAGE_LABEL).toBe('Am Law 100 aggregate, +13.0%')
+    expect(BIG_LAW_AVERAGE_LABEL).not.toMatch(/big law average/i)
+  })
+
+  it('makes no buddy retention claim anywhere', () => {
+    const everything = JSON.stringify({ LONDON_CALLOUT, MEASUREMENT_LIST, PROGRAMS, RISKS })
+    expect(everything).not.toMatch(/52%/)
+    expect(LONDON_CALLOUT.points.join(' ')).toMatch(/retention is what the pilot would test/)
+  })
+
+  it('every source a figure cites actually exists', () => {
+    const ids = new Set(SOURCES.map((s) => s.id))
+    for (const card of [...RESEARCH_PARTNERS, ...RESEARCH_PEOPLE]) {
+      for (const id of card.sources) expect(ids.has(id)).toBe(true)
+    }
   })
 })

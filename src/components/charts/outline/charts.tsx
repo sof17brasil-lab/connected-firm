@@ -404,12 +404,17 @@ export function WideBars({
   max,
   reference,
   referenceLabel,
+  second,
+  secondLabel,
   height = 400,
 }: {
   data: BarDatum[]
   max?: number
   reference?: number
   referenceLabel?: string
+  /** A second context line, where one benchmark would mislead on its own. */
+  second?: number
+  secondLabel?: string
   height?: number
 }) {
   const w = 880
@@ -440,6 +445,28 @@ export function WideBars({
         </>
       )}
 
+      {second !== undefined && (
+        <>
+          <DrawPath
+            d={`M 8 ${floor - scale(second)} L ${w - 8} ${floor - scale(second)}`}
+            dashed
+            faint
+            order={0}
+          />
+          {secondLabel && (
+            <text
+              x={8}
+              y={floor - scale(second) - 10}
+              className="fill-current"
+              fillOpacity={0.6}
+              style={{ fontSize: 13, fontFamily: 'Manrope, sans-serif' }}
+            >
+              {secondLabel}
+            </text>
+          )}
+        </>
+      )}
+
       {data.map((d, i) => {
         const bh = scale(d.value)
         const x = slot * i + slot / 2
@@ -465,6 +492,105 @@ export function WideBars({
                 {line}
               </AxisLabel>
             ))}
+          </g>
+        )
+      })}
+    </svg>
+  )
+}
+
+export interface SquareLayer {
+  /** Share of the outer square's AREA, 0-1. */
+  share: number
+  label: string
+  display: string
+  /** Solid sky rather than an outline. */
+  solid?: boolean
+}
+
+/**
+ * Nested squares, compared by area.
+ *
+ * The outer square is the whole of one thing and each inner square is a
+ * share of it, sized by area rather than by side — so a square drawn at a
+ * fiftieth is a fiftieth of the ink, which is the only way the comparison
+ * is honest. They share a bottom-left corner so the shares stack visibly.
+ */
+export function NestedSquares({
+  outerLabel,
+  outerDisplay,
+  layers,
+}: {
+  outerLabel: string
+  outerDisplay: string
+  layers: SquareLayer[]
+}) {
+  const w = 540
+  const h = 420
+  const side = 300
+  const left = 16
+  const bottom = 384
+  // Small layers are labelled out to the right, all from the same column,
+  // so the leaders stay parallel and never cross each other's pills.
+  const leaderX = left + side + 18
+  const pillX = leaderX + 74
+
+  return (
+    <svg viewBox={`0 0 ${w} ${h}`} className="w-full" role="img">
+      <text
+        x={left}
+        y={bottom - side - 16}
+        className="fill-current"
+        fillOpacity={0.75}
+        style={{ fontSize: 13, fontFamily: 'Manrope, sans-serif' }}
+      >
+        {`${outerLabel} — ${outerDisplay}`}
+      </text>
+      <DrawRect x={left} y={bottom - side} width={side} height={side} order={0} />
+
+      {layers.map((layer, i) => {
+        // Area, not side: the side is the square root of the share, so a
+        // square drawn at a fiftieth really is a fiftieth of the ink.
+        const s = side * Math.sqrt(layer.share)
+        const y = bottom - s
+        const inside = s >= 130
+
+        return (
+          <g key={layer.label}>
+            {layer.solid ? (
+              <rect
+                x={left}
+                y={y}
+                width={s}
+                height={s}
+                className="fill-sky"
+                data-pop={i + 1}
+                opacity={0}
+              />
+            ) : (
+              <DrawRect x={left} y={y} width={s} height={s} order={i + 1} />
+            )}
+
+            {inside ? (
+              <>
+                <ValuePill x={left + s / 2} y={y + s / 2 - 13} order={i + 1}>
+                  {layer.display}
+                </ValuePill>
+                <AxisLabel x={left + s / 2} y={y + s / 2 + 20}>
+                  {layer.label}
+                </AxisLabel>
+              </>
+            ) : (
+              <>
+                <DrawPath d={`M ${left + s + 8} ${y + s / 2} L ${leaderX + 56} ${y + s / 2}`} order={i + 1} />
+                <ValuePill x={pillX} y={y + s / 2 - 13} order={i + 1}>
+                  {layer.display}
+                </ValuePill>
+                <AxisLabel x={pillX} y={y + s / 2 + 20}>
+                  {layer.label}
+                </AxisLabel>
+              </>
+            )}
           </g>
         )
       })}

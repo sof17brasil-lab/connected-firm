@@ -106,8 +106,19 @@ export const COMPETITOR_DATA: CompetitorBar[] = [
   { firm: 'Baker McKenzie', growth: 7.24, sources: [4] },
 ]
 
+/**
+ * 13.0% is the Am Law 100's *aggregate* 2025 revenue growth, weighted across
+ * all 100 firms — not the average of the nine plotted here, and not a
+ * like-for-like benchmark for one firm. The median of the nine is computed
+ * in lib/figures.ts and drawn beside it, because against that White & Case
+ * sits just below the middle rather than far behind.
+ */
 export const BIG_LAW_AVERAGE = 13
-export const BIG_LAW_AVERAGE_LABEL = 'Big Law average'
+export const BIG_LAW_AVERAGE_LABEL = 'Am Law 100 aggregate, +13.0%'
+
+/** Am Law 100 revenue per lawyer, 2025. The per-lawyer view of the same year. */
+export const AM_LAW_REVENUE_PER_LAWYER_GROWTH = 8.7
+export const AM_LAW_REVENUE_PER_LAWYER = '$1.39M'
 
 /* -- Section 2: The problem -------------------------------------------- */
 
@@ -116,6 +127,23 @@ export interface ResearchCard extends Sourced {
   body: string
   caveat?: string
 }
+
+/**
+ * What one failed lateral partner costs, by Am Law band.
+ *
+ * ALM Intelligence and Decipher, 2022, built from compensation data and
+ * SHRM attrition costs. Decipher sells lateral due diligence, so it has an
+ * interest in the number being large; showing all three bands is what makes
+ * the one the site uses legible rather than just big.
+ */
+export const FAILED_LATERAL_TIERS = [
+  { band: 'Am Law 151-200', cost: 715500, label: '$715,500' },
+  { band: 'Am Law 51-150', cost: 1509300, label: '$1,509,300' },
+  { band: 'Am Law 50', cost: 4039200, label: '$4,039,200', isUs: true },
+]
+
+/** The Am Law 50 band, which is the one White & Case sits in. */
+export const FAILED_LATERAL_COST = 4039200
 
 export const RESEARCH_PARTNERS: ResearchCard[] = [
   {
@@ -127,8 +155,9 @@ export const RESEARCH_PARTNERS: ResearchCard[] = [
   {
     figure: '$4.04M',
     body: 'the cost of one failed lateral partner at an Am Law 50 firm.',
-    caveat: '$4,039,200, Decipher, about 2022.',
-    sources: [7],
+    caveat:
+      '$4,039,200. ALM Intelligence and Decipher, 2022, from compensation data and SHRM attrition costs. The same paper puts Am Law 51-150 at $1,509,300 and Am Law 151-200 at $715,500. Decipher sells lateral vetting, so treat it as a vendor estimate.',
+    sources: [7, 30],
   },
   {
     figure: 'Best predictor',
@@ -145,7 +174,9 @@ export const RESEARCH_PARTNERS: ResearchCard[] = [
 export const RESEARCH_PEOPLE: ResearchCard[] = [
   {
     figure: '61%',
-    body: 'of lawyers scored above average on the UCLA loneliness scale, the highest of any profession studied.',
+    body: 'of lawyers scored above average on the UCLA Loneliness Scale, the highest of any profession studied.',
+    caveat:
+      'Achor et al., Harvard Business Review, 2018, from BetterUp research across about 1,600 workers in all occupations, so the legal sample is small. UCLA wrote the scale, not the study.',
     sources: [10],
   },
   {
@@ -172,8 +203,9 @@ export const RESEARCH_PEOPLE: ResearchCard[] = [
     sources: [14],
   },
   {
-    figure: '~20%',
-    body: 'associate attrition reached about this level in 2024.',
+    figure: '19%',
+    body: 'associate attrition across 141 firms in 2025, down from 20% in 2024. The four larger firm-size cohorts ran 16-18%.',
+    caveat: '6,335 hires and 4,442 departures. Firms of 100 or fewer attorneys were highest, at 24%.',
     sources: [15],
   },
   {
@@ -225,7 +257,7 @@ export const GAP_ROWS: GapRow[] = [
   {
     exists: '~50 lateral partners a year',
     gap: 'No public sign of a structured welcome program',
-    add: 'First 90 Days (lead)',
+    add: 'First 90 Days',
     sources: [1, 5],
   },
   {
@@ -236,7 +268,7 @@ export const GAP_ROWS: GapRow[] = [
   },
   {
     exists: 'Client events',
-    gap: 'Usually measured by attendance',
+    gap: 'Across the industry these are usually counted by attendance rather than by what follows',
     add: 'Client Roundtables',
     sources: [19],
   },
@@ -247,7 +279,7 @@ export const LONDON_CALLOUT = {
   points: [
     'Quarterly team socials, office-wide events, a local bar with a White & Case discount, a free in-house restaurant (Broad St Kitchen), and supervisor and buddy lunches for newcomers.',
     "Junior lawyers grade London's social life A to A* and peer support A*.",
-    'Lesson for New York: put socializing on a predictable calendar, use the cafeteria as a hub, give every newcomer a buddy.',
+    'Lesson for New York: put socializing on a predictable calendar, use the cafeteria as a hub, give every newcomer a buddy. The published evidence for buddy pairing is faster ramp-up and higher satisfaction, not retention; retention is what the pilot would test.',
   ],
   caveat:
     'Honest caveat: London still grades C on work-life balance. Connection helps people stay; it does not fix long hours.',
@@ -268,7 +300,8 @@ export const CONTACT_EMAIL = 'sofiamotaus@gmail.com'
 
 export interface Program extends Sourced {
   name: string
-  lead?: boolean
+  /** Whose programme it is. A coordinator runs it; they do not own it. */
+  runsFor?: string
   calculation: string
   cost: number
   costLabel: string
@@ -279,7 +312,7 @@ export interface Program extends Sourced {
 export const PROGRAMS: Program[] = [
   {
     name: 'First 90 Days',
-    lead: true,
+    runsFor: 'the Talent team and practice leaders',
     calculation: '~15 NY partners × 3 lunches × 6 people × $100',
     cost: 27000,
     costLabel: '$27,000',
@@ -308,6 +341,7 @@ export const PROGRAMS: Program[] = [
   },
   {
     name: 'Client Roundtables',
+    runsFor: 'Business Development',
     calculation: '8 dinners × 14 seats × $200',
     cost: 22400,
     costLabel: '$22,400',
@@ -439,7 +473,7 @@ export const MEASUREMENT_LIST = [
   'Link event attendance to the firm’s client and new-work data.',
   'Publish a monthly Event Impact Scorecard.',
   'Compare participants with similar non-participants, with surveys before and after.',
-  'Map relationships to flag new partners with few connections at day 30, anonymized totals only.',
+  'Report connection counts by cohort only, never by individual: an HR-run process, on an agreed basis, with no flagging of named partners.',
   'Track no-show rates and cost per guest to cut waste.',
   'Analyze client feedback themes in English and Portuguese.',
   'Add one survey question: “I feel valued for my work.”',

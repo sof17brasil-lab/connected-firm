@@ -19,15 +19,15 @@ export const SOURCES: Source[] = [
   { id: 4, publisher: 'Above the Law', title: '2026 Am Law 100', year: 2026, url: 'https://abovethelaw.com/?p=1182247' },
   { id: 5, publisher: 'Legal Cheek', title: 'White & Case 2025 results and partner count', year: 2026, url: 'https://www.legalcheek.com/2026/03/white-case-hits-2-7-billion-revenues-lifting-average-partner-earnings-to-3-3-million/amp/' },
   { id: 6, publisher: 'Above the Law', title: 'A third of lateral partners gone in 5 years', year: 2026, url: 'https://abovethelaw.com/2026/05/a-third-of-lateral-partners-are-gone-in-5-years-and-biglaw-keeps-failing-to-understand-why/' },
-  { id: 7, publisher: 'National Law Review', title: 'Cost of failed lateral hires', year: null, url: 'https://natlawreview.com/node/123728/printable/print' },
+  { id: 7, publisher: 'ALM Intelligence / Decipher', title: 'Playing with Fire: Three Warning Signs for Law Firm Lateral Hiring', year: 2022, url: 'https://images.law.com/contrib/content/uploads/documents/292/ALM-Intelligence-Fellows-Playing-with-Fire-Michael-Ellenhorn-Final-March-2022-1.pdf' },
   { id: 8, publisher: 'National Law Review', title: 'Integration predicts lateral success', year: null, url: 'https://natlawreview.com/article/work-doesn-t-stop-once-you-hire-lateral' },
   { id: 9, publisher: 'Nexl', title: 'Law firm lateral integration', year: 2026, url: 'https://nexl.cloud/resources/article-law-firm-lateral-integration' },
-  { id: 10, publisher: 'ABA Journal', title: 'Lawyers rank highest on loneliness scale', year: 2018, url: 'https://abajournal.com/news/article/lawyers_rank_highest_on_loneliness_scale_study_finds' },
+  { id: 10, publisher: 'ABA Journal', title: 'Lawyers rank highest on loneliness scale, reporting Achor et al., Harvard Business Review / BetterUp', year: 2018, url: 'https://abajournal.com/news/article/lawyers_rank_highest_on_loneliness_scale_study_finds' },
   { id: 11, publisher: 'Employee Benefit News', title: 'Gallup best friend at work data', year: 2022, url: 'https://www.benefitnews.com/news/workplace-friendships-boost-engagement-and-lower-turnover' },
   { id: 12, publisher: 'SHRM', title: 'Q3 2026 Global Employee Monitor', year: 2026, url: 'https://www.shrm.org/in/about/press-room/shrm-global-employee-monitor-finds-belonging-is-key-to-engagemen' },
   { id: 13, publisher: 'RFBerlin', title: 'Friends at Work field experiment', year: null, url: 'https://www.rfberlin.com/?p=26042' },
   { id: 14, publisher: 'Above the Law', title: 'Cost of associate attrition (NALP)', year: 2017, url: 'https://abovethelaw.com/legal-innovation-center/member-content/how-does-associate-attrition-impact-the-bottom-line/?rf=1' },
-  { id: 15, publisher: 'LeanLaw', title: 'Associate attrition in 2024', year: null, url: 'https://www.leanlaw.co/blog/the-path-to-partnership-compensation-at-every-stage/' },
+  { id: 15, publisher: 'NALP Foundation', title: 'Update on Associate Attrition and Hiring (CY 2025)', year: 2026, url: 'https://www.nalpfoundation.org/news/the-nalp-foundation-releases-latest-update-on-associate-attrition-and-hiring-(cy-25)' },
   { id: 16, publisher: 'Attorney at Work', title: 'BTI associate satisfaction', year: 2026, url: 'https://www.attorneyatwork.com/law-firms-with-the-highest-associate-job-satisfaction-in-2026/' },
   { id: 17, publisher: 'Major, Lindsey & Africa', title: 'Associate retention survey', year: null, url: 'https://mlaglobal.com/about-us/press-releases/sixty-percent-of-law-firm-associates-feel-their-firms-are-not-trying-to-retain-them-according-to-new-survey-from-mla' },
   { id: 18, publisher: 'Intapp', title: 'Heidi Gardner on smart collaboration', year: null, url: 'https://www.intapp.com/?p=4611' },
@@ -42,6 +42,8 @@ export const SOURCES: Source[] = [
   { id: 27, publisher: 'ABA Journal', title: 'Return-to-office perks (Fried Frank)', year: null, url: 'https://abajournal.com/news/article/law-firms-encourage-workers-to-return-to-office-with-these-perks' },
   { id: 28, publisher: 'Naboo', title: 'Corporate dining costs in New York City', year: 2026, url: 'https://www.naboo.app/en-us/restaurants/new-york-city' },
   { id: 29, publisher: 'LawCareers.Net', title: 'White & Case revenue climbs to $3.6 billion as PEP rises 10%', year: 2026, url: 'https://www.lawcareers.net/Explore/News/White-Case-revenue-climbs-to-36-billion-as-PEP-rises-10-30032026' },
+  { id: 30, publisher: 'Decipher Investigative Intelligence', title: 'Why Lateral Partners: cost of a failed hire by Am Law band', year: null, url: 'https://decipherintel.com/lateral-partners/' },
+  { id: 31, publisher: 'David Lat, Original Jurisdiction', title: 'The 2026 Am Law 100: revenue per lawyer up 8.7% to $1.39M', year: 2026, url: 'https://davidlat.substack.com/p/2026-am-law-100-profits-per-equity-partner-pep-revenue-per-lawyer-rpl-in-2025' },
 ]
 
 export const SOURCE_BY_ID = new Map(SOURCES.map((s) => [s.id, s]))
