@@ -17,6 +17,7 @@ import {
   COMPETITOR_REFERENCE,
   COMPETITOR_REFERENCE_LABEL,
   PER_LAWYER_NOTE,
+  WHITE_CASE_GROWTH,
   WHITE_CASE_RANK,
   LATERAL_STEPS,
   PROGRAM_SPLIT,
@@ -200,5 +201,24 @@ describe('e. sensitivity', () => {
 
   it('clears the pilot cost even at the smallest reduction', () => {
     expect(SENSITIVITY[0].value).toBeGreaterThan(PILOT_TOTAL)
+  })
+})
+
+describe('the copy cannot misstate the ranking', () => {
+  it('counts six firms ahead of White & Case, not eight', () => {
+    const ahead = COMPETITOR_DATA.filter((f) => f.growth > WHITE_CASE_GROWTH)
+    expect(ahead).toHaveLength(6)
+    // The rank is that count plus one, which is what the sentence quotes.
+    expect(WHITE_CASE_RANK).toBe(ahead.length + 1)
+  })
+
+  it('quotes White & Case’s own published growth', () => {
+    expect(WHITE_CASE_GROWTH).toBe(8.36)
+    expect(COMPETITOR_DATA.find((f) => f.isWhiteCase)?.growth).toBe(WHITE_CASE_GROWTH)
+  })
+
+  it('sits below the median of the nine but not far from it', () => {
+    expect(WHITE_CASE_GROWTH).toBeLessThan(COMPETITOR_MEDIAN)
+    expect(COMPETITOR_MEDIAN - WHITE_CASE_GROWTH).toBeLessThan(1.5)
   })
 })

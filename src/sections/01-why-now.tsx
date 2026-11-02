@@ -7,6 +7,8 @@ import { Band, Eyebrow, Rule } from '@/components/site/section'
 import { WhatThisMeans } from '@/components/site/what-this-means'
 import { WHY_NOW_STATS } from '@/lib/data'
 import { HERO_PHOTO } from '@/lib/photos'
+import { AM_LAW_REVENUE_PER_LAWYER_GROWTH, BIG_LAW_AVERAGE } from '@/lib/data'
+import { COMPETITOR_MEDIAN, WHITE_CASE_GROWTH, WHITE_CASE_RANK } from '@/lib/figures'
 
 /**
  * Move 1 carries this section: the opener's centre square grows to fill the
@@ -43,9 +45,11 @@ export function WhyNow() {
                 White &amp; Case is growing, but not fast enough for 2028.
               </h2>
               <p className="measure mt-6 text-slate">
-                White &amp; Case grew 8.36% in 2025 against a Big Law average of about 13%
-                <SourcePill id={2} label="Bloomberg Law" />. Eight comparable firms grew
-                faster.
+                White &amp; Case grew {WHITE_CASE_GROWTH}% in 2025
+                <SourcePill id={2} label="Bloomberg Law" />: {WHITE_CASE_RANK}th of the nine
+                firms here and a little under their {COMPETITOR_MEDIAN}% median. The Am Law
+                100 grew {BIG_LAW_AVERAGE}.0% in aggregate, weighted across all hundred
+                firms, and revenue per lawyer rose {AM_LAW_REVENUE_PER_LAWYER_GROWTH}%.
               </p>
               <p className="text-caption mt-6 text-muted-ink">
                 2025 revenue growth <SourcePill id={4} label="Am Law 100" />. Kirkland is

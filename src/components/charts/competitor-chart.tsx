@@ -10,6 +10,7 @@ import {
 } from 'recharts'
 import { AXIS_STYLE, ChartFrame } from './chart-frame'
 import { BIG_LAW_AVERAGE, BIG_LAW_AVERAGE_LABEL, COMPETITOR_DATA } from '@/lib/data'
+import { COMPETITOR_MEDIAN, COMPETITOR_MEDIAN_LABEL } from '@/lib/figures'
 
 /**
  * 2025 revenue growth across comparable firms, sorted descending.
@@ -46,6 +47,21 @@ export function CompetitorChart() {
                 value: BIG_LAW_AVERAGE_LABEL,
                 position: 'top',
                 fill: '#0E1E3A',
+                fontSize: 12,
+                fontFamily: AXIS_STYLE.fontFamily,
+              }}
+            />
+
+            {/* The aggregate alone reads as a benchmark these nine missed.
+                The median of the nine is the like-for-like comparison. */}
+            <ReferenceLine
+              x={COMPETITOR_MEDIAN}
+              stroke="#6B7280"
+              strokeDasharray="3 4"
+              label={{
+                value: COMPETITOR_MEDIAN_LABEL,
+                position: 'bottom',
+                fill: '#6B7280',
                 fontSize: 12,
                 fontFamily: AXIS_STYLE.fontFamily,
               }}

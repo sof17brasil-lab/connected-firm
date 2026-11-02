@@ -69,7 +69,7 @@ export function SiteFooter() {
 
         <div className="flex flex-col gap-3 md:flex-row md:items-center md:justify-between">
           <p className="eyebrow text-ivory/60">{DISCLAIMER}</p>
-          <p className="eyebrow text-ivory/35">October 2026</p>
+          <p className="eyebrow text-ivory/35">November 2026</p>
         </div>
       </div>
     </footer>

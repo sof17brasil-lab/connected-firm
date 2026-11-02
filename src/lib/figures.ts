@@ -66,6 +66,9 @@ export const COMPETITOR_MEDIAN = (() => {
   return sorted.length % 2 === 0 ? (sorted[mid - 1] + sorted[mid]) / 2 : sorted[mid]
 })()
 
+/** White & Case's own 2025 growth, so the copy cannot quote a stale number. */
+export const WHITE_CASE_GROWTH = COMPETITOR_DATA.find((f) => f.isWhiteCase)!.growth
+
 export const COMPETITOR_MEDIAN_LABEL = `Median of these nine, ${COMPETITOR_MEDIAN}%`
 
 /** Where White & Case ranks among the nine, 1 = fastest. */
