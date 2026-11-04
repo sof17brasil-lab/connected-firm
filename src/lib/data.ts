@@ -41,8 +41,8 @@ export const WHY_NOW_STATS: StatTile[] = [
     value: '51',
     countTo: 51,
     label: 'Lateral partners hired in 2025',
-    note: 'Across 43 offices in 29 countries',
-    sources: [1, 5],
+    note: 'Across 11 offices, including 15 in New York',
+    sources: [32, 33],
   },
   {
     value: '349 → 332',
@@ -199,9 +199,10 @@ export const RESEARCH_PEOPLE: ResearchCard[] = [
     sources: [12],
   },
   {
-    figure: '4-5 points',
+    figure: 'about 4-4.5 points',
     body: 'turnover fell in offices given small budgets for social activities.',
-    caveat: 'Field experiment at a microfinance company, not a law firm.',
+    caveat:
+      'From a 9-13% baseline, in the months after a three-month program. Field experiment at a microfinance firm, not a law firm (Belot & Hakimov, RFBerlin Discussion Paper 26033, 2026).',
     sources: [13],
   },
   {
@@ -353,13 +354,15 @@ export const PROGRAMS: Program[] = [
   {
     name: 'First 90 Days',
     runsFor: 'the Talent team and practice leaders',
-    calculation: '~15 NY partners × 3 lunches × 6 people × $100',
+    calculation: '15 New York lateral partners × 3 lunches × 6 people × $100',
     cost: 27000,
     costLabel: '$27,000',
     blurb:
       'A structured welcome for every lateral partner: three small lunches in their first ninety days, each with people they would not otherwise meet.',
+    // The headcount is published now; the three lunches, the six seats and
+    // the hundred dollars are still mine, so the tag stays.
     estimate: true,
-    sources: [28],
+    sources: [28, 33],
   },
   {
     name: 'Momentum Circles',

@@ -106,9 +106,9 @@ export interface Assumption {
 export const ASSUMPTIONS: Assumption[] = [
   {
     name: 'NY lateral partners per year',
-    value: '~15',
-    why: 'My estimate. The firm does not publish lateral hires by office.',
-    sources: [],
+    value: '15',
+    why: 'Published: of 51 lateral partners added in 2025, 15 were in New York and 14 in London.',
+    sources: [33],
   },
   {
     name: 'Lunch cost per person',
@@ -125,7 +125,7 @@ export const ASSUMPTIONS: Assumption[] = [
   {
     name: 'Turnover reduction',
     value: '1-4 points',
-    why: 'A field experiment found 4-5 points, at a non-legal firm.',
+    why: 'A field experiment found about 4-4.5 points, from a 9-13% baseline, at a non-legal firm.',
     sources: [13],
   },
   {

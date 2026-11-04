@@ -25,7 +25,7 @@ export const SOURCES: Source[] = [
   { id: 10, publisher: 'ABA Journal', title: 'Lawyers rank highest on loneliness scale, reporting Achor et al., Harvard Business Review / BetterUp', year: 2018, url: 'https://abajournal.com/news/article/lawyers_rank_highest_on_loneliness_scale_study_finds' },
   { id: 11, publisher: 'Gallup', title: 'The Increasing Importance of a Best Friend at Work', year: 2022, url: 'https://www.gallup.com/workplace/397058/increasing-importance-best-friend-work.aspx' },
   { id: 12, publisher: 'SHRM', title: 'Q3 2026 Global Employee Monitor', year: 2026, url: 'https://www.shrm.org/in/about/press-room/shrm-global-employee-monitor-finds-belonging-is-key-to-engagemen' },
-  { id: 13, publisher: 'RFBerlin', title: 'Friends at Work field experiment', year: null, url: 'https://www.rfberlin.com/?p=26042' },
+  { id: 13, publisher: 'Belot & Hakimov, RFBerlin', title: 'The Value of Bonding at Work: Evidence from a Field Experiment, Discussion Paper 033/26, abstract p.3', year: 2026, url: 'https://www.rfberlin.com/wp-content/uploads/2026/01/26033.pdf' },
   { id: 14, publisher: 'Above the Law', title: 'Cost of associate attrition: legal recruiters\u2019 estimate drawing on NALP\u2019s 2017 attrition update', year: 2017, url: 'https://abovethelaw.com/legal-innovation-center/member-content/how-does-associate-attrition-impact-the-bottom-line/?rf=1' },
   { id: 15, publisher: 'NALP Foundation', title: 'Update on Associate Attrition and Hiring (CY 2025)', year: 2026, url: 'https://www.nalpfoundation.org/news/the-nalp-foundation-releases-latest-update-on-associate-attrition-and-hiring-(cy-25)' },
   { id: 16, publisher: 'Attorney at Work', title: 'BTI associate satisfaction', year: 2026, url: 'https://www.attorneyatwork.com/law-firms-with-the-highest-associate-job-satisfaction-in-2026/' },
@@ -44,6 +44,10 @@ export const SOURCES: Source[] = [
   { id: 29, publisher: 'LawCareers.Net', title: 'White & Case revenue climbs to $3.6 billion as PEP rises 10%', year: 2026, url: 'https://www.lawcareers.net/Explore/News/White-Case-revenue-climbs-to-36-billion-as-PEP-rises-10-30032026' },
   { id: 30, publisher: 'Decipher Investigative Intelligence', title: 'Why Lateral Partners: cost of a failed hire by Am Law band', year: null, url: 'https://decipherintel.com/lateral-partners/' },
   { id: 31, publisher: 'David Lat, Original Jurisdiction', title: 'The 2026 Am Law 100: revenue per lawyer up 8.7% to $1.39M', year: 2026, url: 'https://davidlat.substack.com/p/2026-am-law-100-profits-per-equity-partner-pep-revenue-per-lawyer-rpl-in-2025' },
+  { id: 32, publisher: 'Solicitor News', title: 'White & Case revenue hits £2.7bn with strong London growth', year: 2026, url: 'https://solicitornews.co.uk/white-case-revenue-london-growth/' },
+  // The same Bloomberg piece as source 2. Bloomberg Law keeps refusing the
+  // request; this mirror opens, and it is where the office split is stated.
+  { id: 33, publisher: 'Bloomberg Government', title: 'White & Case Posts $3.6 Billion Revenue as Profits Also Tick Up', year: 2026, url: 'https://news.bgov.com/class-action/white-case-posts-3-6-billion-revenue-as-profits-also-tick-up' },
 ]
 
 export const SOURCE_BY_ID = new Map(SOURCES.map((s) => [s.id, s]))

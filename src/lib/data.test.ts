@@ -151,7 +151,7 @@ describe('Section 2 — research cards', () => {
       // Gallup does publish.
       '2 in 10',
       '18% vs 61%',
-      '4-5 points',
+      'about 4-4.5 points',
       '$200K-$500K',
       '9.4%',
     ]) {
@@ -159,9 +159,16 @@ describe('Section 2 — research cards', () => {
     }
   })
 
-  it('labels the field experiment as non-legal', () => {
-    const card = all.find((c) => c.figure === '4-5 points')!
+  it('quotes the paper, not the lay summary of it', () => {
+    // The paper's abstract, p.3: "employee turnover falls by about 4-4.5
+    // pp from a 9-13% baseline in the following months". RFBerlin's own
+    // write-up rounds that to 4-5 points; the paper is what is cited.
+    const card = all.find((c) => c.figure === 'about 4-4.5 points')!
+    expect(card.caveat).toMatch(/9-13% baseline/)
+    expect(card.caveat).toMatch(/three-month program/)
     expect(card.caveat).toMatch(/not a law firm/i)
+    expect(card.caveat).toMatch(/Belot & Hakimov/)
+    expect(SOURCE_BY_ID.get(13)?.url).toMatch(/26033\.pdf$/)
   })
 })
 
@@ -228,9 +235,9 @@ describe('Section 4 — gaps table', () => {
 })
 
 describe('Sources', () => {
-  it('is numbered 1..31 with no gaps', () => {
+  it('is numbered 1..33 with no gaps', () => {
     expect(SOURCES.map((s) => s.id)).toEqual(
-      Array.from({ length: 31 }, (_, i) => i + 1),
+      Array.from({ length: 33 }, (_, i) => i + 1),
     )
   })
 
@@ -285,10 +292,15 @@ describe('Section 5 — program costs', () => {
     expect(PILOT_TOTAL).toBe(77600)
   })
 
-  it('labels the ~15 NY partners figure as an estimate', () => {
+  it('names the published New York count, and still flags the rest', () => {
+    // Bloomberg: 51 laterals across 11 offices, 15 of them in New York.
+    // The headcount is no longer a guess, but the three lunches, six
+    // seats and $100 a head are, so the programme keeps its estimate tag.
     const lead = PROGRAMS.find((p) => p.name === 'First 90 Days')!
+    expect(lead.calculation).toContain('15 New York lateral partners')
+    expect(lead.calculation).not.toContain('~15')
+    expect(lead.sources).toContain(33)
     expect(lead.estimate).toBe(true)
-    expect(lead.calculation).toContain('~15')
   })
 
   it('checks each program calculation multiplies out', () => {
@@ -629,5 +641,26 @@ describe('The Gardner figure is scoped to what she measured', () => {
     expect(fact.sources).toEqual([18])
     expect(SOURCE_BY_ID.get(18)?.publisher).toMatch(/American Lawyer/)
     expect(SOURCE_BY_ID.get(18)?.year).toBe(2018)
+  })
+})
+
+describe('Where the 51 laterals landed', () => {
+  it('says offices and New York, not the global footprint', () => {
+    const tile = WHY_NOW_STATS.find((t) => t.label.includes('Lateral partners'))!
+    expect(tile.note).toBe('Across 11 offices, including 15 in New York')
+    expect(tile.note).not.toMatch(/43 offices/)
+    expect(tile.sources).toEqual([32, 33])
+  })
+
+  it('cites two pages that both open', () => {
+    expect(SOURCE_BY_ID.get(32)?.publisher).toBe('Solicitor News')
+    expect(SOURCE_BY_ID.get(33)?.publisher).toBe('Bloomberg Government')
+  })
+
+  it('agrees with the assumption listed on the methodology page', () => {
+    const row = ASSUMPTIONS.find((a) => a.name === 'NY lateral partners per year')!
+    expect(row.value).toBe('15')
+    expect(row.why).not.toMatch(/My estimate/)
+    expect(row.sources).toEqual([33])
   })
 })
