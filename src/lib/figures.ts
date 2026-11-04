@@ -52,13 +52,16 @@ export const COMPETITOR_BARS = COMPETITOR_DATA.map((firm) => ({
 export const COMPETITOR_REFERENCE = BIG_LAW_AVERAGE
 export const COMPETITOR_REFERENCE_LABEL = BIG_LAW_AVERAGE_LABEL
 
+/** How many firms the chart plots: the Am Law top ten by revenue. */
+export const COMPETITOR_COUNT = COMPETITOR_DATA.length
+
 /**
- * The median of the nine firms actually plotted.
+ * The median of the firms actually plotted.
  *
  * The 13.0% line is the Am Law 100's aggregate, which is revenue-weighted
- * across a hundred firms and is dragged up here by one outlier. Against
- * the median of this chart's own nine, White & Case sits just below the
- * middle — which is the fair comparison, and still not fast enough.
+ * across a hundred firms. Against the median of this chart's own set,
+ * White & Case sits just below the middle — which is the fair comparison,
+ * and still not fast enough.
  */
 export const COMPETITOR_MEDIAN = (() => {
   const sorted = COMPETITOR_DATA.map((f) => f.growth).sort((a, b) => a - b)
@@ -69,9 +72,12 @@ export const COMPETITOR_MEDIAN = (() => {
 /** White & Case's own 2025 growth, so the copy cannot quote a stale number. */
 export const WHITE_CASE_GROWTH = COMPETITOR_DATA.find((f) => f.isWhiteCase)!.growth
 
-export const COMPETITOR_MEDIAN_LABEL = `Median of these nine, ${COMPETITOR_MEDIAN}%`
+/** An even set gives a median between two values, so it is rounded to show. */
+export const COMPETITOR_MEDIAN_DISPLAY = Number(COMPETITOR_MEDIAN.toFixed(1))
 
-/** Where White & Case ranks among the nine, 1 = fastest. */
+export const COMPETITOR_MEDIAN_LABEL = `Median of these ${COMPETITOR_COUNT}, ${COMPETITOR_MEDIAN_DISPLAY}%`
+
+/** Where White & Case ranks on growth among them, 1 = fastest. */
 export const WHITE_CASE_RANK =
   COMPETITOR_DATA.filter((f) => f.growth > (COMPETITOR_DATA.find((x) => x.isWhiteCase)?.growth ?? 0))
     .length + 1

@@ -9,7 +9,12 @@ import { WhatThisMeans } from '@/components/site/what-this-means'
 import { WHY_NOW_STATS } from '@/lib/data'
 import { HERO_PHOTO } from '@/lib/photos'
 import { AM_LAW_REVENUE_PER_LAWYER_GROWTH, BIG_LAW_AVERAGE } from '@/lib/data'
-import { COMPETITOR_MEDIAN, WHITE_CASE_GROWTH, WHITE_CASE_RANK } from '@/lib/figures'
+import {
+  COMPETITOR_COUNT,
+  COMPETITOR_MEDIAN_DISPLAY,
+  WHITE_CASE_GROWTH,
+  WHITE_CASE_RANK,
+} from '@/lib/figures'
 
 /**
  * The only charting-library component on the home page, and it sits well
@@ -79,14 +84,15 @@ export function WhyNow() {
               </h2>
               <p className="measure mt-6 text-slate">
                 White &amp; Case grew {WHITE_CASE_GROWTH}% in 2025
-                <SourcePill id={2} label="Bloomberg Law" />: {WHITE_CASE_RANK}th of the nine
-                firms here and a little under their {COMPETITOR_MEDIAN}% median. The Am Law
-                100 grew {BIG_LAW_AVERAGE}.0% in aggregate, weighted across all hundred
-                firms, and revenue per lawyer rose {AM_LAW_REVENUE_PER_LAWYER_GROWTH}%.
+                <SourcePill id={2} label="Bloomberg Law" />: {WHITE_CASE_RANK}th of the{' '}
+                {COMPETITOR_COUNT} firms here and a little under their{' '}
+                {COMPETITOR_MEDIAN_DISPLAY}% median. The Am Law 100 grew {BIG_LAW_AVERAGE}.0%
+                in aggregate, weighted across all hundred firms, and revenue per lawyer rose{' '}
+                {AM_LAW_REVENUE_PER_LAWYER_GROWTH}%.
               </p>
               <p className="text-caption mt-6 text-muted-ink">
-                2025 revenue growth <SourcePill id={4} label="Am Law 100" />. Kirkland is
-                left out: its growth figure is not in the source.
+                2025 revenue growth for the Am Law top ten by revenue{' '}
+                <SourcePill id={4} label="Am Law 100" />.
                 <Footnote ids={[4]} className="ml-1" />
               </p>
             </Reveal>

@@ -13,6 +13,7 @@ import { DEFAULTS, calculate } from './calculator'
 import {
   COMPETITOR_BARS,
   COMPETITOR_MEDIAN,
+  COMPETITOR_MEDIAN_DISPLAY,
   COMPETITOR_MEDIAN_LABEL,
   COMPETITOR_REFERENCE,
   COMPETITOR_REFERENCE_LABEL,
@@ -98,15 +99,17 @@ describe('b. growing slower than rivals', () => {
     expect(COMPETITOR_REFERENCE_LABEL).toBe('Am Law 100 aggregate, +13.0%')
   })
 
-  it('adds the median of the nine actually plotted', () => {
-    expect(COMPETITOR_MEDIAN).toBe(9.39)
-    expect(COMPETITOR_MEDIAN_LABEL).toBe('Median of these nine, 9.39%')
+  it('adds the median of the firms actually plotted', () => {
+    // Ten firms, so the median falls between the fifth and sixth.
+    expect(COMPETITOR_MEDIAN).toBeCloseTo(10.195, 3)
+    expect(COMPETITOR_MEDIAN_DISPLAY).toBe(10.2)
+    expect(COMPETITOR_MEDIAN_LABEL).toBe('Median of these 10, 10.2%')
   })
 
-  it('is a median of the nine, not of some other set', () => {
+  it('is a median of this chart\u2019s own set, not of some other one', () => {
     const sorted = COMPETITOR_DATA.map((f) => f.growth).sort((a, b) => a - b)
-    expect(sorted).toHaveLength(9)
-    expect(COMPETITOR_MEDIAN).toBe(sorted[4])
+    expect(sorted).toHaveLength(10)
+    expect(COMPETITOR_MEDIAN).toBe((sorted[4] + sorted[5]) / 2)
   })
 
   it('shows the aggregate above the median, which is why both are drawn', () => {
@@ -114,8 +117,8 @@ describe('b. growing slower than rivals', () => {
     expect(COMPETITOR_REFERENCE).toBeGreaterThan(COMPETITOR_MEDIAN)
   })
 
-  it('ranks White & Case seventh of the nine, just under the median', () => {
-    expect(WHITE_CASE_RANK).toBe(7)
+  it('ranks White & Case eighth of the ten, just under the median', () => {
+    expect(WHITE_CASE_RANK).toBe(8)
     expect(8.36).toBeLessThan(COMPETITOR_MEDIAN)
   })
 
@@ -205,9 +208,9 @@ describe('e. sensitivity', () => {
 })
 
 describe('the copy cannot misstate the ranking', () => {
-  it('counts six firms ahead of White & Case, not eight', () => {
+  it('counts the firms ahead of White & Case, and matches the rank', () => {
     const ahead = COMPETITOR_DATA.filter((f) => f.growth > WHITE_CASE_GROWTH)
-    expect(ahead).toHaveLength(6)
+    expect(ahead).toHaveLength(7)
     // The rank is that count plus one, which is what the sentence quotes.
     expect(WHITE_CASE_RANK).toBe(ahead.length + 1)
   })
@@ -217,8 +220,8 @@ describe('the copy cannot misstate the ranking', () => {
     expect(COMPETITOR_DATA.find((f) => f.isWhiteCase)?.growth).toBe(WHITE_CASE_GROWTH)
   })
 
-  it('sits below the median of the nine but not far from it', () => {
+  it('sits below the median but not far from it', () => {
     expect(WHITE_CASE_GROWTH).toBeLessThan(COMPETITOR_MEDIAN)
-    expect(COMPETITOR_MEDIAN - WHITE_CASE_GROWTH).toBeLessThan(1.5)
+    expect(COMPETITOR_MEDIAN - WHITE_CASE_GROWTH).toBeLessThan(2)
   })
 })

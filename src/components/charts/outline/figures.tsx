@@ -5,6 +5,7 @@ import { EstimateTag, Footnote } from '@/components/site/footnote'
 import { REVENUE_GOAL } from '@/lib/data'
 import {
   COMPETITOR_BARS,
+  COMPETITOR_COUNT,
   COMPETITOR_MEDIAN,
   COMPETITOR_MEDIAN_LABEL,
   COMPETITOR_REFERENCE,
@@ -101,12 +102,12 @@ export function RevenueGapFigure() {
 export function CompetitorFigure() {
   return (
     <Figure
-      takeaway={`White & Case grew ${COMPETITOR_BARS.find((b) => b.highlight)?.display} in 2025, ${WHITE_CASE_RANK}th of these nine and a little under their median — not far off the pack, and not fast enough for 2028.`}
+      takeaway={`White & Case grew ${COMPETITOR_BARS.find((b) => b.highlight)?.display} in 2025, ${WHITE_CASE_RANK}th of these ${COMPETITOR_COUNT} and a little under their median — not far off the pack, and not fast enough for 2028.`}
       source={
         <>
-          2025 revenue growth, Am Law 100. Kirkland &amp; Ellis is absent from the source. The
-          13.0% line is the Am Law 100 aggregate, weighted across all hundred firms, not an
-          average of these nine. {PER_LAWYER_NOTE}
+          2025 revenue growth for the Am Law top ten by revenue. The 13.0% line is the Am
+          Law 100 aggregate, weighted across all hundred firms, not an average of these{' '}
+          {COMPETITOR_COUNT}. {PER_LAWYER_NOTE}
           <Footnote ids={[4, 31]} className="ml-1" />
         </>
       }

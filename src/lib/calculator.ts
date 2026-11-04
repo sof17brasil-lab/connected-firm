@@ -35,7 +35,8 @@ export interface CalculatorOutputs {
 
 export const DEFAULTS: CalculatorInputs = {
   lawyers: 1950,
-  attrition: 20,
+  // NALP Foundation, CY2025: 19% overall, 16-18% at the larger firms.
+  attrition: 19,
   costPerDeparture: 200000,
   reduction: 1,
   pilotCost: 77600,

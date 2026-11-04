@@ -5,7 +5,9 @@ describe('Calculator defaults', () => {
   const out = calculate(DEFAULTS)
 
   it('matches the five figures the brief specifies', () => {
-    expect(out.baselineDepartures).toBe(390)
+    // 1,950 x 19%, the NALP CY2025 rate. Savings are unchanged: they come
+    // from the reduction, not the baseline.
+    expect(out.baselineDepartures).toBe(370.5)
     expect(out.departuresAvoided).toBe(19.5)
     expect(out.savings).toBe(3_900_000)
     expect(Math.round(out.returnPerDollar)).toBe(50)

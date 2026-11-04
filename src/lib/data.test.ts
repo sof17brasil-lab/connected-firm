@@ -107,6 +107,7 @@ describe('Section 1 — competitor chart', () => {
       'Gibson Dunn': 18.37,
       'Simpson Thacher': 22.66,
       Skadden: 11.0,
+      'Kirkland & Ellis': 19.93,
       'Ropes & Gray': 9.39,
       Sidley: 8.68,
       'White & Case': 8.36,
@@ -121,8 +122,14 @@ describe('Section 1 — competitor chart', () => {
     expect(highlighted[0].firm).toBe('White & Case')
   })
 
-  it('leaves Kirkland out', () => {
-    expect(COMPETITOR_DATA.some((d) => d.firm.includes('Kirkland'))).toBe(false)
+  it('includes Kirkland, which is in the source after all', () => {
+    const k = COMPETITOR_DATA.find((d) => d.firm.includes('Kirkland'))
+    expect(k).toBeDefined()
+    expect(k?.growth).toBe(19.93)
+  })
+
+  it('is the Am Law top ten by revenue', () => {
+    expect(COMPETITOR_DATA).toHaveLength(10)
   })
 
   it('puts the Big Law average reference line at 13%', () => {
@@ -526,11 +533,14 @@ describe('Claims match what the cited page says', () => {
     expect(everything).not.toMatch(/37% vs 49%/)
   })
 
-  it('says where the lateral range comes from, and labels it an estimate', () => {
+  it('names who measured the lateral range, and does not call it mine', () => {
+    // Above the Law carries it verbatim: "research from Decipher
+    // Investigative Intelligence that 30-38 percent of lateral partners
+    // leave within five years". It is sourced, so no estimate tag.
     const card = RESEARCH_PARTNERS.find((c) => c.figure === '30-38%')!
-    expect(card.estimate).toBe(true)
-    expect(card.caveat).toMatch(/roughly a third/)
-    expect(card.caveat).toMatch(/48%/)
+    expect(card.estimate).toBeUndefined()
+    expect(card.caveat).toMatch(/Decipher Investigative Intelligence/)
+    expect(card.caveat).toMatch(/near 50%/)
     expect(card.sources).toEqual([6, 30])
   })
 
@@ -551,5 +561,73 @@ describe('Claims match what the cited page says', () => {
     for (const fact of CLIENT_FACTS) {
       for (const id of fact.sources) expect(SOURCE_BY_ID.get(id)).toBeDefined()
     }
+  })
+})
+
+/**
+ * The second fact-check pass, 4 November 2026. Each of these was checked
+ * against the live page before it was changed.
+ */
+describe('Second fact-check pass', () => {
+  it('carries the figure that sits beside 30-38% in the same sentence', () => {
+    const card = RESEARCH_PARTNERS.find((c) => c.figure === '90%')!
+    expect(card.body).toMatch(/business development challenges/)
+    expect(card.sources).toEqual([6])
+    // The old claim cited a page that no longer backs it.
+    expect(JSON.stringify(RESEARCH_PARTNERS)).not.toMatch(/do not track whether lateral/)
+  })
+
+  it('backs the best-predictor claim with the survey and its sample', () => {
+    const card = RESEARCH_PARTNERS.find((c) => c.figure === 'Best predictor')!
+    expect(card.body).toMatch(/lateral partner satisfaction/)
+    expect(card.sources).toContain(9)
+    expect(SOURCE_BY_ID.get(9)?.publisher).toBe('Major, Lindsey & Africa')
+    expect(SOURCE_BY_ID.get(9)?.title).toMatch(/1,953 partners/)
+  })
+
+  it('splits the two associate surveys onto their own lines', () => {
+    const bti = RESEARCH_PEOPLE.find((c) => c.figure === '9.4%')!
+    expect(bti.sources).toEqual([16])
+    expect(bti.caveat).toMatch(/BTI/)
+    const mla = RESEARCH_PEOPLE.find((c) => c.figure === '69% / 64%')!
+    expect(mla.sources).toEqual([17])
+    expect(mla.caveat).toMatch(/~300 associates/)
+    expect(SOURCE_BY_ID.get(17)?.year).toBe(2023)
+  })
+
+  it('does not attribute the replacement cost to NALP itself', () => {
+    const card = RESEARCH_PEOPLE.find((c) => c.figure === '$200K-$500K')!
+    expect(card.caveat).toMatch(/recruiters/i)
+    expect(card.caveat).toMatch(/not a NALP figure itself/)
+  })
+
+  it('dates the perks that were reported in 2018', () => {
+    expect(SOURCE_BY_ID.get(26)?.year).toBe(2018)
+    expect(LEANER_OPTION.body).toMatch(/as reported in 2018/)
+  })
+
+  it('points the dining source at the page that states the range', () => {
+    expect(SOURCE_BY_ID.get(28)?.url).toBe('https://www.naboo.app/restaurants/new-york')
+  })
+
+  it('every source in the list is cited by something', () => {
+    const cited = new Set<number>()
+    for (const card of [...RESEARCH_PARTNERS, ...RESEARCH_PEOPLE]) {
+      for (const id of card.sources) cited.add(id)
+    }
+    // The ones a figure cites must exist; the list may also hold sources
+    // used only in prose, so this checks the direction that can go wrong.
+    for (const id of cited) expect(SOURCE_BY_ID.get(id)).toBeDefined()
+  })
+})
+
+describe('The Gardner figure is scoped to what she measured', () => {
+  it('says one firm, in the past tense, and cites her own article', () => {
+    const fact = CLIENT_FACTS.find((f) => f.figure === '5.7×')!
+    expect(fact.body).toMatch(/At one firm Heidi Gardner studied/)
+    expect(fact.body).toMatch(/generated/)
+    expect(fact.sources).toEqual([18])
+    expect(SOURCE_BY_ID.get(18)?.publisher).toMatch(/American Lawyer/)
+    expect(SOURCE_BY_ID.get(18)?.year).toBe(2018)
   })
 })

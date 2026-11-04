@@ -17,7 +17,7 @@ export const OTHER_FIRMS: ExtraItem[] = [
   },
   {
     title: 'Arnold & Porter',
-    body: 'Unlimited free lunch with new associates for their first three months, capped at $50 a person, plus a mentorship lunch budget.',
+    body: 'Unlimited free lunch with new associates for their first three months, capped at $50 a person, plus a mentorship lunch budget (as reported in 2018).',
     sources: [26],
   },
   {
@@ -27,13 +27,8 @@ export const OTHER_FIRMS: ExtraItem[] = [
   },
   {
     title: 'Ropes & Gray',
-    body: 'Complimentary breakfast and lunch in the office.',
+    body: 'Complimentary breakfast and lunch in the office (as reported in 2018).',
     sources: [26],
-  },
-  {
-    title: 'Baker Donelson',
-    body: 'BakerWell, a wellness program with coaching and mental health resources.',
-    sources: [],
   },
 ]
 
@@ -136,7 +131,7 @@ export const ASSUMPTIONS: Assumption[] = [
   {
     name: 'Cost per associate departure',
     value: '$200,000-$500,000',
-    why: 'NALP, 2017. Likely conservative today.',
+    why: 'Legal recruiters\u2019 estimate drawing on NALP\u2019s 2017 attrition update, not a NALP figure itself. Likely conservative today.',
     sources: [14],
   },
   {

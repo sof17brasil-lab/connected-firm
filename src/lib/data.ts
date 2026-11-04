@@ -93,9 +93,14 @@ export interface CompetitorBar extends Sourced {
   isWhiteCase?: boolean
 }
 
-/** 2025 revenue growth, Am Law 100 2026. Kirkland is absent from the source. */
+/**
+ * 2025 revenue growth for the Am Law top ten by revenue, as the 2026 Am Law
+ * 100 lists them. Kirkland leads on both counts and belongs here: an earlier
+ * version of this file said it was absent from the source, which was wrong.
+ */
 export const COMPETITOR_DATA: CompetitorBar[] = [
   { firm: 'Simpson Thacher', growth: 22.66, sources: [4] },
+  { firm: 'Kirkland & Ellis', growth: 19.93, sources: [4] },
   { firm: 'Latham', growth: 18.57, sources: [4] },
   { firm: 'Gibson Dunn', growth: 18.37, sources: [4] },
   { firm: 'Skadden', growth: 11.0, sources: [4] },
@@ -150,8 +155,7 @@ export const RESEARCH_PARTNERS: ResearchCard[] = [
     figure: '30-38%',
     body: 'of lateral partners leave within five years.',
     caveat:
-      'Published estimates disagree, so this is the conservative middle rather than any one source: Above the Law reports roughly a third, and Decipher, which sells lateral vetting, puts it at 48% within five years. The higher figures would strengthen the case; the lower one is used throughout.',
-    estimate: true,
+      'Decipher Investigative Intelligence, cited by Above the Law, May 2026. An earlier Decipher/ALM survey put it near 50%.',
     sources: [6, 30],
   },
   {
@@ -163,13 +167,13 @@ export const RESEARCH_PARTNERS: ResearchCard[] = [
   },
   {
     figure: 'Best predictor',
-    body: 'Effective integration is the single strongest predictor of lateral success.',
-    sources: [8],
+    body: 'Effective integration is the single best predictor of lateral partner satisfaction.',
+    sources: [8, 9],
   },
   {
-    figure: '85%',
-    body: 'of firms do not track whether lateral hires succeed.',
-    sources: [9],
+    figure: '90%',
+    body: 'of firms report business development challenges with laterals.',
+    sources: [6],
   },
 ]
 
@@ -203,7 +207,8 @@ export const RESEARCH_PEOPLE: ResearchCard[] = [
   {
     figure: '$200K-$500K',
     body: 'to replace one associate.',
-    caveat: 'Likely conservative today.',
+    caveat:
+      'Legal recruiters\u2019 estimate drawing on NALP\u2019s 2017 attrition update, not a NALP figure itself. Likely conservative today.',
     sources: [14],
   },
   {
@@ -215,8 +220,14 @@ export const RESEARCH_PEOPLE: ResearchCard[] = [
   {
     figure: '9.4%',
     body: 'of associates are in it for the money alone, down from 17.2% in 2022.',
-    caveat: 'After pay, associates rank culture (69%) and quality of work (64%).',
-    sources: [16, 17],
+    caveat: 'BTI, 2026.',
+    sources: [16],
+  },
+  {
+    figure: '69% / 64%',
+    body: 'of associates rank culture and quality of work as what matters after pay.',
+    caveat: 'Major, Lindsey & Africa, 2023 survey of ~300 associates.',
+    sources: [17],
   },
 ]
 
@@ -385,7 +396,7 @@ export const PILOT_TOTAL_LABEL = '$77,600'
 
 export const LEANER_OPTION = {
   label: 'Leaner',
-  body: "At Arnold & Porter's $50-per-person lunch limit, First 90 Days costs $13,500 and the total drops to about $64K.",
+  body: "At Arnold & Porter's $50-per-person lunch limit (as reported in 2018), First 90 Days costs $13,500 and the total drops to about $64K.",
   sources: [26],
 }
 
@@ -454,7 +465,7 @@ export const MOMENTUM_SCENARIOS = {
 export const CLIENT_FACTS = [
   {
     figure: '5.7×',
-    body: 'Clients served by three practice groups generate 5.7 times the revenue of clients served by one.',
+    body: 'At one firm Heidi Gardner studied, clients served by three practice groups generated 5.7 times the revenue of clients served by one.',
     sources: [18],
   },
   {
